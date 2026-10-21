@@ -1,4 +1,4 @@
-# Smart Irrigation Planner
+# UNIT PROJECT 1: Smart Irrigation Planner
  
 A command-line application that helps farmers decide **when** and **how much** to irrigate each crop, using live weather data and the FAO water requirement method. It aims to reduce water waste and cost in arid regions such as Hail, Saudi Arabia.
  
@@ -124,6 +124,5 @@ Type the number of an option and press Enter.
  
 ## Author
  
-Abdulaziz Ayed
-Unit Project 1
+Abdulaziz Ayed,
 GitHub: [ftb2220-create](https://github.com/ftb2220-create)
