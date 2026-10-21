@@ -94,10 +94,102 @@ def show_saudi_news():
 
 
 
+
+   
 def show_sports_news():
-    pass                    
+    url = "https://newsapi.org/v2/everything"
+
+    api_key = os.getenv("NEWS_API_KEY")
+
+    if not api_key:
+        print("News API key not found.")
+        return
+
+    params = {
+        "q": "sports OR football OR soccer",
+        "language": "en",
+        "sortBy": "publishedAt",
+        "pageSize": 5,
+        "apiKey": api_key
+    }
+
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+
+        data = response.json()
+        articles = data.get("articles", [])
+
+        if not articles:
+            print("No sports news available right now.")
+            return
+
+        print("\n" + "=" * 50)
+        print("             SPORTS NEWS")
+        print("=" * 50)
+
+        for number, article in enumerate(articles, start=1):
+            title = article.get("title") or "No title"
+            link = article.get("url") or "No link"
+            published = article.get("publishedAt") or "Date unavailable"
+            source = article.get("source", {}).get("name", "Unknown")
+
+            print(f"\n{number}. {title}")
+            print(f"Source: {source}")
+            print(f"Published: {published}")
+            print(f"Link: {link}")
+            print("-" * 50)
+
+    except requests.exceptions.RequestException as error:
+        print(f"The news request failed: {error}")
+                    
 
 
 def show_technology_news():
-    pass
+    url = "https://newsapi.org/v2/everything"
+
+    api_key = os.getenv("NEWS_API_KEY")
+
+    if not api_key:
+        print("News API key not found.")
+        return
+
+    params = {
+        "q": "technology OR artificial intelligence OR programming",
+        "language": "en",
+        "sortBy": "publishedAt",
+        "pageSize": 5,
+        "apiKey": api_key
+    }
+
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+
+        data = response.json()
+        articles = data.get("articles", [])
+
+        if not articles:
+            print("No technology news available right now.")
+            return
+
+        print("\n" + "=" * 50)
+        print("             TECHNOLOGY NEWS")
+        print("=" * 50)
+
+        for number, article in enumerate(articles, start=1):
+            title = article.get("title") or "No title"
+            link = article.get("url") or "No link"
+            published = article.get("publishedAt") or "Date unavailable"
+            source = article.get("source", {}).get("name", "Unknown")
+
+            print(f"\n{number}. {title}")
+            print(f"Source: {source}")
+            print(f"Published: {published}")
+            print(f"Link: {link}")
+            print("-" * 50)
+
+    except requests.exceptions.RequestException as error:
+        print(f"The news request failed: {error}")
+
 

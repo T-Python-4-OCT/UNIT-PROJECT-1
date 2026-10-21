@@ -1,44 +1,50 @@
-from news import show_top_news,show_saudi_news
+from rich.panel import Panel
+from rich.prompt import Prompt
+from rich.table import Table
+
+from news import show_top_news, show_saudi_news, show_sports_news, show_technology_news
+from ui import banner, console
+from weather import show_weather
+
+MENU = [
+    ("1", "🌍", "Today's Top News", show_top_news),
+    ("2", "🇸🇦", "Saudi Arabia News", show_saudi_news),
+    ("3", "⚽", "Sports News", show_sports_news),
+    ("4", "💻", "Technology News", show_technology_news),
+    ("5", "🌤️", "Check Weather", show_weather),
+    ("6", "🚪", "Exit", None),
+]
 
 
-print("=" * 50)
-print("DAILY NEWS & WEATHER")
-print("=" * 50)
+def print_menu():
+    table = Table.grid(padding=(0, 2))
+    table.add_column(style="bold cyan", justify="right")
+    table.add_column()
+    table.add_column()
+    for key, icon, label, _ in MENU:
+        table.add_row(key, icon, label)
+    console.print(Panel(table, title="[bold]MENU[/]", border_style="cyan", expand=False, padding=(1, 3)))
 
-while True:
-    print("\n1. Today's Top News")
-    print("2. Saudi Arabia News")
-    print("3. Sports News")
-    print("4. Technology News")
-    print("5. Check Weather")
-    print("6. Exit")
 
-    try:
-        choice = int(input("Enter your choice: "))
+def main():
+    console.clear()
+    banner()
+    actions = {key: action for key, _, _, action in MENU}
 
-    except ValueError:
-        print("Invalid input! Please enter a number.")
-        continue
+    while True:
+        print_menu()
+        choice = Prompt.ask("[bold cyan]Enter your choice[/]", choices=list(actions), show_choices=False)
 
-    if choice == 1:
-       show_top_news()
-       
-    elif choice == 2:
-        show_saudi_news()
+        if choice == "6":
+            console.print("\n[bold green]Thank you for using Daily News & Weather! 👋[/]\n")
+            break
 
-    elif choice == 3:
-        print("Sports News - Coming soon!")
-        
-        
-    elif choice == 4:
-        print("Technology News - Coming soon!")
-        
-    elif choice == 5:
-        print("Weather - Coming soon!")
+        actions[choice]()
+        console.print()
+        Prompt.ask("[dim]Press Enter to return to the menu[/]", default="", show_default=False)
+        console.clear()
+        banner()
 
-    elif choice == 6:
-        print("Thank you for using Daily News & Weather!")
-        break
 
-    else:
-        print("Invalid choice! Please choose from 1 to 8.")
+if __name__ == "__main__":
+    main()
