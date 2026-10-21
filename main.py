@@ -2,6 +2,8 @@
 
 from colorama import init
 
+from cinema.config.settings import APP_NAME
+from cinema.screens.booking_screen import new_booking
 from cinema.ui.display import clear_screen, print_info, print_title
 from cinema.ui.inputs import ask_menu
 
@@ -23,12 +25,15 @@ def show_coming_soon() -> None:
 def run() -> None:
     while True:
         clear_screen()
-        print_title("🎬  VOX CINEMAS - RIYADH  🎬")
+        print_title(f"🎬  {APP_NAME}  🎬")
         print()
         choice = ask_menu(MAIN_MENU)
-        if choice == 6:
+        if choice == 1:
+            new_booking()
+        elif choice == 6:
             break
-        show_coming_soon()
+        else:
+            show_coming_soon()
 
 
 def main() -> None:
