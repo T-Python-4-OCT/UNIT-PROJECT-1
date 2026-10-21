@@ -1,4 +1,3 @@
-
 from pathlib import Path
 
 from rich.console import Console
@@ -7,7 +6,6 @@ from rich.text import Text
 
 from quran.quran_reader import QuranReader
 from tafsir.tafsir_reader import TafsirReader
-
 from interface.arabic_ui import (
     show_header,
     show_menu,
@@ -15,15 +13,13 @@ from interface.arabic_ui import (
     show_message,
 )
 from interface.arabic_text import ArabicText
-
 from player.audio_player import AudioPlayer
+from commands.intent_parser import IntentParser
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
-
 QURAN_FILE = BASE_DIR / "data" / "quran.json"
 TAFSIR_FILE = BASE_DIR / "data" / "tafsir.json"
-
 
 MENU_OPTIONS = [
     ("1", "قراءة القرآن"),
@@ -37,24 +33,22 @@ MENU_OPTIONS = [
     ("9", "استماع وتكرار الآية 3 مرات"),
     ("10", "استماع إلى السورة الحالية"),
     ("11", "إيقاف التلاوة"),
+    ("12", "الوكيل الذكي — أمر باللغة العربية"),
     ("0", "خروج"),
 ]
 
 
 def show_current_ayah(console, quran, surah, ayah):
     item = quran.find(surah, ayah)
-
     if item is None:
         show_message(console, "لم يتم العثور على الآية.")
         return None
-
     show_ayah(console, item)
     return item
 
 
 def show_tafsir(console, tafsir, surah, ayah):
     text = tafsir.get(surah, ayah)
-
     if text is None:
         show_message(console, "التفسير غير متوفر لهذه الآية.", "yellow")
         return
@@ -69,13 +63,17 @@ def show_tafsir(console, tafsir, surah, ayah):
     )
 
 
-def search_ayahs(console, quran):
-    query = console.input(
-        f"[bold cyan]{ArabicText('اكتب كلمة أو عبارة للبحث: ')}[/]"
-    ).strip()
+def search_ayahs(console, quran, query=None):
+    if query is None:
+        query = console.input(
+            f"[bold cyan]{ArabicText('اكتب كلمة أو عبارة للبحث: ')}[/]"
+        ).strip()
+
+    if not query:
+        show_message(console, "اكتب كلمة أو عبارة للبحث.", "yellow")
+        return
 
     results = quran.search(query)
-
     if not results:
         show_message(console, "لم يتم العثور على نتائج.")
         return
@@ -89,9 +87,8 @@ def search_ayahs(console, quran):
             Panel(
                 Text(ArabicText(item["text"]), justify="right"),
                 title=ArabicText(
-                    f"{item['surah_name']} — السورة "
-                    f"{item['surah_number']}، الآية "
-                    f"{item['ayah_number']}"
+                    f'{item["surah_name"]} — السورة '
+                    f'{item["surah_number"]}، الآية {item["ayah_number"]}'
                 ),
                 border_style="blue",
             )
@@ -114,9 +111,9 @@ def show_help(console):
         "9. تشغيل الآية الحالية 3 مرات\n"
         "10. تشغيل السورة الحالية\n"
         "11. إيقاف التلاوة\n"
+        "12. كتابة أمر للوكيل الذكي\n"
         "0. الخروج من البرنامج"
     )
-
     console.print(
         Panel(
             ArabicText(help_text),
@@ -126,6 +123,126 @@ def show_help(console):
     )
 
 
+def build_surah_names(quran):
+    """إنشاء قاموس بأسماء السور من بيانات القرآن الموجودة."""
+    names = {}
+    for item in quran.ayahs:
+        names.setdefault(item["surah_number"], item["surah_name"])
+    return names
+
+
+def handle_smart_command(
+    console,
+    parser,
+    quran,
+    tafsir,
+    player,
+    current_surah,
+    current_ayah,
+):
+    command = console.input(
+        f"\n[bold cyan]{ArabicText('اكتب أمرك لتيسير: ')}[/]"
+    ).strip()
+
+    intent = parser.parse(command)
+
+    if intent.action == "unknown":
+        show_message(
+            console,
+            "لم أفهم الأمر. جرّب: الآية التالية، اعرض التفسير، "
+            "انتقل إلى سورة الملك الآية 5، أو ابحث عن الحمد لله.",
+            "yellow",
+        )
+        return current_surah, current_ayah
+
+    if intent.action == "read":
+        show_current_ayah(console, quran, current_surah, current_ayah)
+
+    elif intent.action == "next":
+        if quran.find(current_surah, current_ayah + 1):
+            current_ayah += 1
+        else:
+            next_surah = current_surah + 1
+            while next_surah <= 114 and not quran.find(next_surah, 1):
+                next_surah += 1
+
+            if next_surah <= 114:
+                current_surah = next_surah
+                current_ayah = 1
+            else:
+                show_message(console, "وصلت إلى نهاية القرآن الكريم.")
+                return current_surah, current_ayah
+
+        show_current_ayah(console, quran, current_surah, current_ayah)
+
+    elif intent.action == "previous":
+        if current_ayah > 1:
+            current_ayah -= 1
+        elif current_surah > 1:
+            previous_surah = current_surah - 1
+            while previous_surah > 1 and not quran.get_surah(previous_surah):
+                previous_surah -= 1
+
+            ayahs = quran.get_surah(previous_surah)
+            if ayahs:
+                current_surah = previous_surah
+                current_ayah = ayahs[-1]["ayah_number"]
+        else:
+            show_message(console, "أنت في بداية القرآن الكريم.", "yellow")
+            return current_surah, current_ayah
+
+        show_current_ayah(console, quran, current_surah, current_ayah)
+
+    elif intent.action == "goto":
+        if intent.surah is None or intent.ayah is None:
+            show_message(
+                console,
+                "حدّد السورة والآية، مثل: انتقل إلى سورة الملك الآية 5.",
+                "yellow",
+            )
+            return current_surah, current_ayah
+
+        item = quran.find(intent.surah, intent.ayah)
+        if item is None:
+            show_message(console, "السورة أو الآية غير موجودة.", "yellow")
+            return current_surah, current_ayah
+
+        current_surah = intent.surah
+        current_ayah = intent.ayah
+        show_ayah(console, item)
+
+    elif intent.action == "tafsir":
+        show_tafsir(console, tafsir, current_surah, current_ayah)
+
+    elif intent.action == "repeat":
+        show_current_ayah(console, quran, current_surah, current_ayah)
+
+    elif intent.action == "search":
+        search_ayahs(console, quran, intent.query)
+
+    elif intent.action == "play_ayah":
+        player.play_ayah(current_surah, current_ayah, repeats=1)
+
+    elif intent.action == "play_surah":
+        player.play_surah(quran.get_surah(current_surah))
+
+    elif intent.action == "stop":
+        player.stop()
+        show_message(console, "تم طلب إيقاف التلاوة.")
+
+    elif intent.action == "help":
+        show_help(console)
+
+    elif intent.action == "exit":
+        show_message(
+            console,
+            "للخروج من البرنامج، اختر 0 من القائمة الرئيسية.",
+            "yellow",
+        )
+
+    return current_surah, current_ayah
+
+
 def run_cli():
     console = Console()
 
@@ -133,11 +250,7 @@ def run_cli():
         quran = QuranReader(QURAN_FILE)
         tafsir = TafsirReader(TAFSIR_FILE)
     except (OSError, ValueError) as error:
-        show_message(
-            console,
-            f"تعذّر تحميل البيانات: {error}",
-            "red",
-        )
+        show_message(console, f"تعذّر تحميل البيانات: {error}", "red")
         return
 
     if not quran.ayahs:
@@ -147,42 +260,29 @@ def run_cli():
     try:
         player = AudioPlayer()
     except Exception as error:
-        show_message(
-            console,
-            f"تعذّر تهيئة مشغل الصوت: {error}",
-            "red",
-        )
+        show_message(console, f"تعذّر تهيئة مشغل الصوت: {error}", "red")
         return
 
+    parser = IntentParser(build_surah_names(quran))
     current_surah = 1
     current_ayah = 1
 
     try:
         show_header(console)
-
         console.print(
             f"[green]{ArabicText('تم تحميل')} "
-            f"{quran.get_ayah_count()} "
-            f"{ArabicText('آية.')}[/]"
+            f"{quran.get_ayah_count()} {ArabicText('آية.')}[/]"
         )
-
         console.print(
             f"[green]{ArabicText('عدد التفسيرات المحمّلة:')} "
             f"{tafsir.get_count()}[/]"
         )
-
-        show_current_ayah(
-            console,
-            quran,
-            current_surah,
-            current_ayah,
-        )
+        show_current_ayah(console, quran, current_surah, current_ayah)
 
         while True:
             show_menu(console, MENU_OPTIONS)
-
             choice = console.input(
-                f"\n[bold cyan]{ArabicText(' اختر رقم العملية: ')}[/]"
+                f"\n[bold cyan]{ArabicText('اختر رقم العملية: ')}[/]"
             ).strip()
 
             if choice == "0":
@@ -190,101 +290,64 @@ def run_cli():
                 break
 
             elif choice == "1":
-                show_current_ayah(
-                    console, quran, current_surah, current_ayah
-                )
+                show_current_ayah(console, quran, current_surah, current_ayah)
 
             elif choice == "2":
                 if quran.find(current_surah, current_ayah + 1):
                     current_ayah += 1
                 else:
                     next_surah = current_surah + 1
-
-                    while next_surah <= 114:
-                        if quran.find(next_surah, 1):
-                            current_surah = next_surah
-                            current_ayah = 1
-                            break
-
+                    while next_surah <= 114 and not quran.find(next_surah, 1):
                         next_surah += 1
+
+                    if next_surah <= 114:
+                        current_surah = next_surah
+                        current_ayah = 1
                     else:
-                        show_message(
-                            console,
-                            "وصلت إلى نهاية القرآن الكريم.",
-                        )
+                        show_message(console, "وصلت إلى نهاية القرآن الكريم.")
                         continue
 
-                show_current_ayah(
-                    console, quran, current_surah, current_ayah
-                )
+                show_current_ayah(console, quran, current_surah, current_ayah)
 
             elif choice == "3":
                 if current_ayah > 1:
                     current_ayah -= 1
-
                 elif current_surah > 1:
-                    current_surah -= 1
-                    previous_surah = quran.get_surah(current_surah)
+                    previous_surah = current_surah - 1
+                    while previous_surah > 1 and not quran.get_surah(previous_surah):
+                        previous_surah -= 1
 
-                    while not previous_surah and current_surah > 1:
-                        current_surah -= 1
-                        previous_surah = quran.get_surah(current_surah)
-
-                    if previous_surah:
-                        current_ayah = previous_surah[-1]["ayah_number"]
+                    previous_ayahs = quran.get_surah(previous_surah)
+                    if previous_ayahs:
+                        current_surah = previous_surah
+                        current_ayah = previous_ayahs[-1]["ayah_number"]
                 else:
-                    show_message(
-                        console,
-                        "أنت في بداية القرآن الكريم.",
-                        "yellow",
-                    )
+                    show_message(console, "أنت في بداية القرآن الكريم.", "yellow")
                     continue
 
-                show_current_ayah(
-                    console, quran, current_surah, current_ayah
-                )
+                show_current_ayah(console, quran, current_surah, current_ayah)
 
             elif choice == "4":
                 try:
-                    surah = int(
-                        console.input(
-                            ArabicText("أدخل رقم السورة: ")
-                        ).strip()
-                    )
-                    ayah = int(
-                        console.input(
-                            ArabicText("أدخل رقم الآية: ")
-                        ).strip()
-                    )
+                    surah = int(console.input(ArabicText("أدخل رقم السورة: ")).strip())
+                    ayah = int(console.input(ArabicText("أدخل رقم الآية: ")).strip())
                 except ValueError:
-                    show_message(
-                        console, "أدخل أرقامًا صحيحة.", "red"
-                    )
+                    show_message(console, "أدخل أرقامًا صحيحة.", "red")
                     continue
 
                 item = quran.find(surah, ayah)
-
                 if item is None:
-                    show_message(
-                        console,
-                        "السورة أو الآية غير موجودة.",
-                        "yellow",
-                    )
+                    show_message(console, "السورة أو الآية غير موجودة.", "yellow")
                     continue
 
-                current_surah = surah
-                current_ayah = ayah
+                current_surah, current_ayah = surah, ayah
                 show_ayah(console, item)
 
             elif choice == "5":
-                show_current_ayah(
-                    console, quran, current_surah, current_ayah
-                )
+                show_current_ayah(console, quran, current_surah, current_ayah)
 
             elif choice == "6":
-                show_tafsir(
-                    console, tafsir, current_surah, current_ayah
-                )
+                show_tafsir(console, tafsir, current_surah, current_ayah)
 
             elif choice == "7":
                 search_ayahs(console, quran)
@@ -293,25 +356,27 @@ def run_cli():
                 show_help(console)
 
             elif choice == "9":
-                player.play_ayah(
-                    current_surah,
-                    current_ayah,
-                    repeats=3,
-                )
+                player.play_ayah(current_surah, current_ayah, repeats=3)
 
             elif choice == "10":
-                ayahs = quran.get_surah(current_surah)
-                player.play_surah(ayahs)
+                player.play_surah(quran.get_surah(current_surah))
 
             elif choice == "11":
                 player.stop()
 
-            else:
-                show_message(
+            elif choice == "12":
+                current_surah, current_ayah = handle_smart_command(
                     console,
-                    "اختيار غير صحيح. حاول مرة أخرى.",
-                    "yellow",
+                    parser,
+                    quran,
+                    tafsir,
+                    player,
+                    current_surah,
+                    current_ayah,
                 )
+
+            else:
+                show_message(console, "اختيار غير صحيح. حاول مرة أخرى.", "yellow")
 
     except KeyboardInterrupt:
         show_message(console, "تم إيقاف البرنامج.")
