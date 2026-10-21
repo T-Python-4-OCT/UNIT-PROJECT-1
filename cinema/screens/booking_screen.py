@@ -1,7 +1,8 @@
 """The 'Book a ticket' journey (still under construction)."""
 
 from cinema.screens.choosers import choose_branch, choose_hall, choose_movie
-from cinema.ui.display import clear_screen, print_success, print_title
+from cinema.ui.display import clear_screen, print_title
+from cinema.ui.seat_map import draw_seat_map
 
 
 def new_booking() -> None:
@@ -17,6 +18,9 @@ def new_booking() -> None:
     print_title("Choose your experience")
     hall = choose_hall()
 
-    print()
-    print_success(f"You chose {movie['title']} in {hall.name} at {branch}.")
+    clear_screen()
+    print_title(f"{movie['title']} - {hall.name}")
+    show_key = f"{branch}|{movie['title']}|{hall.name}"
+    taken = hall.taken_by_others(show_key)
+    draw_seat_map(hall, taken)
     input("\nPress Enter to return to the main menu...")
