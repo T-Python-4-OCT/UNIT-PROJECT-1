@@ -1,44 +1,123 @@
-# UNIT-PROJECT-1
+# Smart Irrigation Planner
+
+A command-line application that helps farmers decide **when** and **how much** to irrigate each crop, using live weather data and the FAO water requirement method. It aims to reduce water waste and cost in arid regions such as Hail, Saudi Arabia.
+
+## Overview
+
+The farmer registers a farm and its crops. The program fetches real weather data over the internet, calculates each crop's daily water need, applies smart rules (such as postponing irrigation before rain), and reports how much water and money were saved compared to a traditional fixed schedule.
+
+There are two types of users: a **Farmer** and a **Manager**.
+
+## Features
+
+- Interactive, color-coded CLI menu
+- Add, edit, delete, and search farms and crops
+- Live weather and evapotranspiration (ET0) data, with an offline fallback to the last saved data
+- Water requirement calculation per crop
+- Weekly irrigation schedule in formatted tables
+- Smart alerts: rain expected, heat wave, frost risk, strong wind, over-irrigation
+- Savings report (m3 and SAR) compared to traditional irrigation
+- Data saved in JSON files, with input validation and clear error messages
+
+## User Stories
+
+**As a Farmer, I can:**
+- Register my farm and add, edit, or delete crops.
+- Search for a crop and view its water needs.
+- View the current weather and forecast.
+- Get a weekly irrigation schedule with water volume and best time.
+- Receive alerts for heat, frost, wind, and rain.
+- Log my actual irrigation.
+- View a savings report.
+
+**As a Manager, I can:**
+- Add, edit, or delete crop types in the database.
+- View statistics: most planted crops, total water used and saved.
+- Update settings such as the water price per m3.
+
+## Project Structure
+
+```
+smart_irrigation/
+├── main.py
+├── models/
+│   ├── crop.py
+│   └── farm.py
+├── services/
+│   ├── weather.py
+│   ├── water_calculator.py
+│   ├── scheduler.py
+│   └── alerts.py
+├── utils/
+│   ├── file_handler.py
+│   ├── validators.py
+│   └── display.py
+├── data/
+│   ├── crops.json
+│   └── farms.json
+├── requirements.txt
+└── README.md
+
+```
+
+## Installation
+
+```bash
+git clone https://github.com/<username>/<repo-name>
+cd <repo-name>
+
+python -m venv venv
+source venv/Scripts/activate        # Mac & Linux: venv\bin\activate
+
+pip install -r requirements.txt
+python main.py
+```
+
+## Usage
+
+Type the number of an option and press Enter.
+
+===== Smart Irrigation Planner =====
+1. Manage Farm
+2. Manage Crops
+3. View Weather
+4. Get Irrigation Schedule
+5. Log Irrigation
+6. View Savings Report
+7. Manager Panel
+8. Exit
 
 
-## Based on what you’ve learned until now , create a project of your choosing (impress us with your imagination) . This project must at least satisfy the following minimum requirements :
+| Option | Description |
+| 1. Manage Farm | Create your farm and set its name and city |
+| 2. Manage Crops | Add, edit, delete, list, or search crops |
+| 3. View Weather | Show current weather and forecast |
+| 4. Get Irrigation Schedule | Weekly schedule with water volume  |
+| 5. Log Irrigation | Record the irrigation you actually performed |
+| 6. View Savings Report | Compare your usage with traditional irrigation |
+| 7. Manager Panel | Manage the crop database and view statistics |
+| 0. Exit | Save and quit |
 
-- Must be interactive on CLI.
-- Use your coding skills in Python accurately.
-- Organize Your Code into modules & (or packages)
-- Use git & Github to track changes in your code.
-
-## Example Project :  An online Grocery Store :
-
-#### Overview : An online store that sells fruits to customers. This online store has 2 main users. The customer and the manager of the store . Each one of them should be able to do the following tasks for the store to function properly . 
-
-### Features & User Stories
-#### As a customer I should be able to do the following :
-- Browse  Products . 
-- View the product info (summary, specs, price, quantity , etc.)
-- Search for Products.
-- Get recommendations for my next purchase based on my purchase history.
-- Add Products to the shopping cart .
-- Remove a product from the shopping cart.
-- List the products in my shopping cart. 
-- Continue to checkout . 
-- Fill in my address for delivery.
-- Get receipt of my purchases.
-- Check delivery status . 
+**Example workflow:** create a farm (option 1), add `Wheat` with 1000 m2 (option 2), check the weather (option 3), get the schedule (option 4), log your irrigation (option 5), and view your savings (option 6).
 
 
+## Libraries Used
 
-#### Usage :
- Explain to the user how to use your project . 
- for example:
- - type in search product_name to search for a product.
- - type in list_products to show all the products in the grocery.
- - type in show product_name to get information about this product.
- - type in buy product_name to buy the product . 
- - and so on...
+**External libraries**
 
+| Library | Purpose |
+| `requests` | Sends HTTP requests to fetch live weather data |
+| `colorama` | Adds colors to terminal messages (success, error, warning) |
+| `tabulate` | Prints schedules and reports as formatted tables |
 
-### For your project. Edit this README.md file to include your own project name,  overview, user stories, and usage. 
+**Built-in Python modules**
 
-### NOTE: before submitting the final project, please do the following command:
-`pip freeze > requirements.txt` to enable use to know & use the packages used in your project.
+| Module | Purpose |
+| `json` | Saves and loads farm and crop data |
+| `datetime` | Handles dates for schedules and logs |
+| `os` / `pathlib` | Manages file paths |
+
+## Author
+
+Abdulaziz Ayed, Unit Project 1
+GitHub: [Abdulaziz-ftb2220](https://github.com/ftb2220-create)
