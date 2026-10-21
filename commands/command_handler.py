@@ -182,7 +182,7 @@ def run_cli():
             show_menu(console, MENU_OPTIONS)
 
             choice = console.input(
-                f"\n[bold cyan]{ArabicText('اختر رقم العملية: ')}[/]"
+                f"\n[bold cyan]{ArabicText(' اختر رقم العملية: ')}[/]"
             ).strip()
 
             if choice == "0":
