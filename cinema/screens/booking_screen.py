@@ -1,8 +1,8 @@
 """The 'Book a ticket' journey (still under construction)."""
 
 from cinema.screens.choosers import choose_branch, choose_hall, choose_movie
-from cinema.ui.display import clear_screen, print_title
-from cinema.ui.seat_map import draw_seat_map
+from cinema.screens.seat_picker import calculate_total, select_seats
+from cinema.ui.display import clear_screen, print_success, print_title
 
 
 def new_booking() -> None:
@@ -22,5 +22,8 @@ def new_booking() -> None:
     print_title(f"{movie['title']} - {hall.name}")
     show_key = f"{branch}|{movie['title']}|{hall.name}"
     taken = hall.taken_by_others(show_key)
-    draw_seat_map(hall, taken)
+    seats = select_seats(hall, taken)
+
+    print()
+    print_success(f"Your seats: {', '.join(seats)} - Total: {calculate_total(hall, seats):.0f} SAR")
     input("\nPress Enter to return to the main menu...")
