@@ -16,3 +16,32 @@ DEFAULT_TABLES = [
     Table(5, 6, "family"),
     Table(6, 8, "family"),
 ]
+
+def _read(path):
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        print(f"Warning: {os.path.basename(path)} is corrupted, using empty data.")
+        return None
+
+
+def _write(path, items):
+    os.makedirs(DATA_DIR, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump([asdict(i) for i in items], f, indent=2, ensure_ascii=False)
+
+
+
+def load_tables():
+    data = _read(TABLES_FILE)
+    if data is None:
+        save_tables(DEFAULT_TABLES)
+        return list(DEFAULT_TABLES)
+    return [Table(**d) for d in data]
+
+
+def save_tables(tables):
+    _write(TABLES_FILE, tables)
