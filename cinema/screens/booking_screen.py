@@ -6,6 +6,7 @@ from cinema.screens.choosers import choose_branch, choose_hall, choose_movie, ch
 from cinema.screens.seat_picker import calculate_total, select_seats
 from cinema.storage.bookings_file import load_bookings, save_bookings
 from cinema.storage.search import booked_seats, new_invoice_number
+from cinema.storage.tickets import export_ticket
 from cinema.ui.decorators import pause_after
 from cinema.ui.display import print_error, print_info, print_step, print_success
 from cinema.ui.inputs import ask_name, ask_yes_no
@@ -25,6 +26,18 @@ def print_summary(customer: str, branch: str, movie: dict, hall: Hall,
         print(f"  Seat {seat:<4} {hall.seat_type(seat):<9} {hall.seat_price(seat):>6.0f} SAR")
     print("-" * 40)
     print(f"  TOTAL ({len(seats)} seats)      {calculate_total(hall, seats):>6.0f} SAR")
+
+
+def finish_booking(booking: Booking) -> None:
+    """Show the ticket and offer to save the ticket file."""
+    print()
+    print_success(f"Booking confirmed! Keep your invoice number: {booking.invoice}")
+    print()
+    booking.print_ticket()
+    print()
+    if ask_yes_no("Save the ticket as a text file?"):
+        path = export_ticket(booking)
+        print_success(f"Ticket saved to {path}")
 
 
 @pause_after
@@ -64,8 +77,4 @@ def new_booking() -> None:
     if not save_bookings(bookings):
         print_error("Could not save the booking. Please try again.")
         return
-
-    print()
-    print_success(f"Booking confirmed! Keep your invoice number: {booking.invoice}")
-    print()
-    booking.print_ticket()
+    finish_booking(booking)
