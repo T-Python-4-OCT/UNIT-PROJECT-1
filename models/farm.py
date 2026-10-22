@@ -4,11 +4,12 @@ IRRIGATION_TYPES = ("drip", "sprinkler", "flood")
 class Farm:
     """A farm with its planted crops and irrigation log."""
 
-    def __init__(self, farm_name, city, crops=None, irrigation_log=None):
+    def __init__(self, farm_name, city, crops=None, irrigation_log=None, last_savings=None):
         self.farm_name = farm_name
         self.city = city
         self.crops = crops if crops is not None else []
         self.irrigation_log = irrigation_log if irrigation_log is not None else []
+        self.last_savings = last_savings  # latest savings estimate, or None
 
     def find_crop(self, crop_id):
         """Return the planted crop entry with this id, or None."""
@@ -64,6 +65,7 @@ class Farm:
             "city": self.city,
             "crops": self.crops,
             "irrigation_log": self.irrigation_log,
+            "last_savings": self.last_savings,
         }
 
     @classmethod
@@ -73,4 +75,5 @@ class Farm:
             data["city"],
             data.get("crops", []),
             data.get("irrigation_log", []),
+            data.get("last_savings"),
         )

@@ -4,12 +4,17 @@ from datetime import date, datetime
 from utils import display
 
 
-def get_text(prompt):
-    """Ask until the user types a non-empty text."""
+def get_text(prompt, allow_blank=False):
+    """Ask until the user types a non-empty text.
+
+    If allow_blank is True, pressing Enter returns None (keep the old value).
+    """
     while True:
         text = input(prompt).strip()
         if text:
             return text
+        if allow_blank:
+            return None
         display.print_error("This field cannot be empty.")
 
 
@@ -69,3 +74,23 @@ def get_date(prompt):
             display.print_error("The date cannot be in the future.")
             continue
         return chosen.isoformat()
+
+
+def get_number(prompt, low, high, allow_blank=False):
+    """Ask for any number between low and high (inclusive).
+
+    If allow_blank is True, pressing Enter returns None (keep the old value).
+    """
+    while True:
+        raw_value = input(prompt).strip()
+        if allow_blank and raw_value == "":
+            return None
+        try:
+            number = float(raw_value)
+        except ValueError:
+            display.print_error("Invalid input. Please enter a number.")
+            continue
+        if not math.isfinite(number) or not low <= number <= high:
+            display.print_error(f"The number must be between {low} and {high}.")
+            continue
+        return int(number) if number.is_integer() else number

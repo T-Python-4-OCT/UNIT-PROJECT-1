@@ -40,6 +40,11 @@ There are two types of users: a **Farmer** and a **Manager**.
 ```
 smart_irrigation/
 ├── main.py
+├── menus/
+│   ├── farm_menu.py
+│   ├── weather_menu.py
+│   ├── report_menu.py
+│   └── manager_menu.py
 ├── models/
 │   ├── crop.py
 │   └── farm.py
@@ -52,7 +57,8 @@ smart_irrigation/
 ├── utils/
 │   ├── file_handler.py
 │   ├── validators.py
-│   └── display.py
+│   ├── display.py
+│   └── ui_helpers.py
 ├── data/
 │   ├── crops.json
 │   ├── farms.json

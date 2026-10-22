@@ -71,3 +71,7 @@ def load_settings():
     if isinstance(saved, dict):
         settings.update(saved)
     return settings
+
+
+def save_settings(settings):
+    save_json(SETTINGS_FILE, settings)

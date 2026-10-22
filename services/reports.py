@@ -75,3 +75,17 @@ def get_logged_usage(farm, crops, water_price):
             "cost": volume_m3 * water_price,
         })
     return usage
+
+
+def get_planted_ranking(farm, crops):
+    """Crops on the farm, largest area first, with their share of the total area."""
+    total_area = farm.total_area()
+    ranking = []
+    for farm_crop in sorted(farm.crops, key=lambda item: item["area_m2"], reverse=True):
+        crop = crops.get(farm_crop["crop_id"])
+        ranking.append({
+            "crop_name": crop.name if crop else farm_crop["crop_id"],
+            "area_m2": farm_crop["area_m2"],
+            "share_percent": farm_crop["area_m2"] / total_area * 100 if total_area > 0 else 0,
+        })
+    return ranking
