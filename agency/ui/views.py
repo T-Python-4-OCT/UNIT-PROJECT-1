@@ -1,9 +1,10 @@
-"""Pure display functions: they print tables and panels, nothing else."""
+from datetime import datetime
 
 from rich.markup import escape
+from rich.panel import Panel
 from rich.table import Table
 
-from agency.config import CURRENCY
+from agency.config import APP_NAME, CURRENCY
 from agency.flags import flag
 from agency.ui.console import console
 
@@ -17,7 +18,6 @@ CATEGORY_STYLE = {"city": "cyan", "beach": "yellow", "culture": "magenta", "adve
 
 
 def show_menu(title: str, items, border_style: str = "cyan") -> None:
-    """Draw a numbered menu. `items` is a list of (key, label); key "0" is shown in red."""
     table = Table(title=escape(title), header_style="bold magenta", border_style=border_style)
     table.add_column("#", style="cyan", justify="right")
     table.add_column("Action")
@@ -28,34 +28,40 @@ def show_menu(title: str, items, border_style: str = "cyan") -> None:
 
 
 def place(item) -> str:
-    """"🇹🇷 Istanbul, Turkey" for a destination or a booking (anything with a city and a country)."""
     return f"{flag(item.country)} {escape(item.city)}, {escape(item.country)}"
 
 
 def money(value) -> str:
-    """Format a number as money, e.g. 1,200 SAR."""
     return f"{value:,.0f} {CURRENCY}"
 
 
 def status_text(status: str) -> str:
-    """A booking status wrapped in its color."""
     return f"[{STATUS_STYLE.get(status, 'white')}]{status}[/]"
 
 
+def show_welcome(user, notes) -> None:
+    hour = datetime.now().hour
+    greeting = "Good morning" if hour < 12 else "Good afternoon" if hour < 18 else "Good evening"
+    intro = "Here is your agency overview." if user.role == "manager" else "Ready to plan your next trip?"
+    lines = [f"[bold]{greeting}, {escape(user.full_name)}![/bold]  Welcome to {APP_NAME}.", intro]
+    if user.role == "customer":
+        lines.append(f"[cyan]Customer ID: #{user.id}[/cyan]  |  {escape(user.username)}  |  {escape(user.email)}")
+    lines += [f"• {escape(note)}" for note in notes]
+    console.print(Panel("\n".join(lines), title="Welcome ✈️", border_style="green", expand=False))
+
+
 def show_countries(items, title="Destinations") -> None:
-    """Table of destinations. Suspended ones are struck through."""
     table = Table(title=title, header_style="bold magenta", border_style="cyan")
     table.add_column("ID", style="cyan", justify="right")
     table.add_column("Country", style="bold", no_wrap=True)
     table.add_column("City")
-    table.add_column("Type")
-    table.add_column("Flight", justify="right", style="green")
-    table.add_column("Hotel/night", justify="right", style="green")
+    table.add_column("Type", no_wrap=True)
+    table.add_column("Flight", justify="right", style="green", no_wrap=True)
+    table.add_column("Hotel/night", justify="right", style="green", no_wrap=True)
     table.add_column("Best season")
     for destination in items:
-        color = CATEGORY_STYLE.get(destination.category, "white")
         city = escape(destination.city) + (" [red](suspended)[/]" if destination.suspended else "")
         table.add_row(str(destination.id), f"{flag(destination.country)} {escape(destination.country)}", city,
-                      f"[{color}]{destination.category}[/]", money(destination.flight), money(destination.hotel),
+                      f"[{CATEGORY_STYLE.get(destination.category, 'white')}]{destination.category}[/]", money(destination.flight), money(destination.hotel),
                       escape(destination.best_season), style="strike dim" if destination.suspended else None)
     console.print(table)
