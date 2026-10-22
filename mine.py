@@ -4,7 +4,8 @@ from prompt_toolkit.layout.containers import HSplit, Window
 from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
-
+from courses.course_manager import browse_courses
+from courses.course_search import search_course
 from auth.users import login_page, create_account_page
 from auth.trainee import trainee_page
 from auth.trainer import trainer_page
@@ -26,9 +27,7 @@ selected = 0
 
 
 def get_menu():
-    lines = [
-        ("class:normal", "Choose an option:\n")
-    ]
+    lines = [("class:normal", "Choose an option:\n")]
 
     for index, choice in enumerate(choices):
         if index == selected:
@@ -53,12 +52,14 @@ bindings = KeyBindings()
 def move_up(event):
     global selected
     selected = (selected - 1) % len(choices)
+    event.app.invalidate()
 
 
 @bindings.add("down")
 def move_down(event):
     global selected
     selected = (selected + 1) % len(choices)
+    event.app.invalidate()
 
 
 @bindings.add("enter")
@@ -98,10 +99,6 @@ def main():
         print("    Learn with Excellence, Grow with Skills")
         print("=" * 50)
 
-        if logged_in_user:
-            print(f"Welcome, {logged_in_user['full_name']}!")
-            print(f"Role: {logged_in_user['role']}")
-
         choice = show_menu()
 
         if choice == "Log In":
@@ -114,25 +111,25 @@ def main():
                     logged_in_user = user
 
                     if user.role == "trainee":
-                         trainee_page(user)
-                         logged_in_user = None
+                        trainee_page(user)
+                        logged_in_user = None
+
                     elif user.role == "trainer":
-                         trainer_page(user)
-                         logged_in_user = None
+                        trainer_page(user)
+                        logged_in_user = None
+
                     else:
-                        print(
-                            f"\nWelcome, {user['full_name']}!"
-                        )
-                        print(f"Role: {user['role']}")
+                        print(f"\nWelcome, {user.full_name}!")
+                        print(f"Role: {user.role}")
 
         elif choice == "Create Trainee Account":
             create_account_page()
 
         elif choice == "Browse Training Courses":
-            print("\n[+] Loading Available Courses...")
+            browse_courses()
 
         elif choice == "Search for a Course":
-            print("\n[+] Course Search Engine...")
+            search_course()
 
         elif choice == "View Trainers":
             print("\n[+] Loading Trainers List...")
@@ -150,9 +147,7 @@ def main():
 
         elif choice == "Log Out":
             if logged_in_user is not None:
-                print(
-                    f"\nGoodbye, {logged_in_user['full_name']}!"
-                )
+                print(f"\nGoodbye, {logged_in_user.full_name}!")
                 logged_in_user = None
                 print("You have logged out successfully.")
             else:

@@ -10,7 +10,6 @@ DATA_FOLDER = "data"
 USERS_FILE = os.path.join(DATA_FOLDER, "users.json")
 
 
-
 def setup_users_file():
     os.makedirs(DATA_FOLDER, exist_ok=True)
 
@@ -57,10 +56,8 @@ def create_account_page():
         return
 
     email = email.strip().lower()
-
     users = load_users()
 
-    # Check whether the email is already registered
     for user in users:
         if user["email"].lower() == email:
             print("\nThis email is already registered.")
@@ -85,7 +82,6 @@ def create_account_page():
         print("\nPasswords do not match.")
         return
 
-    # Create the new user
     new_user = {
         "id": max(
             (user.get("id", 0) for user in users),
@@ -104,7 +100,6 @@ def create_account_page():
     print("You can now log in using your email and password.")
 
 
-# Login
 def login_page():
     print("\n" + "=" * 40)
     print("          MOTQEN ACADEMY")
@@ -158,5 +153,4 @@ def login_page():
     return None
 
 
-# Ensure the users file exists
 setup_users_file()
