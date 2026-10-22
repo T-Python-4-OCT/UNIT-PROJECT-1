@@ -131,4 +131,6 @@ CURRENCIES = {
 
 
 def get_currency(country_name):
-    return CURRENCIES.get(country_name)
+    return CURRENCIES.get(
+        country_name
+    )

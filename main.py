@@ -1,11 +1,12 @@
 import time
+import os
 
 from countries import CONTINENTS, COUNTRIES
 from weather import show_weather
 from currency import get_currency
 from holiday_calendar import show_holidays
-from budget import show_budget
-
+from recommendations import find_my_destination
+from language import choose_language
 
 BLUE = "\033[94m"
 CYAN = "\033[96m"
@@ -26,8 +27,129 @@ def loading(message):
     print()
 
 
-def show_welcome():
+def clear_screen():
+    os.system("cls")
+
+
+def show_welcome(language):
+    if language == "ar":
+        title = "اكتشف العالم"
+    else:
+        title = "TRAVEL EXPLORER"
+
+    # Animate the airplane
+    for position in range(70, 5, -3):
+        clear_screen()
+
+        print("\n" * 2)
+
+        print(" " * position + "☁️")
+        print()
+
+        print(" " * position + "✈️")
+        print()
+
+        print(
+            " " * 25
+            + "🌍 "
+            + title
+            + " 🌍"
+        )
+
+        time.sleep(0.08)
+
+    clear_screen()
+
+    print("\n")
+
+    print(
+        CYAN
+        + "              ████████╗██████╗  █████╗ ██╗   ██╗███████╗██╗     "
+        + RESET
+    )
+
+    print(
+        CYAN
+        + "              ╚══██╔══╝██╔══██╗██╔══██╗██║   ██║██╔════╝██║     "
+        + RESET
+    )
+
+    print(
+        CYAN
+        + "                 ██║   ██████╔╝███████║██║   ██║█████╗  ██║     "
+        + RESET
+    )
+
+    print(
+        CYAN
+        + "                 ██║   ██╔══██╗██╔══██║╚██╗ ██╔╝██╔══╝  ██║     "
+        + RESET
+    )
+
+    print(
+        CYAN
+        + "                 ██║   ██║  ██║██║  ██║ ╚████╔╝ ███████╗███████╗"
+        + RESET
+    )
+
     print()
+
+    print(
+        GREEN
+        + "                    🌍  E X P L O R E R  🌍"
+        + RESET
+    )
+
+    print()
+
+    print(
+        YELLOW
+        + "              ✈️  DISCOVER  •  EXPLORE  •  TRAVEL  ✈️"
+        + RESET
+    )
+
+    print()
+
+    print(
+        BLUE
+        + "                    Preparing your journey"
+        + RESET,
+        end=""
+    )
+
+    for _ in range(4):
+        time.sleep(0.3)
+        print(".", end="", flush=True)
+
+    print("\n")
+
+    print(
+        CYAN
+        + "                    ☁️        ✈️        ☁️"
+        + RESET
+    )
+
+    print()
+
+    time.sleep(0.5)
+
+
+def show_menu(language):
+    print()
+
+    if language == "ar":
+        title = "اكتشف العالم"
+        option_1 = "استكشف دولة"
+        option_2 = "اعثر على وجهتي"
+        option_3 = "المفضلة"
+        option_4 = "خروج"
+    else:
+        title = "TRAVEL EXPLORER"
+        option_1 = "Explore a Country"
+        option_2 = "Find My Destination"
+        option_3 = "Favorites"
+        option_4 = "Exit"
+
     print(
         CYAN
         + "╔══════════════════════════════════════╗"
@@ -35,8 +157,8 @@ def show_welcome():
     )
 
     print(
-        BLUE
-        + "║       🌍✈️ TRAVEL ASSISTANT ✈️🌍    ║"
+        CYAN
+        + f"║          🌍 {title}"
         + RESET
     )
 
@@ -47,27 +169,19 @@ def show_welcome():
     )
 
     print(
-        GREEN
-        + "║       🧳 Smart Travel Guide         ║"
-        + RESET
+        f"║  1. 🔎 {option_1}"
     )
 
     print(
-        YELLOW
-        + "║       🌤️ Live Weather               ║"
-        + RESET
+        f"║  2. 🤖 {option_2}"
     )
 
     print(
-        MAGENTA
-        + "║       💰 Budget Planning            ║"
-        + RESET
+        f"║  3. ❤️  {option_3}"
     )
 
     print(
-        BLUE
-        + "║       📅 Travel Calendar            ║"
-        + RESET
+        f"║  4. 🚪 {option_4}"
     )
 
     print(
@@ -76,10 +190,28 @@ def show_welcome():
         + RESET
     )
 
-    print()
+
+def choose_menu_option(language):
+    show_menu(language)
+
+    while True:
+        choice = input(
+            YELLOW
+            + "\n👉 Choose an option: "
+            + RESET
+        )
+
+        if choice in ["1", "2", "3", "4"]:
+            return choice
+
+        print(
+            RED
+            + "❌ Invalid choice. Please choose 1-4."
+            + RESET
+        )
 
 
-def show_continents():
+def show_continents(language):
     print(
         CYAN
         + "🌍 Choose a continent:"
@@ -89,15 +221,21 @@ def show_continents():
     print()
 
     for number, continent in CONTINENTS.items():
+
+        if language == "ar":
+            name = continent["name_ar"]
+        else:
+            name = continent["name"]
+
         print(
             f"{number}. "
             f"{continent['emoji']} "
-            f"{continent['name']}"
+            f"{name}"
         )
 
 
-def choose_continent():
-    show_continents()
+def choose_continent(language):
+    show_continents(language)
 
     while True:
         choice = input(
@@ -120,14 +258,16 @@ def get_countries(continent_name):
     countries = []
 
     for country_name, country in COUNTRIES.items():
+
         if country["continent"] == continent_name:
             countries.append(country_name)
 
     return countries
 
 
-def show_countries(countries):
+def show_countries(countries, language):
     print()
+
     print(
         CYAN
         + "🌍 Available countries:"
@@ -140,6 +280,7 @@ def show_countries(countries):
         countries,
         start=1
     ):
+
         country = COUNTRIES[country_name]
 
         print(
@@ -149,8 +290,11 @@ def show_countries(countries):
         )
 
 
-def choose_country(countries):
-    show_countries(countries)
+def choose_country(countries, language):
+    show_countries(
+        countries,
+        language
+    )
 
     while True:
         choice = input(
@@ -172,6 +316,7 @@ def choose_country(countries):
             )
 
         except ValueError:
+
             print(
                 RED
                 + "❌ Please enter a number."
@@ -194,6 +339,7 @@ def show_cities(country_name):
     print()
 
     for number, city in country["cities"].items():
+
         print(
             f"{number}. "
             f"📍 {city['name']}"
@@ -206,6 +352,7 @@ def choose_city(country_name):
     show_cities(country_name)
 
     while True:
+
         choice = input(
             YELLOW
             + "\n👉 Choose a city: "
@@ -247,6 +394,7 @@ def show_destination(country_name, city):
     )
 
     if currency:
+
         print(
             YELLOW
             + f"║ 💰 Currency: {currency['name']} "
@@ -261,12 +409,10 @@ def show_destination(country_name, city):
     )
 
 
-def main():
-    show_welcome()
-
+def explore_country(language):
     loading("🚀 Starting your journey")
 
-    continent = choose_continent()
+    continent = choose_continent(language)
 
     print()
 
@@ -282,16 +428,23 @@ def main():
     )
 
     if not countries:
+
         print(
             RED
             + "❌ No countries available yet."
             + RESET
         )
+
         return
 
-    country_name = choose_country(countries)
+    country_name = choose_country(
+        countries,
+        language
+    )
 
-    city = choose_city(country_name)
+    city = choose_city(
+        country_name
+    )
 
     show_destination(
         country_name,
@@ -299,8 +452,6 @@ def main():
     )
 
     print()
-
-    show_budget()
 
     loading(
         "🌤️ Getting live weather data"
@@ -317,6 +468,100 @@ def main():
         + "🎉 Destination analysis completed!"
         + RESET
     )
+
+
+def find_destination():
+    find_my_destination()
+
+
+def show_favorites():
+    print()
+
+    print(
+        MAGENTA
+        + "❤️ Favorites"
+        + RESET
+    )
+
+    print()
+
+    print(
+        YELLOW
+        + "🚧 This feature is coming soon."
+        + RESET
+    )
+
+
+def main():
+    language = choose_language()
+
+    show_welcome(language)
+
+    while True:
+
+        choice = choose_menu_option(
+            language
+        )
+
+        if choice == "1":
+
+            clear_screen()
+
+            explore_country(
+                language
+            )
+
+        elif choice == "2":
+
+            clear_screen()
+
+            find_destination()
+
+        elif choice == "3":
+
+            clear_screen()
+
+            show_favorites()
+
+        elif choice == "4":
+
+            print()
+
+            if language == "ar":
+
+                print(
+                    GREEN
+                    + "✈️ شكرًا لاستخدامك اكتشف العالم!"
+                    + RESET
+                )
+
+                print(
+                    CYAN
+                    + "🌍 نراك في رحلتك القادمة!"
+                    + RESET
+                )
+
+            else:
+
+                print(
+                    GREEN
+                    + "✈️ Thank you for using Travel Explorer!"
+                    + RESET
+                )
+
+                print(
+                    CYAN
+                    + "🌍 See you on your next journey!"
+                    + RESET
+                )
+
+            break
+
+        input(
+            "\nPress Enter to return to the main menu..."
+        )
+
+        clear_screen()
 
 
 if __name__ == "__main__":
