@@ -1,3 +1,36 @@
+
+# Python cache files
 __pycache__/
-*.pyc
+*.py[codz]
+*$py.class
+
+# Virtual environments
 .venv/
+venv/
+env/
+ENV/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Spyder settings
+.spyderproject
+.spyproject
+
+# IDE settings
+.vscode/
+.idea/
+
+# Build and distribution files
+build/
+dist/
+*.egg-info/
+
+# Test and coverage files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary files
+tempCodeRunnerFile.py
