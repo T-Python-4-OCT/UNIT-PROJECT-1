@@ -1,4 +1,5 @@
 import math
+from datetime import date, datetime
 
 from utils import display
 
@@ -51,3 +52,20 @@ def confirm(prompt):
     """Ask a yes/no question. Return True for yes."""
     answer = get_menu_choice(f"{prompt} (y/n): ", ["y", "n", "Y", "N"])
     return answer.lower() == "y"
+
+
+def get_date(prompt):
+    """Ask for a date as YYYY-MM-DD. Enter means today. Future dates are rejected."""
+    while True:
+        raw_value = input(prompt).strip()
+        if raw_value == "":
+            return date.today().isoformat()
+        try:
+            chosen = datetime.strptime(raw_value, "%Y-%m-%d").date()
+        except ValueError:
+            display.print_error("Invalid date. Use the format YYYY-MM-DD (for example 2026-10-21).")
+            continue
+        if chosen > date.today():
+            display.print_error("The date cannot be in the future.")
+            continue
+        return chosen.isoformat()

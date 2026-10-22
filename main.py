@@ -1,9 +1,10 @@
 from models.farm import Farm, IRRIGATION_TYPES
 from services.alerts import get_alerts
+from services.reports import build_savings_report, get_logged_usage, summarize_savings
 from services.scheduler import POSTPONE, build_schedule
 from services.weather import WeatherError, get_weather
 from utils import display, validators
-from utils.file_handler import load_crops, load_farm, save_farm
+from utils.file_handler import load_crops, load_farm, load_settings, save_farm
 
 MAIN_MENU = [
     ("1", "Manage Farm"),
@@ -15,7 +16,7 @@ MAIN_MENU = [
     ("7", "Manager Panel"),
     ("8", "Exit"),
 ]
-COMING_SOON = ("5", "6", "7")
+COMING_SOON = ("7",)
 
 
 # ---------- Helpers ----------
@@ -270,9 +271,9 @@ def show_irrigation_schedule(farm, crops):
         [
             row["date"],
             row["crop_name"],
-            row["need_mm"],
+            round(row["need_mm"], 1),
             row["action"],
-            row["volume_m3"] if row["volume_m3"] > 0 else "-",
+            round(row["volume_m3"], 1) if row["volume_m3"] > 0 else "-",
             row["best_time"],
         ]
         for row in schedule
@@ -285,6 +286,79 @@ def show_irrigation_schedule(farm, crops):
     if postponed:
         display.print_info(f"Irrigations postponed because of rain: {postponed}")
     show_alerts(farm, crops, weather["daily"])
+
+
+# ---------- Log Irrigation and Savings Report ----------
+
+def log_irrigation(farm, crops):
+    if farm is None:
+        display.print_warning("Create your farm first (option 1).")
+        return
+    crop_id = choose_farm_crop(farm, crops, "log")
+    if crop_id is None:
+        return
+    volume_m3 = validators.get_positive_number("Water used (m3): ")
+    date = validators.get_date("Date (YYYY-MM-DD, press Enter for today): ")
+    try:
+        farm.add_irrigation_log(crop_id, date, volume_m3)
+    except ValueError as error:
+        display.print_error(str(error))
+        return
+    save_farm(farm)
+    display.print_success(f"Logged {volume_m3} m3 for {get_crop_name(crops, crop_id)} on {date}.")
+
+
+def show_savings_report(farm, crops):
+    if farm is None:
+        display.print_warning("Create your farm first (option 1).")
+        return
+    if not farm.crops:
+        display.print_warning("Add at least one crop first (option 2).")
+        return
+    weather = fetch_weather_for_farm(farm)
+    if weather is None:
+        return
+
+    water_price = load_settings()["water_price_per_m3"]
+    schedule, _ = build_schedule(farm, crops, weather["daily"])
+    report = build_savings_report(farm, crops, weather["daily"], schedule)
+    summary = summarize_savings(report, water_price)
+
+    display.print_title(f"Savings Report (next 7 days): {farm.farm_name}")
+    rows = [
+        [
+            row["crop_name"],
+            round(row["traditional_m3"], 1),
+            round(row["smart_m3"], 1),
+            round(row["saved_m3"], 1),
+            f"{round(row['saved_percent'])}%",
+        ]
+        for row in report
+    ]
+    rows.append([
+        "TOTAL",
+        round(summary["traditional_m3"], 1),
+        round(summary["smart_m3"], 1),
+        round(summary["saved_m3"], 1),
+        f"{round(summary['saved_percent'])}%",
+    ])
+    display.print_table(rows, ["Crop", "Traditional (m3)", "Smart (m3)", "Saved (m3)", "Saved"])
+
+    used_percent = 100 - summary["saved_percent"] if summary["traditional_m3"] > 0 else 0
+    print(f"Smart vs traditional: {display.usage_bar(used_percent)}")
+    display.print_info(
+        f"Estimated saving: {round(summary['saved_m3'], 1)} m3 "
+        f"= {round(summary['saved_cost'], 2)} SAR (at {water_price} SAR per m3)"
+    )
+    display.print_info("Traditional = fixed daily irrigation that ignores rain. Smart = schedule from the forecast.")
+
+    logged = get_logged_usage(farm, crops, water_price)
+    display.print_title("Irrigation You Logged")
+    if not logged:
+        display.print_info("Nothing logged yet. Use option 5 after you irrigate.")
+        return
+    rows = [[item["crop_name"], round(item["volume_m3"], 1), round(item["cost"], 2)] for item in logged]
+    display.print_table(rows, ["Crop", "Logged (m3)", "Cost (SAR)"])
 
 
 # ---------- Main loop ----------
@@ -305,6 +379,10 @@ def main():
             view_weather(farm, crops)
         elif choice == "4":
             show_irrigation_schedule(farm, crops)
+        elif choice == "5":
+            log_irrigation(farm, crops)
+        elif choice == "6":
+            show_savings_report(farm, crops)
         elif choice in COMING_SOON:
             display.print_info("This feature is coming soon.")
         else:

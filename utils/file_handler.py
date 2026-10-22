@@ -8,6 +8,8 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 CROPS_FILE = DATA_DIR / "crops.json"
 FARM_FILE = DATA_DIR / "farms.json"
 WEATHER_CACHE_FILE = DATA_DIR / "weather_cache.json"
+SETTINGS_FILE = DATA_DIR / "settings.json"
+DEFAULT_SETTINGS = {"water_price_per_m3": 1.0}
 
 
 def load_json(file_path, default):
@@ -60,3 +62,12 @@ def load_farm():
 
 def save_farm(farm):
     save_json(FARM_FILE, farm.to_dict())
+
+
+def load_settings():
+    """Return the settings, filling in defaults for anything missing."""
+    settings = dict(DEFAULT_SETTINGS)
+    saved = load_json(SETTINGS_FILE, {})
+    if isinstance(saved, dict):
+        settings.update(saved)
+    return settings

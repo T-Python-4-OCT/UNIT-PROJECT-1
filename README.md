@@ -47,14 +47,16 @@ smart_irrigation/
 │   ├── weather.py
 │   ├── water_calculator.py
 │   ├── scheduler.py
-│   └── alerts.py
+│   ├── alerts.py
+│   └── reports.py
 ├── utils/
 │   ├── file_handler.py
 │   ├── validators.py
 │   └── display.py
 ├── data/
 │   ├── crops.json
-│   └── farms.json
+│   ├── farms.json
+│   └── settings.json
 ├── requirements.txt
 └── README.md
 

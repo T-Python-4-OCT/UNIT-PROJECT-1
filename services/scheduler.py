@@ -51,11 +51,13 @@ def schedule_crop(crop, farm_crop, days):
 
         rows.append({
             "date": day["date"],
+            "crop_id": farm_crop["crop_id"],
             "crop_name": crop.name,
-            "need_mm": round(water_calculator.daily_requirement_mm(day["et0_mm"], crop.kc, day["rain_mm"]), 1),
+            "need_mm": water_calculator.daily_requirement_mm(day["et0_mm"], crop.kc, day["rain_mm"]),
             "action": action,
-            "volume_m3": round(volume_m3, 1),
+            "volume_m3": volume_m3,
             "best_time": choose_best_time(day) if action == IRRIGATE else "-",
+            "deficit_mm": deficit_mm,  # water still missing at the end of the day
         })
     return rows
 

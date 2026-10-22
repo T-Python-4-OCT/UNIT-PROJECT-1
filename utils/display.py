@@ -26,3 +26,10 @@ def print_title(message):
 
 def print_table(rows, headers):
     print(tabulate(rows, headers=headers, tablefmt="grid"))
+
+
+def usage_bar(percent, width=20):
+    """Return a text bar such as [██████████░░░░░░░░░░] 50%."""
+    percent = max(0, min(100, percent))
+    filled = round(width * percent / 100)
+    return f"[{'█' * filled}{'░' * (width - filled)}] {round(percent)}%"
