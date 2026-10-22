@@ -1,4 +1,4 @@
-def display_menu():
+"""def display_menu():
      print("\n"+"="*40)
      print("Riyadh Smart Trip")
      print("="*40)
@@ -34,8 +34,12 @@ def main():
             
             
 
-if __name__=="__main__"
-    main()
+if __name__=="__main__":
+    main() 
     
     
-            
+    """
+from trips import plan_trip
+
+trip = plan_trip()
+print(trip)
