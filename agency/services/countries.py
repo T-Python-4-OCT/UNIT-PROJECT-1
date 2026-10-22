@@ -1,4 +1,3 @@
-"""Destination catalog: list, search, add, edit, delete, suspend."""
 import difflib
 
 from agency.config import COUNTRIES_FILE
@@ -12,7 +11,6 @@ _INT_FIELDS = ("flight", "hotel", "food", "transport", "activities")
 
 
 def _clean(data: dict) -> dict:
-    """Validate and normalise the fields of a country."""
     out = dict(data)
     for field in _TEXT_FIELDS:
         value = str(out.get(field, "")).strip()
@@ -39,12 +37,10 @@ def _clean(data: dict) -> dict:
 
 
 def list_all() -> list:
-    """Every destination in the catalog."""
     return [Country.from_dict(record) for record in json_db.load(COUNTRIES_FILE)]
 
 
 def get(country_id: int) -> Country:
-    """Return one destination by id."""
     for destination in list_all():
         if destination.id == country_id:
             return destination
@@ -52,7 +48,6 @@ def get(country_id: int) -> Country:
 
 
 def search(query: str = "", category: str = "") -> list:
-    """Filter destinations by text (country, city, type) and/or category."""
     q = query.strip().lower()
     results = []
     for destination in list_all():
@@ -65,11 +60,6 @@ def search(query: str = "", category: str = "") -> list:
 
 
 def search_by(field: str, text: str):
-    """Search by 'country', 'city' or 'category'. Returns (results, corrected).
-
-    If nothing matches, the closest spellings are used instead (corrected=True),
-    so 'turky' still finds Turkey.
-    """
     text = text.strip().lower()
     items = list_all()
     found = [item for item in items if text in getattr(item, field).lower()]
@@ -80,7 +70,6 @@ def search_by(field: str, text: str):
 
 
 def set_suspended(country_id: int, suspended: bool) -> Country:
-    """Pause or resume a destination until further notice."""
     items = json_db.load(COUNTRIES_FILE)
     for raw in items:
         if raw["id"] == country_id:
@@ -91,7 +80,6 @@ def set_suspended(country_id: int, suspended: bool) -> Country:
 
 
 def add(data: dict) -> Country:
-    """Validate and save a new destination."""
     items = json_db.load(COUNTRIES_FILE)
     clean = _clean(data)
     if any(i["city"].lower() == clean["city"].lower() for i in items):
@@ -104,7 +92,6 @@ def add(data: dict) -> Country:
 
 
 def update(country_id: int, changes: dict) -> Country:
-    """Change fields of an existing destination."""
     items = json_db.load(COUNTRIES_FILE)
     for i, raw in enumerate(items):
         if raw["id"] == country_id:
@@ -118,7 +105,6 @@ def update(country_id: int, changes: dict) -> Country:
 
 
 def delete(country_id: int) -> None:
-    """Remove a destination from the catalog."""
     items = json_db.load(COUNTRIES_FILE)
     remaining = [i for i in items if i["id"] != country_id]
     if len(remaining) == len(items):

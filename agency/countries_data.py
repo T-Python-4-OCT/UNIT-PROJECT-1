@@ -1,7 +1,6 @@
-"""Built-in destination catalog (estimated prices in SAR)."""
-# (country, city, category, flight, hotel/night, food/day, transport/day,
-#  activities/day, best season, highlights)
-# All prices are rough estimates in SAR, per person, from Riyadh.
+
+
+
 COUNTRIES = [
     ("Turkey", "Istanbul", "culture", 1200, 300, 120, 40, 100, "Apr-Jun, Sep-Nov",
      ["Hagia Sophia", "Grand Bazaar", "Bosphorus cruise", "Galata Tower"]),
@@ -55,6 +54,8 @@ COUNTRIES = [
      ["Brandenburg Gate", "Museum Island", "East Side Gallery", "Reichstag dome"]),
     ("Singapore", "Singapore", "city", 2900, 700, 200, 40, 160, "Feb-Apr",
      ["Gardens by the Bay", "Marina Bay Sands", "Sentosa", "Hawker centres"]),
-   ("China", "Shanghai", "city", 3000, 400, 120, 40, 130, "Mar-May, Sep-Nov",
+    ("China", "Shanghai", "city", 3000, 400, 120, 40, 130, "Mar-May, Sep-Nov",
      ["The Bund", "Yu Garden", "Shanghai Tower", "Nanjing Road"]),
+    ("Portugal", "Lisbon", "city", 2100, 450, 150, 40, 110, "Mar-May, Sep-Oct",
+     ["Belem Tower", "Alfama district", "Tram 28", "Sintra day trip"]),
 ]

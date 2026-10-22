@@ -1,6 +1,6 @@
 # SkyRoute ✈️ - Travel Agency CLI
 
-A command-line travel agency written in Python. It shows 26 destinations (country, most famous
+A command-line travel agency written in Python. It shows 28 destinations (country, most famous
 city, type, flight and hotel prices in SAR).
 
 ## Setup & Run

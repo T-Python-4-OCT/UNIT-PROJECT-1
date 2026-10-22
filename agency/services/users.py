@@ -1,4 +1,3 @@
-"""Customer accounts: list, find and numbering."""
 
 from agency.config import USERS_FILE
 from agency.errors import ServiceError
@@ -7,12 +6,10 @@ from agency.storage import json_db
 
 
 def list_all() -> list:
-    """Every account (customers and managers)."""
     return [User.from_dict(record) for record in json_db.load(USERS_FILE)]
 
 
 def get(user_id: int) -> User:
-    """Return one account by id."""
     for user in list_all():
         if user.id == user_id:
             return user
@@ -20,11 +17,9 @@ def get(user_id: int) -> User:
 
 
 def directory() -> dict:
-    """{user id: User}, used to show who made each booking."""
     return {user.id: user for user in list_all()}
 
 
 def next_user_id() -> int:
-    """Next free user id."""
     used = [user.id for user in list_all()]
     return max(used, default=0) + 1

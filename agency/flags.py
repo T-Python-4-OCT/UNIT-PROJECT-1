@@ -1,4 +1,3 @@
-"""Country flags for the screens: an emoji built from the two-letter ISO country code."""
 
 COUNTRY_CODES = {
     "austria": "AT", "azerbaijan": "AZ", "bosnia": "BA", "china": "CN", "egypt": "EG",
@@ -8,12 +7,11 @@ COUNTRY_CODES = {
     "south korea": "KR", "spain": "ES", "switzerland": "CH", "thailand": "TH", "turkey": "TR",
     "uae": "AE", "usa": "US", "united kingdom": "GB",
 }
-UNKNOWN_FLAG = "🌍"        # for a destination the manager adds that is not in the list above
-_FIRST_LETTER = 0x1F1E6    # the "regional indicator A" character
+UNKNOWN_FLAG = "🌍"
+_FIRST_LETTER = 0x1F1E6
 
 
 def flag(country: str) -> str:
-    """The flag of a country (any capitalisation), or a globe when the country is unknown."""
     code = COUNTRY_CODES.get(country.strip().lower())
     if not code:
         return UNKNOWN_FLAG

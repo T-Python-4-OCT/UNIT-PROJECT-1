@@ -1,4 +1,3 @@
-"""Registration and login."""
 from agency.config import USERS_FILE
 from agency.errors import ServiceError
 from agency.models.user import User
@@ -9,7 +8,6 @@ from agency.utils.security import hash_password, verify_password
 
 
 def register(username: str, password: str, full_name: str, email: str, phone: str) -> User:
-    """Create a customer account after validating every field."""
     username = username.strip().lower()
     full_name = full_name.strip()
     email = email.strip().lower()
@@ -42,7 +40,6 @@ def register(username: str, password: str, full_name: str, email: str, phone: st
 
 
 def login(username: str, password: str) -> User:
-    """Return the user for a correct username and password, otherwise raise ServiceError."""
     username = username.strip().lower()
     for user_record in json_db.load(USERS_FILE):
         if user_record["username"] == username and verify_password(password, user_record["password_hash"]):

@@ -1,4 +1,3 @@
-"""Creates the first data files (manager account and destinations)."""
 from agency.config import BOOKINGS_FILE, COUNTRIES_FILE, USERS_FILE
 from agency.countries_data import COUNTRIES
 from agency.storage import json_db
@@ -9,7 +8,6 @@ COUNTRY_KEYS = ["id", "country", "city", "category", "flight", "hotel", "food",
 
 
 def run() -> None:
-    """Create the initial data files if they don't exist yet."""
     if not USERS_FILE.exists():
         json_db.save(USERS_FILE, [{
             "id": 1,
