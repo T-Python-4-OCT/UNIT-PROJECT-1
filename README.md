@@ -1,44 +1,87 @@
-# UNIT-PROJECT-1
+# Riyadh Smart Trip 🚗
 
+## Overview
 
-## Based on what you’ve learned until now , create a project of your choosing (impress us with your imagination) . This project must at least satisfy the following minimum requirements :
+Riyadh Smart Trip is an interactive Python CLI application designed to help users plan trips within Riyadh, Saudi Arabia.
 
-- Must be interactive on CLI.
-- Use your coding skills in Python accurately.
-- Organize Your Code into modules & (or packages)
-- Use git & Github to track changes in your code.
+The application estimates trip duration based on the user's starting location, destination, departure time, and simulated traffic conditions. Its goal is to demonstrate how Python can be used to build a simple trip-planning tool.
 
-## Example Project :  An online Grocery Store :
+**Note:** The current version uses simulated traffic data and user-provided base travel durations. It does not provide real-time traffic information or actual navigation routes.
 
-#### Overview : An online store that sells fruits to customers. This online store has 2 main users. The customer and the manager of the store . Each one of them should be able to do the following tasks for the store to function properly . 
+## Features & User Stories
 
-### Features & User Stories
-#### As a customer I should be able to do the following :
-- Browse  Products . 
-- View the product info (summary, specs, price, quantity , etc.)
-- Search for Products.
-- Get recommendations for my next purchase based on my purchase history.
-- Add Products to the shopping cart .
-- Remove a product from the shopping cart.
-- List the products in my shopping cart. 
-- Continue to checkout . 
-- Fill in my address for delivery.
-- Get receipt of my purchases.
-- Check delivery status . 
+### As a user, I should be able to:
 
+- Plan a trip by entering a starting location and destination.
+- Enter my preferred departure time.
+- Provide an estimated base travel duration.
+- Receive an estimated trip duration based on simulated traffic conditions.
+- View the expected traffic period, such as morning peak or off-peak.
+- Receive clear error messages when entering invalid information.
+- Save planned trips and view previously saved trips (once storage functionality is implemented).
 
+## Usage
 
-#### Usage :
- Explain to the user how to use your project . 
- for example:
- - type in search product_name to search for a product.
- - type in list_products to show all the products in the grocery.
- - type in show product_name to get information about this product.
- - type in buy product_name to buy the product . 
- - and so on...
+Run the application from the terminal:
 
+```bash
+python main.py
+```
 
-### For your project. Edit this README.md file to include your own project name,  overview, user stories, and usage. 
+Follow the interactive menu to select an available action.
 
-### NOTE: before submitting the final project, please do the following command:
-`pip freeze > requirements.txt` to enable use to know & use the packages used in your project.
+For example, to plan a trip, enter:
+
+- Starting location: Al Narjis
+- Destination: KAFD
+- Departure time: 08:30
+- Estimated base duration: 20 minutes
+
+The application calculates an estimated duration using the simulated traffic factor for the selected departure time.
+
+## Project Structure
+
+```text
+Riyadh-Smart-Trip/
+├── main.py
+├── traffic_data.py
+├── trips.py
+├── storage.py
+├── trips.json
+├── requirements.txt
+└── README.md
+```
+
+The project is organized into separate Python modules to keep the application logic maintainable and easy to understand. The structure will be updated as development progresses.
+
+## Technologies Used
+
+- Python
+- Git
+- GitHub
+- JSON for data storage (planned)
+
+## Installation
+
+1. Clone or download the repository.
+2. Open a terminal in the project directory.
+3. Run the application:
+
+```bash
+python main.py
+```
+
+## Future Improvements
+
+- Store and retrieve trip history.
+- Compare estimated durations across different departure times.
+- Integrate a suitable maps or traffic API.
+- Improve trip summaries and reporting.
+
+## Project Status
+
+In Development
+
+## Author
+
+Muath Mohammad Sufani
