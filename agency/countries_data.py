@@ -55,4 +55,6 @@ COUNTRIES = [
      ["Brandenburg Gate", "Museum Island", "East Side Gallery", "Reichstag dome"]),
     ("Singapore", "Singapore", "city", 2900, 700, 200, 40, 160, "Feb-Apr",
      ["Gardens by the Bay", "Marina Bay Sands", "Sentosa", "Hawker centres"]),
+   ("China", "Shanghai", "city", 3000, 400, 120, 40, 130, "Mar-May, Sep-Nov",
+     ["The Bund", "Yu Garden", "Shanghai Tower", "Nanjing Road"]),
 ]
