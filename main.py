@@ -4,6 +4,7 @@ from colorama import init
 
 from cinema.config.settings import APP_NAME
 from cinema.screens.booking_screen import new_booking
+from cinema.storage.bookings_file import ensure_folders
 from cinema.ui.display import clear_screen, print_info, print_title
 from cinema.ui.inputs import ask_menu
 
@@ -23,6 +24,7 @@ def show_coming_soon() -> None:
 
 
 def run() -> None:
+    ensure_folders()
     while True:
         clear_screen()
         print_title(f"🎬  {APP_NAME}  🎬")

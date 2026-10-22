@@ -1,12 +1,12 @@
 """The full 'Book a ticket' journey: name -> cinema -> movie -> experience -> showtime -> seats -> confirm."""
 
-import random
-
 from cinema.models.booking import Booking, make_show_key
 from cinema.models.hall import Hall
 from cinema.screens.choosers import choose_branch, choose_hall, choose_movie, choose_show_time, format_date
 from cinema.screens.seat_picker import calculate_total, select_seats
-from cinema.ui.display import clear_screen, print_info, print_success, print_title
+from cinema.storage.bookings_file import load_bookings, save_bookings
+from cinema.storage.search import booked_seats, new_invoice_number
+from cinema.ui.display import clear_screen, print_error, print_info, print_success, print_title
 from cinema.ui.inputs import ask_name, ask_yes_no
 
 
@@ -45,24 +45,33 @@ def new_booking() -> None:
     print_title("Choose your showtime")
     show_date, show_time = choose_show_time()
 
+    bookings = load_bookings()
+    show_key = make_show_key(branch, movie["title"], hall.name, show_date, show_time)
+    taken = hall.taken_by_others(show_key) | booked_seats(bookings, show_key)  # set union
+
     clear_screen()
     print_title(f"{movie['title']} - {hall.name} - {format_date(show_date)} {show_time}")
-    show_key = make_show_key(branch, movie["title"], hall.name, show_date, show_time)
-    taken = hall.taken_by_others(show_key)
     seats = select_seats(hall, taken)
 
     clear_screen()
     print_title("Booking summary")
     print_summary(customer, branch, movie, hall, show_date, show_time, seats)
     print()
-    if ask_yes_no("Confirm this booking?"):
-        invoice = random.randint(10000, 99999)
-        booking = Booking(invoice, customer, branch, movie["title"], movie["genre"],
-                          hall.name, show_date, show_time, seats, calculate_total(hall, seats))
-        print()
-        print_success(f"Booking confirmed! Keep your invoice number: {booking.invoice}")
-        print()
-        booking.print_ticket()
-    else:
-        print_info("Booking cancelled.")
+    if not ask_yes_no("Confirm this booking?"):
+        print_info("Booking cancelled. Nothing was saved.")
+        input("\nPress Enter to return to the main menu...")
+        return
+
+    booking = Booking(new_invoice_number(bookings), customer, branch, movie["title"], movie["genre"],
+                      hall.name, show_date, show_time, seats, calculate_total(hall, seats))
+    bookings.append(booking)
+    if not save_bookings(bookings):
+        print_error("Could not save the booking. Please try again.")
+        input("\nPress Enter to return to the main menu...")
+        return
+
+    print()
+    print_success(f"Booking confirmed! Keep your invoice number: {booking.invoice}")
+    print()
+    booking.print_ticket()
     input("\nPress Enter to return to the main menu...")
