@@ -1,6 +1,7 @@
 from models import Patient
 from storage import json_store
 from utils.errors import ClinicError
+from services import appointment_service
 
 # user-friendly field names -> Patient attribute names
 FIELDS = {"name": "full_name", "phone": "phone", "age": "age", "blood": "blood_type",
@@ -83,6 +84,8 @@ def update(patient_id, field_name, value):
 
 
 def delete(patient_id):
-    # NOTE: in step 7 we will block deleting patients that have appointments.
+    if appointment_service.has_appointments_for_patient(patient_id):
+        raise ClinicError("Cannot delete: this patient has appointments on record.")
     items = all_patients()
     _save([p for p in items if p.id != patient_id])
+    

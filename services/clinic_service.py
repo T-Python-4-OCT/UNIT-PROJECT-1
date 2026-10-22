@@ -2,6 +2,7 @@ from models import Clinic
 from storage import json_store
 from storage.seed import default_hours
 from utils.errors import ClinicError
+from services import appointment_service
 
 
 def all_clinics():
@@ -69,6 +70,8 @@ def day_off(clinic_id, day):
 
 
 def remove(clinic_id):
-    # NOTE: in step 7 we will block removing clinics that have appointments.
+    if appointment_service.has_appointments_for_clinic(clinic_id):
+        raise ClinicError("Cannot remove: this clinic has appointments on record.")
     items = all_clinics()
     _save([c for c in items if c.id != clinic_id])
+    
