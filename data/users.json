@@ -1,9 +1,27 @@
 [
-    {
-        "id": 1,
-        "full_name": "nn",
-        "email": "dmfd@.com",
-        "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
-        "role": "trainee"
-    }
+{
+"id": 1,
+"full_name": "nn",
+"email": "dmfd@.com",
+"password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
+"role": "trainee"
+},
+{
+
+    "id": 2,
+    "full_name": "mm",
+    "email": "mm@nn.com",
+    "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
+    "role": "trainee"
+},
+{
+
+    "id": 3,
+    "full_name": "Ahmed Ali",
+    "email": "ahmed@motqen.com",
+    "password": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+    "role": "trainer"
+
+}
 ]
+

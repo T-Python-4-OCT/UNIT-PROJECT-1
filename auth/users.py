@@ -2,7 +2,8 @@ import json
 import os
 import hashlib
 import questionary
-
+from models.trainee import Trainee
+from models.trainer import Trainer
 
 
 DATA_FOLDER = "data"
@@ -132,10 +133,26 @@ def login_page():
             user["email"].lower() == email.strip().lower()
             and user["password"] == password_hash
         ):
-            print(f"\nWelcome back, {user['full_name']}!")
-            print(f"Your role: {user['role']}")
+            if user["role"] == "trainee":
+                logged_in_user = Trainee(
+                    user["id"],
+                    user["full_name"],
+                    user["email"]
+                )
+            elif user["role"] == "trainer":
+                logged_in_user = Trainer(
+                    user["id"],
+                    user["full_name"],
+                    user["email"]
+                )
+            else:
+                print("\nThis user role is not supported.")
+                return None
 
-            return user
+            print(f"\nWelcome back, {logged_in_user.full_name}!")
+            print(f"Your role: {logged_in_user.role}")
+
+            return logged_in_user
 
     print("\nInvalid email or password.")
     return None
