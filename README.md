@@ -1,44 +1,28 @@
-# UNIT-PROJECT-1
+# Subscription Guardian
 
-
-## Based on what you’ve learned until now , create a project of your choosing (impress us with your imagination) . This project must at least satisfy the following minimum requirements :
-
-- Must be interactive on CLI.
-- Use your coding skills in Python accurately.
-- Organize Your Code into modules & (or packages)
-- Use git & Github to track changes in your code.
-
-## Example Project :  An online Grocery Store :
-
-#### Overview : An online store that sells fruits to customers. This online store has 2 main users. The customer and the manager of the store . Each one of them should be able to do the following tasks for the store to function properly . 
+#### Overview : A CLI app that helps you keep track of all your monthly and yearly subscriptions (Netflix, Shahid, Spotify, Gym, etc.). It shows you how much you really spend, how many days are left before each subscription renews, and suggests which subscriptions you can cancel to save money. Most people forget their subscriptions and they keep renewing even when nobody uses them, this app solves that problem.
 
 ### Features & User Stories
-#### As a customer I should be able to do the following :
-- Browse  Products . 
-- View the product info (summary, specs, price, quantity , etc.)
-- Search for Products.
-- Get recommendations for my next purchase based on my purchase history.
-- Add Products to the shopping cart .
-- Remove a product from the shopping cart.
-- List the products in my shopping cart. 
-- Continue to checkout . 
-- Fill in my address for delivery.
-- Get receipt of my purchases.
-- Check delivery status . 
+#### As a user I should be able to do the following :
+- Add a subscription (name, price, monthly/yearly, category, renewal date).
+- View all my subscriptions in a table.
+- See how many days are left until each subscription renews.
+- Get reminders for the subscriptions that renew soon when I open the app.
+- Get a spending report (monthly total, yearly total, and spending by category).
+- See my spending by category as a chart in the terminal.
+- Mark a subscription as used today.
+- Get suggestions on what to cancel based on my usage (subscriptions I haven't used in a long time, or more than one subscription in the same category).
+- Delete a subscription.
+- Save my subscriptions so they are still there the next time I open the app.
 
 
 
 #### Usage :
- Explain to the user how to use your project . 
- for example:
- - type in search product_name to search for a product.
- - type in list_products to show all the products in the grocery.
- - type in show product_name to get information about this product.
- - type in buy product_name to buy the product . 
- - and so on...
-
-
-### For your project. Edit this README.md file to include your own project name,  overview, user stories, and usage. 
-
-### NOTE: before submitting the final project, please do the following command:
-`pip freeze > requirements.txt` to enable use to know & use the packages used in your project.
+ Run the app by typing `python main.py`, then choose from the main menu:
+ - type in 1 to add a new subscription.
+ - type in 2 to show all your subscriptions and the days left until each one renews.
+ - type in 3 to show the spending report.
+ - type in 4 to mark a subscription as used today.
+ - type in 5 to get suggestions on what to cancel.
+ - type in 6 to delete a subscription.
+ - type in 7 to exit.
