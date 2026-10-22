@@ -45,3 +45,12 @@ def load_tables():
 
 def save_tables(tables):
     _write(TABLES_FILE, tables)
+
+
+def load_reservations():
+    data = _read(RESERVATIONS_FILE) or []
+    return [Reservation(**d) for d in data]
+
+
+def save_reservations(reservations):
+    _write(RESERVATIONS_FILE, reservations)
