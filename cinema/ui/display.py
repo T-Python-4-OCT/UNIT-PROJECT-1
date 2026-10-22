@@ -17,6 +17,12 @@ def print_title(title: str) -> None:
     print("=" * WIDTH + Style.RESET_ALL)
 
 
+def print_step(number: int, total: int, title: str) -> None:
+    """Clear the screen and show the booking step, e.g. 'Step 2/7 - Choose a cinema'."""
+    clear_screen()
+    print_title(f"Step {number}/{total} - {title}")
+
+
 def print_success(message: str) -> None:
     print(Fore.GREEN + "✔ " + message + Style.RESET_ALL)
 

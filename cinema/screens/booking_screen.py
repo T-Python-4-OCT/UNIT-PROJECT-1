@@ -6,8 +6,11 @@ from cinema.screens.choosers import choose_branch, choose_hall, choose_movie, ch
 from cinema.screens.seat_picker import calculate_total, select_seats
 from cinema.storage.bookings_file import load_bookings, save_bookings
 from cinema.storage.search import booked_seats, new_invoice_number
-from cinema.ui.display import clear_screen, print_error, print_info, print_success, print_title
+from cinema.ui.decorators import pause_after
+from cinema.ui.display import print_error, print_info, print_step, print_success
 from cinema.ui.inputs import ask_name, ask_yes_no
+
+TOTAL_STEPS = 7
 
 
 def print_summary(customer: str, branch: str, movie: dict, hall: Hall,
@@ -24,42 +27,35 @@ def print_summary(customer: str, branch: str, movie: dict, hall: Hall,
     print(f"  TOTAL ({len(seats)} seats)      {calculate_total(hall, seats):>6.0f} SAR")
 
 
+@pause_after
 def new_booking() -> None:
-    clear_screen()
-    print_title("Your name")
+    print_step(1, TOTAL_STEPS, "Your name")
     customer = ask_name()
 
-    clear_screen()
-    print_title("Choose a cinema")
+    print_step(2, TOTAL_STEPS, "Choose a cinema")
     branch = choose_branch()
 
-    clear_screen()
-    print_title(f"Movies at {branch}")
+    print_step(3, TOTAL_STEPS, f"Movies at {branch}")
     movie = choose_movie(branch)
 
-    clear_screen()
-    print_title("Choose your experience")
+    print_step(4, TOTAL_STEPS, "Choose your experience")
     hall = choose_hall()
 
-    clear_screen()
-    print_title("Choose your showtime")
+    print_step(5, TOTAL_STEPS, "Choose your showtime")
     show_date, show_time = choose_show_time()
 
     bookings = load_bookings()
     show_key = make_show_key(branch, movie["title"], hall.name, show_date, show_time)
     taken = hall.taken_by_others(show_key) | booked_seats(bookings, show_key)  # set union
 
-    clear_screen()
-    print_title(f"{movie['title']} - {hall.name} - {format_date(show_date)} {show_time}")
+    print_step(6, TOTAL_STEPS, f"{movie['title']} - {hall.name} - {format_date(show_date)} {show_time}")
     seats = select_seats(hall, taken)
 
-    clear_screen()
-    print_title("Booking summary")
+    print_step(7, TOTAL_STEPS, "Booking summary")
     print_summary(customer, branch, movie, hall, show_date, show_time, seats)
     print()
     if not ask_yes_no("Confirm this booking?"):
         print_info("Booking cancelled. Nothing was saved.")
-        input("\nPress Enter to return to the main menu...")
         return
 
     booking = Booking(new_invoice_number(bookings), customer, branch, movie["title"], movie["genre"],
@@ -67,11 +63,9 @@ def new_booking() -> None:
     bookings.append(booking)
     if not save_bookings(bookings):
         print_error("Could not save the booking. Please try again.")
-        input("\nPress Enter to return to the main menu...")
         return
 
     print()
     print_success(f"Booking confirmed! Keep your invoice number: {booking.invoice}")
     print()
     booking.print_ticket()
-    input("\nPress Enter to return to the main menu...")
