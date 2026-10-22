@@ -7,7 +7,6 @@ class Subject:
         self.code = str(code).strip().upper()
         self.instructor = str(instructor).strip()
         
-        # Try-except for safe integer conversion
         try:
             self.credit_hours = int(credit_hours)
         except ValueError:
@@ -32,7 +31,6 @@ class Task:
         self.priority = priority
         self.status = status
         
-        # Private attributes to secure scores
         self.__earned_score = None
         self.__max_score = None
         
@@ -43,7 +41,6 @@ class Task:
             
         self.created_at = str(created_at).strip() if created_at else date.today().strftime("%Y-%m-%d")
 
-    # Getter and Setter for earned score
     def get_earned_score(self):
         return self.__earned_score
 
@@ -56,7 +53,6 @@ class Task:
         except ValueError:
             self.__earned_score = None
 
-    # Getter and Setter for max score
     def get_max_score(self):
         return self.__max_score
 
@@ -69,7 +65,6 @@ class Task:
         except ValueError:
             self.__max_score = 100.0
 
-    # Properties to allow clean access
     @property
     def earned_score(self):
         return self.__earned_score
@@ -192,4 +187,3 @@ class StudyNote:
             "subject_id": self.subject_id,
             "created_at": self.created_at
         }
-    

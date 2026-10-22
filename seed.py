@@ -6,8 +6,6 @@ from storage import save_data
 fake = Faker()
 
 def generate_seed():
-    print("Generating seed data...")
-    
     try:
         subjects_data = [
             ("Software Engineering", "SWE301", "Dr. Ahmed", 3),
@@ -78,10 +76,10 @@ def generate_seed():
         }
 
         save_data(data)
-        print("Seed data generated and saved successfully!")
+        print("Seed data generated successfully.")
 
     except Exception as e:
-        print(f"An error occurred while generating seed data: {e}")
+        print(f"Error generating seed data: {e}")
 
 if __name__ == "__main__":
     generate_seed()
