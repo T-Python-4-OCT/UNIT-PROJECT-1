@@ -1,76 +1,117 @@
-
 import requests
+from rich.panel import Panel
+from rich.table import Table
+
+from ui import console, section, error, info
+
+WEATHER_CODES = {
+    0: ("Clear sky", "☀️"),
+    1: ("Mainly clear", "🌤️"),
+    2: ("Partly cloudy", "⛅"),
+    3: ("Overcast", "☁️"),
+    45: ("Fog", "🌫️"),
+    48: ("Rime fog", "🌫️"),
+    51: ("Light drizzle", "🌦️"),
+    53: ("Drizzle", "🌦️"),
+    55: ("Heavy drizzle", "🌧️"),
+    61: ("Light rain", "🌧️"),
+    63: ("Rain", "🌧️"),
+    65: ("Heavy rain", "🌧️"),
+    71: ("Light snow", "🌨️"),
+    73: ("Snow", "🌨️"),
+    75: ("Heavy snow", "❄️"),
+    80: ("Rain showers", "🌦️"),
+    81: ("Heavy showers", "🌧️"),
+    82: ("Violent showers", "⛈️"),
+    95: ("Thunderstorm", "⛈️"),
+    96: ("Thunderstorm with hail", "⛈️"),
+    99: ("Severe thunderstorm", "⛈️"),
+}
+
+
+def temp_color(temp):
+    if temp >= 40:
+        return "bold red"
+    if temp >= 30:
+        return "orange1"
+    if temp >= 20:
+        return "yellow"
+    if temp >= 10:
+        return "green"
+    return "cyan"
 
 
 def show_weather():
-    city = input("Enter city name: ").strip()
+    city = console.input("[bold cyan]Enter city name:[/] ").strip()
 
     if not city:
-        print("Please enter a city name.")
+        info("Please enter a city name.")
         return
 
     try:
-        geo_url = "https://geocoding-api.open-meteo.com/v1/search"
+        with console.status("[cyan]Fetching weather...[/]", spinner="dots"):
+            geo = requests.get(
+                "https://geocoding-api.open-meteo.com/v1/search",
+                params={"name": city, "count": 1, "language": "en", "format": "json"},
+                timeout=10,
+            )
+            geo.raise_for_status()
+            results = geo.json().get("results", [])
 
-        geo_params = {
-            "name": city,
-            "count": 1,
-            "language": "en",
-            "format": "json"
-        }
+            if not results:
+                info("City not found. Please try again.")
+                return
 
-        geo_response = requests.get(
-            geo_url, params=geo_params, timeout=10
-        )
-        geo_response.raise_for_status()
+            location = results[0]
 
-        geo_data = geo_response.json()
-        results = geo_data.get("results", [])
+            weather = requests.get(
+                "https://api.open-meteo.com/v1/forecast",
+                params={
+                    "latitude": location["latitude"],
+                    "longitude": location["longitude"],
+                    "current": "temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code",
+                    "timezone": "auto",
+                },
+                timeout=10,
+            )
+            weather.raise_for_status()
+            current = weather.json()["current"]
 
-        if not results:
-            print("City not found. Please try again.")
-            return
-
-        location = results[0]
-        latitude = location["latitude"]
-        longitude = location["longitude"]
         city_name = location["name"]
         country = location.get("country", "Unknown")
+        description, icon = WEATHER_CODES.get(current["weather_code"], ("Unknown", "🌡️"))
+        temp = current["temperature_2m"]
 
-        weather_url = "https://api.open-meteo.com/v1/forecast"
+        table = Table.grid(padding=(0, 3))
+        table.add_column(style="dim")
+        table.add_column(style="bold")
+        table.add_row("Condition", f"{icon}  {description}")
+        table.add_row("Temperature", f"[{temp_color(temp)}]{temp} °C[/]")
+        table.add_row("Feels like", f"{current['apparent_temperature']} °C")
+        table.add_row("Humidity", f"💧 {current['relative_humidity_2m']}%")
+        table.add_row("Wind speed", f"💨 {current['wind_speed_10m']} km/h")
+        table.add_row("Updated", current["time"].replace("T", " "))
 
-        weather_params = {
-            "latitude": latitude,
-            "longitude": longitude,
-            "current": (
-                "temperature_2m,relative_humidity_2m,"
-                "apparent_temperature,wind_speed_10m,weather_code"
-            ),
-            "timezone": "auto"
-        }
-
-        weather_response = requests.get(
-            weather_url, params=weather_params, timeout=10
+        section("WEATHER", "blue")
+        console.print(
+            Panel(
+                table,
+                title=f"[bold]{city_name}, {country}[/]",
+                border_style="blue",
+                padding=(1, 3),
+                expand=False,
+            )
         )
-        weather_response.raise_for_status()
-
-        data = weather_response.json()
-        current = data["current"]
-
-        print("\n" + "=" * 40)
-        print(f"WEATHER IN {city_name.upper()}, {country.upper()}")
-        print("=" * 40)
-
-        print(f"Temperature: {current['temperature_2m']} °C")
-        print(f"Feels like: {current['apparent_temperature']} °C")
-        print(f"Humidity: {current['relative_humidity_2m']}%")
-        print(f"Wind speed: {current['wind_speed_10m']} km/h")
-        print(f"Weather code: {current['weather_code']}")
-        print(f"Updated at: {current['time']}")
-
-        print("=" * 40)
-
-    except requests.exceptions.RequestException as error:
-        print(f"Weather API error: {error}")
+        return {
+            "city": f"{city_name}, {country}",
+            "condition": description,
+            "temperature": current["temperature_2m"],
+            "feels_like": current["apparent_temperature"],
+            "humidity": current["relative_humidity_2m"],
+            "wind_speed": current["wind_speed_10m"],
+            "time": current["time"].replace("T", " "),
+        }
+    except requests.exceptions.RequestException as err:
+        error(f"Weather API error: {err}")
     except (KeyError, IndexError, ValueError):
-        print("Could not read the weather data. Please try again.")
+        error("Could not read the weather data. Please try again.")
