@@ -51,5 +51,5 @@ def ask_yes_no(question: str) -> bool:
 
 def ask_seat() -> str:
     """Turn inputs like 'b5', 'B-5' or 'b 5' into 'B5'."""
-    text = input("\nEnter a seat (example: B5): ")
+    text = input("\nEnter a seat (example: B5) or Q to stop: ")
     return text.upper().replace("-", "").replace(" ", "")

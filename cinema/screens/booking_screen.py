@@ -60,9 +60,15 @@ def new_booking() -> None:
     bookings = load_bookings()
     show_key = make_show_key(branch, movie["title"], hall.name, show_date, show_time)
     taken = hall.taken_by_others(show_key) | booked_seats(bookings, show_key)  # set union
+    if len(taken) >= hall.capacity():
+        print_error("Sorry, this show is sold out.")
+        return
 
     print_step(6, TOTAL_STEPS, f"{movie['title']} - {hall.name} - {format_date(show_date)} {show_time}")
     seats = select_seats(hall, taken)
+    if not seats:
+        print_info("No seats were chosen. Booking cancelled.")
+        return
 
     print_step(7, TOTAL_STEPS, "Booking summary")
     print_summary(customer, branch, movie, hall, show_date, show_time, seats)
