@@ -4,7 +4,7 @@ import os
 DATA_FILE = "studymate_data.json"
 
 def load_data():
-    default_data = {"subjects": [], "tasks": [], "exams": [], "notes": []}
+    default_data = {"subjects": [], "tasks": [], "projects": [], "exams": [], "notes": []}
     if not os.path.exists(DATA_FILE):
         return default_data
     try:
@@ -22,6 +22,7 @@ def save_data(data):
         serializable_data = {
             "subjects": [s.to_dict() if hasattr(s, "to_dict") else s for s in data.get("subjects", [])],
             "tasks": [t.to_dict() if hasattr(t, "to_dict") else t for t in data.get("tasks", [])],
+            "projects": [p.to_dict() if hasattr(p, "to_dict") else p for p in data.get("projects", [])],
             "exams": [e.to_dict() if hasattr(e, "to_dict") else e for e in data.get("exams", [])],
             "notes": [n.to_dict() if hasattr(n, "to_dict") else n for n in data.get("notes", [])]
         }
