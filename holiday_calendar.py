@@ -1,4 +1,5 @@
 from datetime import date
+
 import holidays
 
 
@@ -34,103 +35,75 @@ COUNTRY_CODES = {
     "Argentina": "AR",
     "Australia": "AU",
     "New Zealand": "NZ",
-    "Fiji": "FJ"
+    "Fiji": "FJ",
 }
 
 
-WEEKENDS = {
-    "Saudi Arabia": ["Friday", "Saturday"],
-    "United Arab Emirates": ["Saturday", "Sunday"],
-    "Kuwait": ["Friday", "Saturday"],
-    "Qatar": ["Friday", "Saturday"],
-    "Egypt": ["Friday", "Saturday"]
-}
+def remove_duplicate_holidays(holiday_list):
+    unique = []
+    seen = set()
+
+    for holiday_date, holiday_name in holiday_list:
+        key = (
+            holiday_date,
+            holiday_name.lower().strip(),
+        )
+
+        if key not in seen:
+            seen.add(key)
+            unique.append(
+                (holiday_date, holiday_name)
+            )
+
+    return unique
 
 
-def get_holidays(country_name, year=None):
-    if country_name not in COUNTRY_CODES:
+def get_holidays(country_name, year=2026):
+    country_code = COUNTRY_CODES.get(country_name)
+
+    if not country_code:
         return []
-
-    if year is None:
-        year = date.today().year
-
-    country_code = COUNTRY_CODES[country_name]
 
     try:
         country_holidays = holidays.country_holidays(
             country_code,
-            years=year
+            years=year,
         )
-
-        return [
-            {
-                "date": holiday_date,
-                "name": holiday_name
-            }
-            for holiday_date, holiday_name
-            in sorted(country_holidays.items())
-        ]
-
-    except Exception as error:
-        print(f"❌ Holiday API error: {error}")
+    except Exception:
         return []
 
+    holiday_list = []
 
-def get_weekend(country_name):
-    return WEEKENDS.get(
-        country_name,
-        ["Saturday", "Sunday"]
-    )
+    for holiday_date, holiday_name in country_holidays.items():
+        holiday_list.append(
+            (
+                holiday_date,
+                holiday_name,
+            )
+        )
+
+    holiday_list.sort(key=lambda item: item[0])
+
+    return remove_duplicate_holidays(holiday_list)
 
 
-def show_holidays(country_name, year=None):
+def show_holidays(country_name, year=2026):
+    print("\n" + "=" * 50)
+    print(f"🎉 Holidays - {country_name}")
+    print("=" * 50)
+
     holiday_list = get_holidays(
         country_name,
-        year
+        year,
     )
-
-    weekend = get_weekend(country_name)
-
-    print()
-    print("📅 Travel Calendar")
-    print()
-    print(
-        f"🗓️ Weekly Weekend: "
-        f"{' & '.join(weekend)}"
-    )
-
-    print()
-    print("🎉 Official Holidays:")
 
     if not holiday_list:
         print("❌ No holiday information available.")
         return
 
-    grouped_holidays = {}
+    for holiday_date, holiday_name in holiday_list:
+        formatted_date = holiday_date.strftime("%d %B %Y")
 
-    for holiday in holiday_list:
-        holiday_name = holiday["name"].replace(
-            " (observed)",
-            ""
+        print(
+            f"📅 {formatted_date} - {holiday_name}"
         )
-
-        if holiday_name not in grouped_holidays:
-            grouped_holidays[holiday_name] = []
-
-        grouped_holidays[holiday_name].append(
-            holiday["date"]
-        )
-
-    for holiday_name, dates in grouped_holidays.items():
-
-        if len(dates) == 1:
-            print(
-                f"📌 {dates[0]} - "
-                f"{holiday_name}"
-            )
-
-        else:
-            print(
-                f"📌 {dates[0]} → {dates[-1]} - "
-                f"{holiday_name}"
-            )

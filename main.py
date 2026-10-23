@@ -1,567 +1,758 @@
-import time
+
 import os
+import time
 
 from countries import CONTINENTS, COUNTRIES
 from weather import show_weather
-from currency import get_currency
+from currency import show_currency
 from holiday_calendar import show_holidays
 from recommendations import find_my_destination
-from language import choose_language
+from favorites import (
+    add_favorite,
+    remove_favorite,
+    show_favorites,
+    is_favorite,
+)
+from destination_info import show_destination_info
 
-BLUE = "\033[94m"
+
+# ============================================================
+# COLORS
+# ============================================================
+
+RESET = "\033[0m"
+BOLD = "\033[1m"
 CYAN = "\033[96m"
+BLUE = "\033[94m"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
-MAGENTA = "\033[95m"
 RED = "\033[91m"
-RESET = "\033[0m"
+WHITE = "\033[97m"
+MAGENTA = "\033[95m"
 
 
-def loading(message):
-    print(CYAN + message + RESET, end="")
-
-    for _ in range(3):
-        time.sleep(0.3)
-        print(".", end="", flush=True)
-
-    print()
-
+# ============================================================
+# SCREEN
+# ============================================================
 
 def clear_screen():
-    os.system("cls")
+    os.system("cls" if os.name == "nt" else "clear")
 
 
-def show_welcome(language):
-    if language == "ar":
-        title = "اكتشف العالم"
-    else:
-        title = "TRAVEL EXPLORER"
+def pause():
+    input(f"\n{CYAN}Press Enter to continue...{RESET}")
 
-    # Animate the airplane
-    for position in range(70, 5, -3):
-        clear_screen()
 
-        print("\n" * 2)
+# ============================================================
+# INTRO
+# ============================================================
 
-        print(" " * position + "☁️")
-        print()
-
-        print(" " * position + "✈️")
-        print()
-
-        print(
-            " " * 25
-            + "🌍 "
-            + title
-            + " 🌍"
-        )
-
-        time.sleep(0.08)
-
+def show_logo():
     clear_screen()
 
-    print("\n")
+    print(CYAN + r"""
+ ████████╗██████╗  █████╗ ██╗   ██╗███████╗██╗     
+ ╚══██╔══╝██╔══██╗██╔══██╗██║   ██║██╔════╝██║     
+    ██║   ██████╔╝███████║██║   ██║█████╗  ██║     
+    ██║   ██╔══██╗██╔══██║╚██╗ ██╔╝██╔══╝  ██║     
+    ██║   ██║  ██║██║  ██║ ╚████╔╝ ███████╗███████╗
+    ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚══════╝
+
+ ███████╗██╗  ██╗██████╗ ██╗      ██████╗ ██████╗ ███████╗██████╗
+ ██╔════╝╚██╗██╔╝██╔══██╗██║     ██╔═══██╗██╔══██╗██╔════╝██╔══██╗
+ █████╗   ╚███╔╝ ██████╔╝██║     ██║   ██║██████╔╝█████╗  ██████╔╝
+ ██╔══╝   ██╔██╗ ██╔══██╗██║     ██║   ██║██╔══██╗██╔══╝  ██╔══██╗
+ ███████╗██╔╝ ██╗██████╔╝███████╗╚██████╔╝██║  ██║███████╗██║  ██║
+ ╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+""" + RESET)
 
     print(
-        CYAN
-        + "              ████████╗██████╗  █████╗ ██╗   ██╗███████╗██╗     "
-        + RESET
-    )
-
-    print(
-        CYAN
-        + "              ╚══██╔══╝██╔══██╗██╔══██╗██║   ██║██╔════╝██║     "
-        + RESET
-    )
-
-    print(
-        CYAN
-        + "                 ██║   ██████╔╝███████║██║   ██║█████╗  ██║     "
-        + RESET
-    )
-
-    print(
-        CYAN
-        + "                 ██║   ██╔══██╗██╔══██║╚██╗ ██╔╝██╔══╝  ██║     "
-        + RESET
-    )
-
-    print(
-        CYAN
-        + "                 ██║   ██║  ██║██║  ██║ ╚████╔╝ ███████╗███████╗"
+        BOLD + WHITE +
+        "                    ✈  DISCOVER THE WORLD  ✈"
         + RESET
     )
 
     print()
+    print(BLUE + "              ─────────────────────────────────" + RESET)
+    print()
 
-    print(
-        GREEN
-        + "                    🌍  E X P L O R E R  🌍"
-        + RESET
-    )
+
+def airplane_animation():
+    print()
+
+    frames = [
+        "✈",
+        "  ✈",
+        "    ✈",
+        "      ✈",
+        "        ✈",
+        "          ✈",
+        "            ✈",
+    ]
+
+    for frame in frames:
+        print("\r" + CYAN + frame + "  ☁️   ☁️   ☁️" + RESET, end="")
+        time.sleep(0.12)
 
     print()
 
-    print(
-        YELLOW
-        + "              ✈️  DISCOVER  •  EXPLORE  •  TRAVEL  ✈️"
-        + RESET
-    )
 
+def loading_animation():
     print()
 
     print(
-        BLUE
-        + "                    Preparing your journey"
+        YELLOW +
+        "Initializing your journey"
         + RESET,
-        end=""
+        end="",
     )
 
     for _ in range(4):
-        time.sleep(0.3)
+        time.sleep(0.35)
         print(".", end="", flush=True)
 
-    print("\n")
+    print()
 
     print(
-        CYAN
-        + "                    ☁️        ✈️        ☁️"
+        GREEN +
+        "✓ Travel Explorer is ready!"
+        + RESET
+    )
+
+    time.sleep(0.7)
+
+
+def intro():
+    show_logo()
+    airplane_animation()
+    loading_animation()
+
+    print()
+    print(
+        WHITE +
+        "Explore countries • Check live weather • Discover food"
+        + RESET
+    )
+    print(
+        WHITE +
+        "Find famous places • Check holidays • Get smart recommendations"
+        + RESET
+    )
+
+    print()
+    pause()
+
+
+# ============================================================
+# UI HELPERS
+# ============================================================
+
+def print_header(title):
+    clear_screen()
+
+    print()
+    print(
+        CYAN +
+        "╔" + "═" * 68 + "╗"
+        + RESET
+    )
+
+    print(
+        CYAN +
+        "║"
+        + RESET
+        + BOLD
+        + WHITE
+        + f"{title:^68}"
+        + RESET
+        + CYAN
+        + "║"
+        + RESET
+    )
+
+    print(
+        CYAN +
+        "╚" + "═" * 68 + "╝"
         + RESET
     )
 
     print()
 
-    time.sleep(0.5)
 
+def print_menu_option(number, icon, title, description):
+    print(
+        f"  {YELLOW}{number}{RESET}  "
+        f"{CYAN}{icon}{RESET} "
+        f"{BOLD}{WHITE}{title}{RESET}"
+    )
 
-def show_menu(language):
+    print(
+        f"      {description}"
+    )
+
     print()
 
-    if language == "ar":
-        title = "اكتشف العالم"
-        option_1 = "استكشف دولة"
-        option_2 = "اعثر على وجهتي"
-        option_3 = "المفضلة"
-        option_4 = "خروج"
-    else:
-        title = "TRAVEL EXPLORER"
-        option_1 = "Explore a Country"
-        option_2 = "Find My Destination"
-        option_3 = "Favorites"
-        option_4 = "Exit"
 
-    print(
-        CYAN
-        + "╔══════════════════════════════════════╗"
-        + RESET
-    )
+# ============================================================
+# COUNTRY SELECTION
+# ============================================================
 
-    print(
-        CYAN
-        + f"║          🌍 {title}"
-        + RESET
-    )
+def choose_continent():
+    print_header("🌍 CHOOSE YOUR CONTINENT")
 
-    print(
-        CYAN
-        + "╠══════════════════════════════════════╣"
-        + RESET
-    )
+    continent_list = list(CONTINENTS.values())
 
-    print(
-        f"║  1. 🔎 {option_1}"
-    )
-
-    print(
-        f"║  2. 🤖 {option_2}"
-    )
-
-    print(
-        f"║  3. ❤️  {option_3}"
-    )
-
-    print(
-        f"║  4. 🚪 {option_4}"
-    )
-
-    print(
-        CYAN
-        + "╚══════════════════════════════════════╝"
-        + RESET
-    )
-
-
-def choose_menu_option(language):
-    show_menu(language)
-
-    while True:
-        choice = input(
-            YELLOW
-            + "\n👉 Choose an option: "
-            + RESET
-        )
-
-        if choice in ["1", "2", "3", "4"]:
-            return choice
-
+    for index, continent in enumerate(
+        continent_list,
+        start=1,
+    ):
         print(
-            RED
-            + "❌ Invalid choice. Please choose 1-4."
-            + RESET
-        )
-
-
-def show_continents(language):
-    print(
-        CYAN
-        + "🌍 Choose a continent:"
-        + RESET
-    )
-
-    print()
-
-    for number, continent in CONTINENTS.items():
-
-        if language == "ar":
-            name = continent["name_ar"]
-        else:
-            name = continent["name"]
-
-        print(
-            f"{number}. "
+            f"  {YELLOW}{index}{RESET}. "
             f"{continent['emoji']} "
-            f"{name}"
+            f"{continent['name']}"
         )
 
-
-def choose_continent(language):
-    show_continents(language)
+    print()
 
     while True:
         choice = input(
-            YELLOW
-            + "\n👉 Choose: "
-            + RESET
-        )
+            f"{CYAN}➜ Select a continent: {RESET}"
+        ).strip()
 
-        if choice in CONTINENTS:
-            return CONTINENTS[choice]
+        if choice.isdigit():
+            number = int(choice)
+
+            if 1 <= number <= len(continent_list):
+                return continent_list[number - 1]
 
         print(
-            RED
-            + "❌ Invalid choice. Choose 1-5."
+            RED +
+            "❌ Invalid choice. Please try again."
             + RESET
         )
 
 
-def get_countries(continent_name):
+def choose_country(continent):
     countries = []
 
-    for country_name, country in COUNTRIES.items():
+    for country_name, country_data in COUNTRIES.items():
+        if country_data["continent"] == continent["name"]:
+            country_data["name"] = country_name
+            countries.append(country_data)
 
-        if country["continent"] == continent_name:
-            countries.append(country_name)
+    if not countries:
+        print(
+            RED +
+            "❌ No countries found."
+            + RESET
+        )
+        return None
 
-    return countries
-
-
-def show_countries(countries, language):
-    print()
-
-    print(
-        CYAN
-        + "🌍 Available countries:"
-        + RESET
+    print_header(
+        f"🌎 {continent['name'].upper()}"
     )
 
-    print()
-
-    for number, country_name in enumerate(
+    for index, country in enumerate(
         countries,
-        start=1
+        start=1,
     ):
-
-        country = COUNTRIES[country_name]
-
         print(
-            f"{number}. "
+            f"  {YELLOW}{index:02d}{RESET}. "
             f"{country['flag']} "
-            f"{country_name}"
+            f"{country['name']}"
         )
 
-
-def choose_country(countries, language):
-    show_countries(
-        countries,
-        language
-    )
+    print()
 
     while True:
         choice = input(
-            YELLOW
-            + "\n👉 Choose a country: "
-            + RESET
-        )
+            f"{CYAN}➜ Select a country: {RESET}"
+        ).strip()
 
-        try:
+        if choice.isdigit():
             number = int(choice)
 
             if 1 <= number <= len(countries):
                 return countries[number - 1]
 
-            print(
-                RED
-                + "❌ Number is out of range."
-                + RESET
-            )
-
-        except ValueError:
-
-            print(
-                RED
-                + "❌ Please enter a number."
-                + RESET
-            )
-
-
-def show_cities(country_name):
-    country = COUNTRIES[country_name]
-
-    print()
-
-    print(
-        CYAN
-        + f"{country['flag']} "
-        f"{country_name} - Cities:"
-        + RESET
-    )
-
-    print()
-
-    for number, city in country["cities"].items():
-
         print(
-            f"{number}. "
-            f"📍 {city['name']}"
+            RED +
+            "❌ Invalid choice. Please try again."
+            + RESET
         )
 
 
-def choose_city(country_name):
-    country = COUNTRIES[country_name]
+def choose_city(country):
+    cities = list(country.get("cities", {}).values())
 
-    show_cities(country_name)
+    if not cities:
+        return None
+
+    print_header(
+        f"🏙️ CITIES OF {country['name'].upper()}"
+    )
+
+    for index, city in enumerate(
+        cities,
+        start=1,
+    ):
+        print(
+            f"  {YELLOW}{index}{RESET}. "
+            f"{city['name']}"
+        )
+
+    print()
 
     while True:
-
         choice = input(
-            YELLOW
-            + "\n👉 Choose a city: "
-            + RESET
-        )
+            f"{CYAN}➜ Select a city: {RESET}"
+        ).strip()
 
-        if choice in country["cities"]:
-            return country["cities"][choice]
+        if choice.isdigit():
+            number = int(choice)
 
-        print(
-            RED
-            + "❌ Invalid city choice."
-            + RESET
-        )
-
-
-def show_destination(country_name, city):
-    country = COUNTRIES[country_name]
-    currency = get_currency(country_name)
-
-    print()
-
-    print(
-        GREEN
-        + "╔══════════════════════════════════════╗"
-        + RESET
-    )
-
-    print(
-        GREEN
-        + f"║ {country['flag']} {country_name}"
-        + RESET
-    )
-
-    print(
-        CYAN
-        + f"║ 📍 {city['name']}"
-        + RESET
-    )
-
-    if currency:
+            if 1 <= number <= len(cities):
+                return cities[number - 1]
 
         print(
-            YELLOW
-            + f"║ 💰 Currency: {currency['name']} "
-            f"({currency['code']})"
+            RED +
+            "❌ Invalid city."
             + RESET
         )
 
-    print(
-        GREEN
-        + "╚══════════════════════════════════════╝"
-        + RESET
-    )
 
+# ============================================================
+# COUNTRY EXPLORER
+# ============================================================
 
-def explore_country(language):
-    loading("🚀 Starting your journey")
+def explore_country():
+    continent = choose_continent()
 
-    continent = choose_continent(language)
-
-    print()
-
-    print(
-        GREEN
-        + f"✅ {continent['emoji']} "
-        + continent["name"]
-        + RESET
-    )
-
-    countries = get_countries(
-        continent["name"]
-    )
-
-    if not countries:
-
-        print(
-            RED
-            + "❌ No countries available yet."
-            + RESET
-        )
-
+    if not continent:
         return
 
-    country_name = choose_country(
-        countries,
-        language
-    )
+    country = choose_country(continent)
 
-    city = choose_city(
-        country_name
-    )
-
-    show_destination(
-        country_name,
-        city
-    )
-
-    print()
-
-    loading(
-        "🌤️ Getting live weather data"
-    )
-
-    show_weather(city)
-
-    show_holidays(country_name)
-
-    print()
-
-    print(
-        MAGENTA
-        + "🎉 Destination analysis completed!"
-        + RESET
-    )
-
-
-def find_destination():
-    find_my_destination()
-
-
-def show_favorites():
-    print()
-
-    print(
-        MAGENTA
-        + "❤️ Favorites"
-        + RESET
-    )
-
-    print()
-
-    print(
-        YELLOW
-        + "🚧 This feature is coming soon."
-        + RESET
-    )
-
-
-def main():
-    language = choose_language()
-
-    show_welcome(language)
+    if not country:
+        return
 
     while True:
-
-        choice = choose_menu_option(
-            language
+        print_header(
+            f"🌍 EXPLORE {country['name'].upper()}"
         )
 
+        print_menu_option(
+            "1",
+            "📖",
+            "Country Information",
+            "Discover what this country is famous for.",
+        )
+
+        print_menu_option(
+            "2",
+            "🍣",
+            "Famous Foods",
+            "Explore popular local dishes.",
+        )
+
+        print_menu_option(
+            "3",
+            "🎉",
+            "Events & Experiences",
+            "Discover festivals and unique experiences.",
+        )
+
+        print_menu_option(
+            "4",
+            "🏯",
+            "Famous Places",
+            "Explore famous cities and attractions.",
+        )
+
+        print_menu_option(
+            "5",
+            "🌤️",
+            "Live Weather",
+            "Check current weather conditions.",
+        )
+
+        print_menu_option(
+            "6",
+            "💰",
+            "Currency",
+            "Check currency and live exchange rate.",
+        )
+
+        print_menu_option(
+            "7",
+            "📅",
+            "Holidays",
+            "View public holidays for 2026.",
+        )
+
+        print_menu_option(
+            "8",
+            "⭐",
+            "Add to Favorites",
+            "Save this country for later.",
+        )
+
+        print_menu_option(
+            "9",
+            "🗑️",
+            "Remove from Favorites",
+            "Remove this country from your favorites.",
+        )
+
+        print_menu_option(
+            "0",
+            "↩️",
+            "Back",
+            "Return to the main menu.",
+        )
+
+        choice = input(
+            f"{CYAN}➜ Choose an option: {RESET}"
+        ).strip()
+
         if choice == "1":
-
             clear_screen()
-
-            explore_country(
-                language
+            show_destination_info(
+                country["name"]
             )
+            pause()
 
         elif choice == "2":
-
             clear_screen()
-
-            find_destination()
+            show_destination_info(
+                country["name"],
+                section="foods",
+            )
+            pause()
 
         elif choice == "3":
-
             clear_screen()
-
-            show_favorites()
+            show_destination_info(
+                country["name"],
+                section="events",
+            )
+            pause()
 
         elif choice == "4":
+            clear_screen()
+            show_destination_info(
+                country["name"],
+                section="places",
+            )
+            pause()
+
+        elif choice == "5":
+            city = choose_city(country)
+
+            if city:
+                clear_screen()
+                show_weather(city)
+                pause()
+
+        elif choice == "6":
+            clear_screen()
+            show_currency(country["name"])
+            pause()
+
+        elif choice == "7":
+            clear_screen()
+            show_holidays(country["name"])
+            pause()
+
+        elif choice == "8":
+            clear_screen()
+
+            if is_favorite(country["name"]):
+                print(
+                    YELLOW +
+                    "⭐ This country is already in your favorites."
+                    + RESET
+                )
+            else:
+                add_favorite(country["name"])
+
+                print(
+                    GREEN +
+                    f"✓ {country['name']} added to favorites!"
+                    + RESET
+                )
+
+            pause()
+
+        elif choice == "9":
+            clear_screen()
+
+            if is_favorite(country["name"]):
+                remove_favorite(country["name"])
+
+                print(
+                    GREEN +
+                    f"✓ {country['name']} removed from favorites."
+                    + RESET
+                )
+            else:
+                print(
+                    YELLOW +
+                    "ℹ This country is not in your favorites."
+                    + RESET
+                )
+
+            pause()
+
+        elif choice == "0":
+            break
+
+        else:
+            print(
+                RED +
+                "❌ Invalid option."
+                + RESET
+            )
+
+            time.sleep(1)
+
+
+# ============================================================
+# FAVORITES
+# ============================================================
+
+def favorites_menu():
+    while True:
+        print_header("⭐ MY FAVORITES")
+
+        favorites = show_favorites(
+            return_data=True
+        )
+
+        if not favorites:
+            print(
+                YELLOW +
+                "You don't have any favorite countries yet."
+                + RESET
+            )
+
+            print()
+            print(
+                "Go to Explore a Country and save your favorite destinations."
+            )
 
             print()
 
-            if language == "ar":
+        else:
+            print(
+                BOLD +
+                WHITE +
+                "Your Saved Destinations:"
+                + RESET
+            )
 
+            print()
+
+            for index, country_name in enumerate(
+                favorites,
+                start=1,
+            ):
                 print(
-                    GREEN
-                    + "✈️ شكرًا لاستخدامك اكتشف العالم!"
-                    + RESET
+                    f"  {YELLOW}{index}{RESET}. "
+                    f"⭐ {country_name}"
                 )
 
-                print(
-                    CYAN
-                    + "🌍 نراك في رحلتك القادمة!"
-                    + RESET
-                )
+            print()
 
+        print(
+            f"  {YELLOW}1{RESET}. 🗑️ Remove a Favorite"
+        )
+
+        print(
+            f"  {YELLOW}0{RESET}. ↩️ Back"
+        )
+
+        print()
+
+        choice = input(
+            f"{CYAN}➜ Choose an option: {RESET}"
+        ).strip()
+
+        if choice == "1":
+
+            if favorites:
+                remove_favorite_menu(
+                    favorites
+                )
             else:
-
                 print(
-                    GREEN
-                    + "✈️ Thank you for using Travel Explorer!"
+                    YELLOW +
+                    "No favorites to remove."
                     + RESET
                 )
+                pause()
 
-                print(
-                    CYAN
-                    + "🌍 See you on your next journey!"
-                    + RESET
-                )
+        elif choice == "0":
+            break
+
+        else:
+            print(
+                RED +
+                "❌ Invalid option."
+                + RESET
+            )
+
+
+def remove_favorite_menu(favorites):
+    print_header("🗑️ REMOVE FAVORITE")
+
+    for index, country_name in enumerate(
+        favorites,
+        start=1,
+    ):
+        print(
+            f"  {YELLOW}{index}{RESET}. "
+            f"{country_name}"
+        )
+
+    print()
+
+    choice = input(
+        f"{CYAN}➜ Enter the number: {RESET}"
+    ).strip()
+
+    if not choice.isdigit():
+        print(
+            RED +
+            "❌ Please enter a number."
+            + RESET
+        )
+        pause()
+        return
+
+    number = int(choice)
+
+    if not 1 <= number <= len(favorites):
+        print(
+            RED +
+            "❌ Invalid number."
+            + RESET
+        )
+        pause()
+        return
+
+    country_name = favorites[number - 1]
+
+    remove_favorite(country_name)
+
+    print()
+    print(
+        GREEN +
+        f"✓ {country_name} removed from favorites."
+        + RESET
+    )
+
+    pause()
+
+
+# ============================================================
+# MAIN MENU
+# ============================================================
+
+def main_menu():
+
+    while True:
+
+        print_header("✈️ TRAVEL EXPLORER")
+
+        print_menu_option(
+            "1",
+            "🌍",
+            "Explore a Country",
+            "Discover countries, food, places, weather and more.",
+        )
+
+        print_menu_option(
+            "2",
+            "🧠",
+            "Find My Destination",
+            "Get a smart destination recommendation.",
+        )
+
+        print_menu_option(
+            "3",
+            "⭐",
+            "Favorites",
+            "View and manage your saved destinations.",
+        )
+
+        print_menu_option(
+            "4",
+            "🚪",
+            "Exit",
+            "End your journey.",
+        )
+
+        choice = input(
+            f"{CYAN}➜ Choose an option: {RESET}"
+        ).strip()
+
+        if choice == "1":
+            explore_country()
+
+        elif choice == "2":
+            clear_screen()
+            find_my_destination()
+            pause()
+
+        elif choice == "3":
+            favorites_menu()
+
+        elif choice == "4":
+            clear_screen()
+
+            print()
+            print(
+                CYAN +
+                "✈️  THANK YOU FOR USING TRAVEL EXPLORER"
+                + RESET
+            )
+
+            print()
+            print(
+                WHITE +
+                "Your next adventure is waiting..."
+                + RESET
+            )
+
+            print()
+            print(
+                GREEN +
+                "🌍 See you on your next journey!"
+                + RESET
+            )
+
+            print()
 
             break
 
-        input(
-            "\nPress Enter to return to the main menu..."
-        )
+        else:
+            print(
+                RED +
+                "❌ Invalid option. Please choose 1 - 4."
+                + RESET
+            )
 
-        clear_screen()
+            time.sleep(1)
+
+
+# ============================================================
+# START
+# ============================================================
+
+def main():
+    intro()
+    main_menu()
 
 
 if __name__ == "__main__":
