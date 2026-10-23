@@ -122,11 +122,12 @@ def delete_subject(data):
 
     sub_id = selected.split("]")[0].replace("[", "").strip()
 
-    linked_tasks = any(t.subject_id == sub_id for t in data["tasks"])
-    linked_exams = any(e.subject_id == sub_id for e in data["exams"])
+    linked_tasks = any(t.subject_id == sub_id for t in data.get("tasks", []))
+    linked_projects = any(p.subject_id == sub_id for p in data.get("projects", []))
+    linked_exams = any(e.subject_id == sub_id for e in data.get("exams", []))
 
-    if linked_tasks or linked_exams:
-        print_error("Cannot delete this subject because it has linked tasks or exams.")
+    if linked_tasks or linked_projects or linked_exams:
+        print_error("Cannot delete this subject because it has linked tasks, projects, or exams.")
         return
 
     if prompt_confirm("Are you sure you want to delete this subject?"):

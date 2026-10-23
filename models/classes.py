@@ -116,6 +116,100 @@ class Task:
             "created_at": self.created_at
         }
 
+class Project:
+    def __init__(self, project_id, title, subject_id, deadline, phase="Planning", progress=0, earned_score=None, max_score=100.0):
+        self.project_id = str(project_id).strip()
+        self.title = str(title).strip()
+        self.subject_id = str(subject_id).strip()
+        self.deadline = str(deadline).strip()
+        self.phase = phase
+        
+        self.__progress = 0
+        self.__earned_score = None
+        self.__max_score = 100.0
+        
+        self.set_progress(progress)
+        self.set_earned_score(earned_score)
+        self.set_max_score(max_score)
+
+    def get_progress(self):
+        return self.__progress
+
+    def set_progress(self, value):
+        try:
+            val = int(value)
+            if val < 0:
+                self.__progress = 0
+            elif val > 100:
+                self.__progress = 100
+            else:
+                self.__progress = val
+                
+            if self.__progress == 100:
+                self.phase = "Completed"
+        except (ValueError, TypeError):
+            self.__progress = 0
+
+    def get_earned_score(self):
+        return self.__earned_score
+
+    def set_earned_score(self, value):
+        try:
+            if value is None or str(value).strip() == "":
+                self.__earned_score = None
+            else:
+                self.__earned_score = float(value)
+        except ValueError:
+            self.__earned_score = None
+
+    def get_max_score(self):
+        return self.__max_score
+
+    def set_max_score(self, value):
+        try:
+            if value is None or str(value).strip() == "":
+                self.__max_score = 100.0
+            else:
+                self.__max_score = float(value)
+        except ValueError:
+            self.__max_score = 100.0
+
+    @property
+    def progress(self):
+        return self.__progress
+
+    @progress.setter
+    def progress(self, value):
+        self.set_progress(value)
+
+    @property
+    def earned_score(self):
+        return self.__earned_score
+
+    @earned_score.setter
+    def earned_score(self, value):
+        self.set_earned_score(value)
+
+    @property
+    def max_score(self):
+        return self.__max_score
+
+    @max_score.setter
+    def max_score(self, value):
+        self.set_max_score(value)
+
+    def to_dict(self):
+        return {
+            "project_id": self.project_id,
+            "title": self.title,
+            "subject_id": self.subject_id,
+            "deadline": self.deadline,
+            "phase": self.phase,
+            "progress": self.__progress,
+            "earned_score": self.__earned_score,
+            "max_score": self.__max_score
+        }
+
 class Exam:
     def __init__(self, exam_id, title, subject_id, exam_date, exam_time="09:00", exam_type="Midterm", earned_score=None, max_score=100.0):
         self.exam_id = str(exam_id).strip()
@@ -125,8 +219,35 @@ class Exam:
         self.exam_time = str(exam_time).strip()
         self.exam_type = exam_type
         
-        self.__earned_score = float(earned_score) if earned_score is not None and str(earned_score).strip() != "" else None
-        self.__max_score = float(max_score) if max_score is not None else 100.0
+        self.__earned_score = None
+        self.__max_score = 100.0
+        
+        self.set_earned_score(earned_score)
+        self.set_max_score(max_score)
+
+    def get_earned_score(self):
+        return self.__earned_score
+
+    def set_earned_score(self, value):
+        try:
+            if value is None or str(value).strip() == "":
+                self.__earned_score = None
+            else:
+                self.__earned_score = float(value)
+        except ValueError:
+            self.__earned_score = None
+
+    def get_max_score(self):
+        return self.__max_score
+
+    def set_max_score(self, value):
+        try:
+            if value is None or str(value).strip() == "":
+                self.__max_score = 100.0
+            else:
+                self.__max_score = float(value)
+        except ValueError:
+            self.__max_score = 100.0
 
     @property
     def earned_score(self):
@@ -134,10 +255,7 @@ class Exam:
 
     @earned_score.setter
     def earned_score(self, value):
-        try:
-            self.__earned_score = float(value) if value is not None and str(value).strip() != "" else None
-        except ValueError:
-            self.__earned_score = None
+        self.set_earned_score(value)
 
     @property
     def max_score(self):
@@ -145,10 +263,7 @@ class Exam:
 
     @max_score.setter
     def max_score(self, value):
-        try:
-            self.__max_score = float(value) if value is not None else 100.0
-        except ValueError:
-            self.__max_score = 100.0
+        self.set_max_score(value)
 
     def get_exam_date_object(self):
         try:

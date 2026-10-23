@@ -53,7 +53,7 @@ def display_tasks_table(tasks, subjects):
     table.add_column("Due Date", width=12)
     table.add_column("Priority", width=10)
     table.add_column("Status", width=14)
-    table.add_column("Score", width=10)
+    table.add_column("Score", width=12)
 
     for t in tasks:
         course_code = sub_map.get(t.subject_id, "N/A")
@@ -76,14 +76,13 @@ def display_tasks_table(tasks, subjects):
 def view_all_tasks(data):
     print_header("VIEW: All Tasks", "Complete list of assignments")
     show_spinner("Loading tasks...")
-    display_tasks_table([Task(**t) if isinstance(t, dict) else t for t in data["tasks"]], data["subjects"])
+    display_tasks_table(data["tasks"], data["subjects"])
 
 def generate_next_task_id(tasks):
     max_num = 0
     for item in tasks:
-        t_id = item.task_id if hasattr(item, "task_id") else item.get("task_id", "")
-        if t_id.startswith("TSK-"):
-            num_part = t_id.replace("TSK-", "")
+        if item.task_id.startswith("TSK-"):
+            num_part = item.task_id.replace("TSK-", "")
             if num_part.isdigit():
                 num = int(num_part)
                 if num > max_num:
@@ -105,10 +104,7 @@ def add_task(data):
     sub_id = selected_sub_str.split("]")[0].replace("[", "").strip()
 
     title = prompt_required_text("Enter Task Title:")
-    if not title:
-        return
-
-    description = prompt_required_text("Enter Description:") or ""
+    description = prompt_required_text("Enter Description:")
     due_date = prompt_required_text("Enter Due Date (YYYY-MM-DD):", default_value=str(date.today()))
     priority = prompt_select("Select Priority:", ["High", "Medium", "Low"]) or "Medium"
 
@@ -116,19 +112,19 @@ def add_task(data):
     new_task = Task(new_id, title, description, sub_id, due_date, priority)
 
     show_spinner("Saving task...")
-    data["tasks"].append(new_task.to_dict())
+    data["tasks"].append(new_task)
     save_data(data)
     print_success(f"Task '{title}' added successfully.")
 
 def complete_task(data):
     print_header("ACTION: Complete Task", "Update task status and score")
     
-    pending_tasks = [t for t in data["tasks"] if (t.status if hasattr(t, "status") else t.get("status")) != "Completed"]
+    pending_tasks = [t for t in data["tasks"] if t.status != "Completed"]
     if not pending_tasks:
         print_info("No pending tasks available.")
         return
 
-    choices = [f"[{t.task_id if hasattr(t, 'task_id') else t.get('task_id')}] {t.title if hasattr(t, 'title') else t.get('title')}" for t in pending_tasks]
+    choices = [f"[{t.task_id}] {t.title}" for t in pending_tasks]
     choices.append("Cancel")
 
     selected = prompt_select("Select task to complete:", choices)
@@ -136,12 +132,7 @@ def complete_task(data):
         return
 
     task_id = selected.split("]")[0].replace("[", "").strip()
-    target_task = None
-    for t in data["tasks"]:
-        t_id = t.task_id if hasattr(t, "task_id") else t.get("task_id")
-        if t_id == task_id:
-            target_task = t
-            break
+    target_task = next((t for t in data["tasks"] if t.task_id == task_id), None)
 
     if not target_task:
         return
@@ -149,15 +140,9 @@ def complete_task(data):
     earned = prompt_required_text("Enter Earned Score:", default_value="100")
     max_s = prompt_required_text("Enter Maximum Score:", default_value="100")
 
-    if hasattr(target_task, "mark_completed"):
-        target_task.mark_completed(earned, max_s)
-    else:
-        target_task["status"] = "Completed"
-        target_task["earned_score"] = float(earned) if earned else 100.0
-        target_task["max_score"] = float(max_s) if max_s else 100.0
+    target_task.mark_completed(earned, max_s)
 
     show_spinner("Updating task...")
-    data["tasks"] = [t.to_dict() if hasattr(t, "to_dict") else t for t in data["tasks"]]
     save_data(data)
     print_success("Task marked as completed.")
 
@@ -167,7 +152,7 @@ def delete_task(data):
         print_info("No tasks available.")
         return
 
-    choices = [f"[{t.task_id if hasattr(t, 'task_id') else t.get('task_id')}] {t.title if hasattr(t, 'title') else t.get('title')}" for t in data["tasks"]]
+    choices = [f"[{t.task_id}] {t.title}" for t in data["tasks"]]
     choices.append("Cancel")
 
     selected = prompt_select("Select task to delete:", choices)
@@ -175,6 +160,6 @@ def delete_task(data):
         return
 
     task_id = selected.split("]")[0].replace("[", "").strip()
-    data["tasks"] = [t for t in data["tasks"] if (t.task_id if hasattr(t, "task_id") else t.get("task_id")) != task_id]
+    data["tasks"] = [t for t in data["tasks"] if t.task_id != task_id]
     save_data(data)
     print_success("Task deleted successfully.")

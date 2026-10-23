@@ -22,7 +22,7 @@ def print_info(message):
 
 def prompt_required_text(prompt_text, default_value=None):
     while True:
-        val = questionary.text(prompt_text, default=default_value or "").ask()
+        val = questionary.text(prompt_text, default=str(default_value) if default_value else "").ask()
         if val is not None and str(val).strip() != "":
             return str(val).strip()
         print_error("This field cannot be empty.")
@@ -39,8 +39,6 @@ def prompt_positive_int(prompt_text, default_value="3"):
             print_error("Invalid number. Please try again.")
 
 def prompt_select(prompt_text, choices):
-    """Interactive selection using arrow keys via questionary."""
-    # Clean choices by removing prefixes like "1. ", "2. " if they exist
     cleaned_choices = []
     choice_map = {}
     

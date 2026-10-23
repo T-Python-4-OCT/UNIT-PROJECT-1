@@ -1,0 +1,202 @@
+{
+    "subjects": [
+        {
+            "subject_id": "SUB-001",
+            "name": "Digitized Mobile Help-Desk",
+            "code": "LWY390",
+            "instructor": "Dr. Rachel Hays",
+            "credit_hours": 3
+        },
+        {
+            "subject_id": "SUB-002",
+            "name": "Configurable Background Knowledgebase",
+            "code": "JTY447",
+            "instructor": "Dr. Elizabeth Parsons",
+            "credit_hours": 3
+        },
+        {
+            "subject_id": "SUB-003",
+            "name": "Universal Logistical Extranet",
+            "code": "XWE388",
+            "instructor": "Dr. Stephanie Davis",
+            "credit_hours": 3
+        },
+        {
+            "subject_id": "SUB-004",
+            "name": "User-Friendly Grid-Enabled Projection",
+            "code": "SDL659",
+            "instructor": "Dr. Frederick Mathis",
+            "credit_hours": 2
+        }
+    ],
+    "tasks": [
+        {
+            "task_id": "TSK-001",
+            "title": "LWY390 - Maximize Innovative Niches",
+            "description": "Start couple eat evening high.",
+            "subject_id": "SUB-001",
+            "due_date": "2026-10-22",
+            "priority": "High",
+            "status": "Completed",
+            "earned_score": 86.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-23"
+        },
+        {
+            "task_id": "TSK-002",
+            "title": "LWY390 - Synthesize Best-Of-Breed Networks",
+            "description": "Various painting close voice could hold.",
+            "subject_id": "SUB-001",
+            "due_date": "2026-10-17",
+            "priority": "High",
+            "status": "Completed",
+            "earned_score": 85.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-23"
+        },
+        {
+            "task_id": "TSK-003",
+            "title": "JTY447 - Empower Clicks-And-Mortar Paradigms",
+            "description": "Interest reveal job.",
+            "subject_id": "SUB-002",
+            "due_date": "2026-10-17",
+            "priority": "Medium",
+            "status": "Completed",
+            "earned_score": 96.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-23"
+        },
+        {
+            "task_id": "TSK-004",
+            "title": "JTY447 - Scale Cross-Media Paradigms",
+            "description": "Wear image nor his peace sort.",
+            "subject_id": "SUB-002",
+            "due_date": "2026-10-16",
+            "priority": "High",
+            "status": "Completed",
+            "earned_score": 93.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-23"
+        },
+        {
+            "task_id": "TSK-005",
+            "title": "XWE388 - Incentivize Magnetic E-Tailers",
+            "description": "Statement choose we while quickly law control.",
+            "subject_id": "SUB-003",
+            "due_date": "2026-10-18",
+            "priority": "Low",
+            "status": "Completed",
+            "earned_score": 89.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-23"
+        },
+        {
+            "task_id": "TSK-006",
+            "title": "XWE388 - Implement End-To-End Functionalities",
+            "description": "College position soldier adult movement guy.",
+            "subject_id": "SUB-003",
+            "due_date": "2026-10-18",
+            "priority": "Low",
+            "status": "Completed",
+            "earned_score": 88.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-23"
+        },
+        {
+            "task_id": "TSK-007",
+            "title": "SDL659 - Implement Killer Metrics",
+            "description": "Ten either present.",
+            "subject_id": "SUB-004",
+            "due_date": "2026-10-26",
+            "priority": "Low",
+            "status": "Not Started",
+            "earned_score": null,
+            "max_score": null,
+            "created_at": "2026-10-23"
+        },
+        {
+            "task_id": "TSK-008",
+            "title": "SDL659 - Transform Efficient Architectures",
+            "description": "Author more nature marriage citizen then.",
+            "subject_id": "SUB-004",
+            "due_date": "2026-10-16",
+            "priority": "Low",
+            "status": "Completed",
+            "earned_score": 90.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-23"
+        }
+    ],
+    "exams": [
+        {
+            "exam_id": "EXM-001",
+            "title": "LWY390 - Stand-Alone Discrete Protocol",
+            "subject_id": "SUB-001",
+            "exam_date": "2026-10-28",
+            "exam_time": "21:13",
+            "exam_type": "Practical",
+            "earned_score": null,
+            "max_score": 100.0
+        },
+        {
+            "exam_id": "EXM-002",
+            "title": "JTY447 - Organic Contextually-Based Extranet",
+            "subject_id": "SUB-002",
+            "exam_date": "2026-10-13",
+            "exam_time": "03:25",
+            "exam_type": "Practical",
+            "earned_score": 84.0,
+            "max_score": 100.0
+        },
+        {
+            "exam_id": "EXM-003",
+            "title": "XWE388 - Multi-Lateral Didactic Matrix",
+            "subject_id": "SUB-003",
+            "exam_date": "2026-10-19",
+            "exam_time": "06:21",
+            "exam_type": "Final",
+            "earned_score": 79.0,
+            "max_score": 100.0
+        },
+        {
+            "exam_id": "EXM-004",
+            "title": "SDL659 - Centralized Disintermediate Internet Solution",
+            "subject_id": "SUB-004",
+            "exam_date": "2026-10-29",
+            "exam_time": "22:02",
+            "exam_type": "Quiz",
+            "earned_score": null,
+            "max_score": 100.0
+        }
+    ],
+    "notes": [
+        {
+            "note_id": "NTE-001",
+            "title": "LWY390 - Maximize Dynamic Metrics",
+            "content": "Heavy this subject gun ground. Guy pay husband hope decide director. Interest others probably medical market.",
+            "subject_id": "SUB-001",
+            "created_at": "2026-10-23"
+        },
+        {
+            "note_id": "NTE-002",
+            "title": "JTY447 - Implement E-Business Bandwidth",
+            "content": "Physical believe audience positive loss fire rise name. Yourself tonight kitchen put high half fish.",
+            "subject_id": "SUB-002",
+            "created_at": "2026-10-23"
+        },
+        {
+            "note_id": "NTE-003",
+            "title": "XWE388 - Strategize Magnetic Communities",
+            "content": "Understand war green note when well. Together around middle born us moment hope.",
+            "subject_id": "SUB-003",
+            "created_at": "2026-10-23"
+        },
+        {
+            "note_id": "NTE-004",
+            "title": "SDL659 - Exploit One-To-One Systems",
+            "content": "Listen every against throughout treatment by weight.",
+            "subject_id": "SUB-004",
+            "created_at": "2026-10-23"
+        }
+    ]
+}

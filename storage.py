@@ -1,34 +1,32 @@
-"""Data storage module for reading and writing JSON files in StudyMate."""
-
-import os
 import json
+import os
 
-DATA_DIR = "data"
-DATA_FILE = os.path.join(DATA_DIR, "study_mate.json")
-
+DATA_FILE = "studymate_data.json"
 
 def load_data():
-    """Load data from JSON file or create an empty structure if it doesn't exist."""
-    if not os.path.exists(DATA_DIR):
-        os.makedirs(DATA_DIR)
-
+    default_data = {"subjects": [], "tasks": [], "exams": [], "notes": []}
     if not os.path.exists(DATA_FILE):
-        empty_data = {"subjects": [], "tasks": [], "exams": [], "notes": []}
-        with open(DATA_FILE, "w", encoding="utf-8") as file:
-            json.dump(empty_data, file, indent=4, ensure_ascii=False)
-        return empty_data
-
+        return default_data
     try:
         with open(DATA_FILE, "r", encoding="utf-8") as file:
-            return json.load(file)
+            data = json.load(file)
+            for key in default_data:
+                if key not in data:
+                    data[key] = []
+            return data
     except Exception:
-        return {"subjects": [], "tasks": [], "exams": [], "notes": []}
-
+        return default_data
 
 def save_data(data):
-    """Save the application data dictionary to the JSON file."""
-    if not os.path.exists(DATA_DIR):
-        os.makedirs(DATA_DIR)
-
-    with open(DATA_FILE, "w", encoding="utf-8") as file:
-        json.dump(data, file, indent=4, ensure_ascii=False)
+    try:
+        serializable_data = {
+            "subjects": [s.to_dict() if hasattr(s, "to_dict") else s for s in data.get("subjects", [])],
+            "tasks": [t.to_dict() if hasattr(t, "to_dict") else t for t in data.get("tasks", [])],
+            "exams": [e.to_dict() if hasattr(e, "to_dict") else e for e in data.get("exams", [])],
+            "notes": [n.to_dict() if hasattr(n, "to_dict") else n for n in data.get("notes", [])]
+        }
+        with open(DATA_FILE, "w", encoding="utf-8") as file:
+            json.dump(serializable_data, file, indent=4, ensure_ascii=False)
+        return True
+    except Exception:
+        return False
