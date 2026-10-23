@@ -12,7 +12,11 @@ def choose_database_crop(crops, action):
         return None
     crop_list = list(crops.values())
     show_database_crops(crop_list)
-    index = validators.get_number_in_range(f"Enter the number of the crop to {action}: ", 1, len(crop_list))
+    index = validators.get_number_in_range(
+        f"Enter the number of the crop to {action} (0 to go back): ", 0, len(crop_list)
+    )
+    if index == 0:
+        return None
     return crop_list[index - 1]
 
 
