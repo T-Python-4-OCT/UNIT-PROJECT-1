@@ -115,40 +115,57 @@ class Task:
             "max_score": self.__max_score,
             "created_at": self.created_at
         }
-
 class Project:
-    def __init__(self, project_id, title, subject_id, deadline, phase="Planning", progress=0, earned_score=None, max_score=100.0):
+    MILESTONES = [
+        "1. Planning & Requirements",
+        "2. Research & Analysis",
+        "3. UI/UX & System Design",
+        "4. Implementation & Coding",
+        "5. Testing & Final Delivery"
+    ]
+
+    def __init__(self, project_id, title, subject_id, deadline, completed_steps=None, phase=None, progress=None, earned_score=None, max_score=100.0):
         self.project_id = str(project_id).strip()
         self.title = str(title).strip()
         self.subject_id = str(subject_id).strip()
         self.deadline = str(deadline).strip()
-        self.phase = phase
         
         self.__progress = 0
+        self.phase = "Planning & Requirements"
+        self.completed_steps = []
+        
         self.__earned_score = None
         self.__max_score = 100.0
-        
-        self.set_progress(progress)
+
+        if completed_steps is not None:
+            self.update_milestones(completed_steps)
+        elif progress is not None:
+            count = int(progress) // 20
+            self.update_milestones(self.MILESTONES[:count])
+        else:
+            self.update_milestones([])
+
         self.set_earned_score(earned_score)
         self.set_max_score(max_score)
 
+    def update_milestones(self, selected_steps):
+        valid_steps = [s for s in self.MILESTONES if s in (selected_steps or [])]
+        self.completed_steps = valid_steps
+        
+        step_weight = 100 // len(self.MILESTONES)
+        self.__progress = len(self.completed_steps) * step_weight
+
+        if len(self.completed_steps) == len(self.MILESTONES):
+            self.__progress = 100
+            self.phase = "Completed"
+        else:
+            for m in self.MILESTONES:
+                if m not in self.completed_steps:
+                    self.phase = m.split(". ", 1)[1]
+                    break
+
     def get_progress(self):
         return self.__progress
-
-    def set_progress(self, value):
-        try:
-            val = int(value)
-            if val < 0:
-                self.__progress = 0
-            elif val > 100:
-                self.__progress = 100
-            else:
-                self.__progress = val
-                
-            if self.__progress == 100:
-                self.phase = "Completed"
-        except (ValueError, TypeError):
-            self.__progress = 0
 
     def get_earned_score(self):
         return self.__earned_score
@@ -178,10 +195,6 @@ class Project:
     def progress(self):
         return self.__progress
 
-    @progress.setter
-    def progress(self, value):
-        self.set_progress(value)
-
     @property
     def earned_score(self):
         return self.__earned_score
@@ -204,12 +217,12 @@ class Project:
             "title": self.title,
             "subject_id": self.subject_id,
             "deadline": self.deadline,
+            "completed_steps": self.completed_steps,
             "phase": self.phase,
             "progress": self.__progress,
             "earned_score": self.__earned_score,
             "max_score": self.__max_score
         }
-
 class Exam:
     def __init__(self, exam_id, title, subject_id, exam_date, exam_time="09:00", exam_type="Midterm", earned_score=None, max_score=100.0):
         self.exam_id = str(exam_id).strip()

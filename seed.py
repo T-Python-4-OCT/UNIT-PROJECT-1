@@ -17,7 +17,6 @@ def generate_seed():
             credit_hours = fake.random_int(min=2, max=4)
             subjects.append(Subject(sub_id, name, code, instructor, credit_hours))
 
-        # Score ranges per subject to guarantee varied dashboard scenarios (A, B, C, D, F)
         score_brackets = [
             (92, 100),  # Excellent (A)
             (81, 89),   # Very Good (B)
@@ -37,7 +36,6 @@ def generate_seed():
                 title = f"{sub.code} - {fake.bs().title()}"
                 description = fake.sentence()
                 
-                # Make first task completed with a score, second task random
                 if j == 0 or fake.boolean(chance_of_getting_true=60):
                     days_offset = fake.random_int(min=-7, max=-1)
                     status = "Completed"
@@ -53,10 +51,9 @@ def generate_seed():
                 priority = fake.random_element(elements=("High", "Medium", "Low"))
                 tasks.append(Task(t_id, title, description, sub.subject_id, due_date, priority, status, earned, max_s))
 
-        # Generate term projects
+        # Generate term projects using milestone steps
         projects = []
         project_counter = 1
-        phases = ("Planning", "Research", "Design & Prototyping", "Implementation", "Testing", "Completed")
         
         for idx, sub in enumerate(subjects):
             min_s, max_s_range = score_brackets[idx % len(score_brackets)]
@@ -64,16 +61,12 @@ def generate_seed():
             project_counter += 1
             title = f"{sub.code} Project: {fake.catch_phrase().title()}"
             deadline = (date.today() + timedelta(days=fake.random_int(min=5, max=40))).strftime("%Y-%m-%d")
-            phase = fake.random_element(elements=phases)
             
-            if phase == "Completed":
-                progress = 100
-                earned = float(fake.random_int(min=min_s, max=max_s_range))
-            else:
-                progress = fake.random_int(min=15, max=90)
-                earned = None
+            steps_done_count = fake.random_int(min=1, max=5)
+            completed_steps = Project.MILESTONES[:steps_done_count]
+            earned = float(fake.random_int(min=min_s, max=max_s_range)) if steps_done_count == 5 else None
                 
-            projects.append(Project(p_id, title, sub.subject_id, deadline, phase, progress, earned, 100.0))
+            projects.append(Project(p_id, title, sub.subject_id, deadline, completed_steps=completed_steps, earned_score=earned, max_score=100.0))
 
         # Generate exams
         exams = []
@@ -88,7 +81,6 @@ def generate_seed():
             exam_date = (date.today() + timedelta(days=days_offset)).strftime("%Y-%m-%d")
             exam_time = fake.time(pattern="%H:%M")
             
-            # Ensure exams have recorded scores to reflect in dashboard
             earned = float(fake.random_int(min=min_s, max=max_s_range))
             exams.append(Exam(e_id, title, sub.subject_id, exam_date, exam_time, e_type, earned, 100.0))
 
@@ -112,7 +104,7 @@ def generate_seed():
         }
 
         save_data(data)
-        print("Seed data generated successfully with varied grade scenarios!")
+        print("Seed data generated successfully with milestone-based projects!")
 
     except Exception as e:
         print(f"Error generating seed data: {e}")

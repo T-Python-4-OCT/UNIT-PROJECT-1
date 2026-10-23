@@ -32,9 +32,9 @@ def prompt_positive_int(prompt_text, default_value="3"):
         val = questionary.text(prompt_text, default=str(default_value)).ask()
         try:
             num = int(val)
-            if num > 0:
+            if num >= 0:
                 return num
-            print_error("Please enter a positive number.")
+            print_error("Please enter a valid number.")
         except ValueError:
             print_error("Invalid number. Please try again.")
 
@@ -60,6 +60,21 @@ def prompt_select(prompt_text, choices):
         return None
         
     return choice_map.get(selected, selected)
+
+def prompt_checkbox(prompt_text, choices, checked_items=None):
+    checked_items = checked_items or []
+    q_choices = [
+        questionary.Choice(title=c, value=c, checked=(c in checked_items))
+        for c in choices
+    ]
+    return questionary.checkbox(
+        prompt_text,
+        choices=q_choices,
+        style=questionary.Style([
+            ('selected', 'fg:green bold'),
+            ('pointer', 'fg:cyan bold'),
+        ])
+    ).ask()
 
 def prompt_confirm(prompt_text):
     return questionary.confirm(prompt_text).ask()

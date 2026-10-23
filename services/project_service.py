@@ -10,8 +10,8 @@ from utils import (
     print_error,
     print_info,
     prompt_required_text,
-    prompt_positive_int,
     prompt_select,
+    prompt_checkbox,
     show_spinner
 )
 
@@ -21,12 +21,12 @@ def manage_projects_menu(data):
     while True:
         print_header(
             "SECTION: Academic Projects Tracker",
-            "Track project phases, progress percentage, and final grades"
+            "Complete project milestones to automatically increase your progress %"
         )
         choices = [
             "1. View All Projects",
             "2. Add New Project (Manual or Auto-Faker)",
-            "3. Update Project Progress & Phase",
+            "3. Check/Uncheck Project Milestones (Auto-Update %)",
             "4. Delete Project",
             "5. Back to Main Menu"
         ]
@@ -47,11 +47,11 @@ def render_progress_bar(percentage):
     filled = int(percentage // 10)
     empty = 10 - filled
     bar = "█" * filled + "░" * empty
-    color = "green" if percentage == 100 else ("cyan" if percentage >= 50 else "yellow")
+    color = "green" if percentage == 100 else ("cyan" if percentage >= 60 else "yellow")
     return f"[{color}]{bar} {percentage}%[/{color}]"
 
 def view_all_projects(data):
-    print_header("VIEW: All Academic Projects", "Current status and progress of your term projects")
+    print_header("VIEW: All Academic Projects", "Each completed milestone automatically adds 20% to progress")
     show_spinner("Loading projects...")
     projects = data.get("projects", [])
 
@@ -62,24 +62,27 @@ def view_all_projects(data):
     sub_map = {s.subject_id: s.code for s in data["subjects"]}
 
     table = Table(title=f"Academic Projects (Total: {len(projects)})", show_header=True, header_style="bold cyan")
-    table.add_column("ID", width=10)
+    table.add_column("ID", width=9)
     table.add_column("Project Title", width=28)
-    table.add_column("Course", width=10)
-    table.add_column("Current Phase", width=20)
-    table.add_column("Progress", width=18)
+    table.add_column("Course", width=9)
+    table.add_column("Current/Next Milestone", width=24)
+    table.add_column("Steps Done", width=12)
+    table.add_column("Auto Progress", width=18)
     table.add_column("Deadline", width=12)
-    table.add_column("Score", width=12)
+    table.add_column("Score", width=10)
 
     for p in projects:
         course_code = sub_map.get(p.subject_id, "N/A")
         score_str = f"{p.earned_score}/{p.max_score}" if p.earned_score is not None else "-"
         phase_color = "green" if p.phase == "Completed" else "magenta"
+        steps_str = f"{len(p.completed_steps)}/{len(Project.MILESTONES)}"
 
         table.add_row(
             p.project_id,
             p.title,
             course_code,
             f"[{phase_color}]{p.phase}[/{phase_color}]",
+            steps_str,
             render_progress_bar(p.progress),
             p.deadline,
             score_str
@@ -100,7 +103,7 @@ def generate_next_project_id(projects):
     return f"PRJ-{max_num + 1:03d}"
 
 def add_project(data):
-    print_header("ACTION: Add New Project", "Create a new course project")
+    print_header("ACTION: Add New Project", "Create a new course project with milestone tracking")
     if not data["subjects"]:
         print_error("Please add a subject first.")
         return
@@ -119,34 +122,34 @@ def add_project(data):
     if not mode:
         return
 
-    phases = ["Planning", "Research", "Design & Prototyping", "Implementation", "Testing"]
-
     if "1." in mode:
         title = fake.catch_phrase().title()
         deadline = (date.today() + timedelta(days=fake.random_int(min=7, max=45))).strftime("%Y-%m-%d")
-        phase = fake.random_element(elements=phases)
-        progress = fake.random_int(min=10, max=85)
+        num_done = fake.random_int(min=1, max=4)
+        completed_steps = Project.MILESTONES[:num_done]
     else:
         title = prompt_required_text("Enter Project Title:", default_value=fake.catch_phrase().title())
         deadline = prompt_required_text("Enter Deadline (YYYY-MM-DD):", default_value=str(date.today() + timedelta(days=30)))
-        phase = prompt_select("Select Initial Phase:", phases) or "Planning"
-        progress = prompt_positive_int("Enter Initial Progress (0-100):", default_value="10")
+        completed_steps = prompt_checkbox(
+            "Select any milestones already completed (Press Space to check, Enter to confirm):",
+            Project.MILESTONES
+        ) or []
 
     new_id = generate_next_project_id(data["projects"])
-    new_project = Project(new_id, title, sub_id, deadline, phase, progress)
+    new_project = Project(new_id, title, sub_id, deadline, completed_steps=completed_steps)
 
     show_spinner("Saving project...")
     data["projects"].append(new_project)
     save_data(data)
-    print_success(f"Project '{title}' added successfully.")
+    print_success(f"Project '{title}' added! Auto-calculated progress: {new_project.progress}%.")
 
 def update_project_progress(data):
-    print_header("ACTION: Update Project Progress", "Update current milestone, progress %, or final grade")
+    print_header("ACTION: Check Project Milestones", "Each checked step adds 20% to your project progress")
     if not data.get("projects"):
         print_info("No projects available.")
         return
 
-    choices = [f"[{p.project_id}] {p.title} ({p.progress}% - {p.phase})" for p in data["projects"]]
+    choices = [f"[{p.project_id}] {p.title} ({p.progress}% - {len(p.completed_steps)}/5 steps)" for p in data["projects"]]
     choices.append("Cancel")
 
     selected = prompt_select("Select project to update:", choices)
@@ -158,23 +161,28 @@ def update_project_progress(data):
     if not target:
         return
 
-    phases = ["Planning", "Research", "Design & Prototyping", "Implementation", "Testing", "Completed"]
-    new_phase = prompt_select("Select Current Phase:", phases) or target.phase
-    target.phase = new_phase
+    selected_steps = prompt_checkbox(
+        "Check completed milestones (Space to toggle, Enter to save):",
+        Project.MILESTONES,
+        checked_items=target.completed_steps
+    )
+    if selected_steps is None:
+        return
 
-    if new_phase == "Completed":
-        target.set_progress(100)
-        earned = prompt_required_text("Enter Earned Score (Project Completed):", default_value="95")
+    target.update_milestones(selected_steps)
+
+    if target.progress == 100:
+        print_info("All 5 milestones completed (100%)!")
+        earned = prompt_required_text("Enter Final Project Earned Score:", default_value="95")
         max_s = prompt_required_text("Enter Maximum Score:", default_value="100")
         target.set_earned_score(earned)
         target.set_max_score(max_s)
     else:
-        prog_str = prompt_required_text("Enter New Progress Percentage (0-100):", default_value=str(target.progress))
-        target.set_progress(prog_str)
+        target.set_earned_score(None)
 
-    show_spinner("Updating project...")
+    show_spinner("Calculating progress and updating project...")
     save_data(data)
-    print_success(f"Project '{target.title}' updated to {target.progress}% ({target.phase}).")
+    print_success(f"Project updated automatically! New Progress: {target.progress}% | Current Phase: {target.phase}")
 
 def delete_project(data):
     print_header("ACTION: Delete Project", "Remove a project")
