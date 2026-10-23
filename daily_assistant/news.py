@@ -54,11 +54,13 @@ def print_article(number, title, link, source=None, published=None, color="cyan"
     )
 
 
+
 def show_newsapi(query, heading, color):
     api_key = os.getenv("NEWS_API_KEY")
+
     if not api_key:
-        error("News API key not found. Add NEWS_API_KEY to your .env file.")
-        return
+        error("News API key not found. Check your .env file.")
+        return []
 
     params = {
         "q": query,
@@ -69,19 +71,26 @@ def show_newsapi(query, heading, color):
     }
 
     try:
-        with console.status(f"[{color}]Loading {heading.lower()}...[/]", spinner="dots"):
-            response = requests.get(NEWS_API_URL, params=params, timeout=10)
+        with console.status(
+            f"[{color}]Loading {heading.lower()}...[/]",
+            spinner="dots"
+        ):
+            response = requests.get(
+                NEWS_API_URL, params=params, timeout=10
+            )
             response.raise_for_status()
             articles = response.json().get("articles", [])
+
     except requests.exceptions.RequestException as err:
         error(f"The news request failed: {err}")
-        return
+        return []
 
     if not articles:
         info(f"No {heading.lower()} available right now.")
-        return
+        return []
 
     section(heading, color)
+
     for number, article in enumerate(articles, start=1):
         print_article(
             number,
@@ -91,6 +100,10 @@ def show_newsapi(query, heading, color):
             published=format_date(article.get("publishedAt")),
             color=color,
         )
+
+    return articles
+
+
 def show_top_news():
     return show_newsapi(
         "world OR international",
@@ -106,6 +119,7 @@ def show_sports_news():
         "green",
     )
 
+
 def show_technology_news():
     return show_newsapi(
         "technology OR artificial intelligence OR programming",
@@ -118,23 +132,43 @@ def show_saudi_news():
     url = "https://www.alwatan.com.sa/rssFeed/1"
 
     try:
-        with console.status("[yellow]Loading Saudi news...[/]", spinner="dots"):
+        with console.status(
+            "[yellow]Loading Saudi news...[/]",
+            spinner="dots"
+        ):
             response = requests.get(url, timeout=15)
             response.raise_for_status()
-            news = feedparser.parse(response.content)
+            feed = feedparser.parse(response.content)
+
     except requests.exceptions.RequestException as err:
         error(f"Connection error: {err}")
-        return
+        return []
 
-    if not news.entries:
-        info("No news available.")
-        return
+    articles = []
+
+    for item in feed.entries[:5]:
+        articles.append({
+            "title": format_arabic(item.get("title", "No title")),
+            "description": item.get("summary", ""),
+            "url": item.get("link", ""),
+            "source": {"name": "Al Watan"},
+            "publishedAt": item.get("published", ""),
+        })
+
+    if not articles:
+        info("No Saudi news available.")
+        return []
 
     section("AL WATAN - SAUDI NEWS", "yellow")
-    for number, article in enumerate(news.entries[:5], start=1):
+
+    for number, article in enumerate(articles, start=1):
         print_article(
             number,
-            format_arabic(article.get("title", "No title")),
-            article.get("link", "No link"),
+            article["title"],
+            article["url"] or "No link",
+            source="Al Watan",
+            published=article["publishedAt"] or None,
             color="yellow",
         )
+
+    return articles

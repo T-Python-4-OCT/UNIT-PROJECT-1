@@ -11,6 +11,9 @@ from news import (
 from ui import banner, console
 from weather import show_weather
 
+from pdf_report import PDFReport
+from rich import print as rich_print
+
 
 MENU = [
     ("1", "🌍", "Today's Top News", show_top_news),
@@ -43,6 +46,7 @@ def print_menu():
     )
 
 
+
 def main():
     console.clear()
     banner()
@@ -63,6 +67,8 @@ def main():
         "4": "Technology News",
     }
 
+    pdf_report = PDFReport()
+
     while True:
         print_menu()
 
@@ -79,21 +85,36 @@ def main():
             )
             break
 
-        if choice == "6":
+        elif choice == "6":
             if not news_sections and weather_data is None:
                 console.print(
                     "[yellow]View news or check weather "
                     "before saving a report.[/]"
                 )
+            else:
+                try:
+                    filename = pdf_report.generate_report(
+                        news_sections,
+                        weather_data,
+                    )
+                    console.print(
+                        f"[bold green]PDF saved successfully: "
+                        f"{filename}[/]"
+                    )
+                except Exception as err:
+                    console.print(
+                        f"[bold red]Could not create PDF: {err}[/]"
+                    )
 
         else:
-            result = actions[choice]()
+            action = actions[choice]
+            result = action()
 
             if choice == "5" and result is not None:
                 weather_data = result
                 city = result["city"]
 
-            elif choice in news_labels and result is not None:
+            elif choice in news_labels and result:
                 category = news_labels[choice]
                 news_sections[category] = result
 
