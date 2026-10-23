@@ -4,7 +4,9 @@ from colorama import init
 
 from cinema.config.settings import APP_NAME
 from cinema.screens.booking_screen import new_booking
+from cinema.screens.my_bookings_screen import my_bookings_menu
 from cinema.storage.bookings_file import ensure_folders
+from cinema.ui.decorators import pause_after
 from cinema.ui.display import clear_screen, print_info, print_title
 from cinema.ui.inputs import ask_menu
 
@@ -18,9 +20,9 @@ MAIN_MENU = [
 ]
 
 
+@pause_after
 def show_coming_soon() -> None:
     print_info("This feature is coming soon...")
-    input("\nPress Enter to return to the main menu...")
 
 
 def run() -> None:
@@ -32,10 +34,16 @@ def run() -> None:
         choice = ask_menu(MAIN_MENU)
         if choice == 1:
             new_booking()
+        elif choice == 2:
+            my_bookings_menu()
+        elif choice == 3:
+            show_coming_soon()
+        elif choice == 4:
+            show_coming_soon()
+        elif choice == 5:
+            show_coming_soon()
         elif choice == 6:
             break
-        else:
-            show_coming_soon()
 
 
 def main() -> None:
