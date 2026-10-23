@@ -8,34 +8,30 @@ fake = Faker()
 def generate_seed():
     try:
         subjects = []
-        subject_prefixes = ["CS", "SWE", "CIS", "IT", "HCI", "SE"]
         
-        # Generate 4 dynamic subjects using Faker
         for i in range(1, 5):
             sub_id = f"SUB-{i:03d}"
-            prefix = fake.random_element(elements=subject_prefixes)
-            code = f"{prefix}{fake.random_int(min=100, max=400)}"
-            name = f"{fake.word().capitalize()} {fake.random_element(['Engineering', 'Systems', 'Analysis', 'Design', 'Development'])}"
+            code = fake.bothify(text="???###").upper()
+            name = fake.catch_phrase().title()
             instructor = f"Dr. {fake.name()}"
-            credit_hours = fake.random_element(elements=[3, 4])
+            credit_hours = fake.random_int(min=2, max=4)
             
             subjects.append(Subject(sub_id, name, code, instructor, credit_hours))
 
         tasks = []
         task_counter = 1
-        priorities = ["High", "Medium", "Low"]
 
         for sub in subjects:
-            for j in range(1, 3):
+            for _ in range(2):
                 t_id = f"TSK-{task_counter:03d}"
                 task_counter += 1
                 
-                title = f"{sub.code} - {fake.sentence(nb_words=3).replace('.', '')}"
+                title = f"{sub.code} - {fake.bs().title()}"
                 description = fake.sentence()
                 
                 days_offset = fake.random_int(min=-7, max=10)
                 due_date = (date.today() + timedelta(days=days_offset)).strftime("%Y-%m-%d")
-                priority = fake.random_element(elements=priorities)
+                priority = fake.random_element(elements=("High", "Medium", "Low"))
                 
                 if days_offset < 0:
                     status = "Completed"
@@ -50,35 +46,38 @@ def generate_seed():
 
         exams = []
         exam_counter = 1
+        
         for sub in subjects:
             e_id = f"EXM-{exam_counter:03d}"
             exam_counter += 1
             
-            title = f"{sub.code} {fake.random_element(['Midterm Exam', 'Final Assessment', 'Quiz'])}"
+            e_type = fake.random_element(elements=("Midterm", "Final", "Quiz", "Practical"))
+            title = f"{sub.code} - {fake.catch_phrase().title()}"
             days_offset = fake.random_int(min=-10, max=15)
             exam_date = (date.today() + timedelta(days=days_offset)).strftime("%Y-%m-%d")
+            exam_time = fake.time(pattern="%H:%M")
             earned = float(fake.random_int(min=70, max=98)) if days_offset < 0 else None
             
-            exams.append(Exam(e_id, title, sub.subject_id, exam_date, "10:00", "Midterm", earned, 100.0))
+            exams.append(Exam(e_id, title, sub.subject_id, exam_date, exam_time, e_type, earned, 100.0))
 
         notes = []
         note_counter = 1
         for sub in subjects:
             n_id = f"NTE-{note_counter:03d}"
             note_counter += 1
-            title = f"{sub.name} Summary"
-            content = fake.text(max_nb_chars=120)
+            title = f"{sub.code} - {fake.bs().title()}"
+            content = fake.paragraph(nb_sentences=3)
             notes.append(StudyNote(n_id, title, content, sub.subject_id))
 
         data = {
-            "subjects": [s.to_dict() for s in subjects],
-            "tasks": [t.to_dict() for t in tasks],
-            "exams": [e.to_dict() for e in exams],
-            "notes": [n.to_dict() for n in notes]
+            "subjects": subjects,
+            "tasks": tasks,
+            "exams": exams,
+            "notes": notes
         }
 
         save_data(data)
-        print("Seed data generated completely using Faker.")
+        print("Seed data generated using Faker.")
 
     except Exception as e:
         print(f"Error generating seed data: {e}")

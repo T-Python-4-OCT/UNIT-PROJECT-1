@@ -1,5 +1,4 @@
-"""Service module for managing university subjects."""
-
+from faker import Faker
 from rich.table import Table
 from models.classes import Subject
 from storage import save_data
@@ -8,7 +7,6 @@ from utils import (
     print_header,
     print_success,
     print_error,
-    print_warning,
     print_info,
     prompt_required_text,
     prompt_positive_int,
@@ -17,185 +15,121 @@ from utils import (
     show_spinner
 )
 
+fake = Faker()
 
 def manage_subjects_menu(data):
-    """Main submenu for subject management."""
     while True:
         print_header(
             "SECTION: Subject Management",
-            "View, add, edit, or delete your registered university courses"
+            "View, add, or delete your academic courses"
         )
         choices = [
             "1. View All Subjects",
-            "2. Add New Subject",
-            "3. Edit Subject",
-            "4. Delete Subject",
-            "5. Back to Main Menu"
+            "2. Add New Subject (Manual or Auto-Faker)",
+            "3. Delete Subject",
+            "4. Back to Main Menu"
         ]
-        choice = prompt_select("Select an action from Subject Management:", choices)
+        choice = prompt_select("Select an action:", choices)
 
-        if choice is None or "5." in choice:
+        if choice is None or "4." in choice:
             break
         elif "1." in choice:
             view_all_subjects(data)
         elif "2." in choice:
             add_subject(data)
         elif "3." in choice:
-            edit_subject(data)
-        elif "4." in choice:
             delete_subject(data)
 
+def view_all_subjects(data):
+    print_header("VIEW: All Subjects", "List of registered courses")
+    show_spinner("Loading subjects...")
+    subjects = data["subjects"]
 
-def display_subjects_table(subjects, table_title="Registered University Subjects"):
-    """Display subjects in a formatted rich table."""
-    if len(subjects) == 0:
-        print_info("No subjects available to display.")
+    if not subjects:
+        print_info("No subjects registered yet.")
         return
 
-    table = Table(title=f"{table_title} (Total: {len(subjects)})", show_header=True, header_style="bold cyan")
-    table.add_column("Subject ID", width=12)
-    table.add_column("Course Code", width=14)
-    table.add_column("Subject Name", width=32)
-    table.add_column("Instructor", width=24)
-    table.add_column("Credit Hours", justify="center", width=14)
+    table = Table(title=f"Registered Courses (Total: {len(subjects)})", show_header=True, header_style="bold cyan")
+    table.add_column("ID", width=10)
+    table.add_column("Code", width=10)
+    table.add_column("Name", width=30)
+    table.add_column("Instructor", width=22)
+    table.add_column("Credit Hours", width=12)
 
     for s in subjects:
-        table.add_row(
-            s.subject_id,
-            s.code,
-            s.name,
-            s.instructor,
-            str(s.credit_hours)
-        )
+        table.add_row(s.subject_id, s.code, s.name, s.instructor, str(s.credit_hours))
 
     console.print()
     console.print(table)
 
-
-def view_all_subjects(data):
-    """Display all registered subjects."""
-    print_header("VIEW: All Registered Subjects", "Complete list of your current semester courses")
-    show_spinner("Loading subjects...")
-    display_subjects_table(data["subjects"], "All Registered University Subjects")
-
-
 def generate_next_subject_id(subjects):
-    """Generate next sequential ID for subjects (e.g., SUB-001)."""
     max_num = 0
-    for item in subjects:
-        if item.subject_id.startswith("SUB-"):
-            num_part = item.subject_id.replace("SUB-", "")
+    for s in subjects:
+        if s.subject_id.startswith("SUB-"):
+            num_part = s.subject_id.replace("SUB-", "")
             if num_part.isdigit():
                 num = int(num_part)
                 if num > max_num:
                     max_num = num
     return f"SUB-{max_num + 1:03d}"
 
-
 def add_subject(data):
-    """Add a new subject to the dataset."""
-    print_header("ACTION: Add New Subject", "Enter the details for the new university course")
-    code = prompt_required_text("Enter Course Code (e.g., CS101):")
-    if code is None:
+    print_header("ACTION: Add New Subject", "Register a new course")
+    
+    mode = prompt_select(
+        "How would you like to add the subject?",
+        ["1. Auto-generate completely with Faker", "2. Enter manually (with Faker defaults)"]
+    )
+    if not mode:
         return
 
-    for existing in data["subjects"]:
-        if existing.code.lower() == code.lower():
-            print_error(f"A subject with code '{code.upper()}' already exists.")
+    if "1." in mode:
+        name = fake.catch_phrase().title()
+        code = fake.bothify(text="???###").upper()
+        instructor = f"Dr. {fake.name()}"
+        credit_hours = fake.random_int(min=2, max=4)
+    else:
+        name = prompt_required_text("Enter Subject Name:", default_value=fake.catch_phrase().title())
+        code = prompt_required_text("Enter Course Code:", default_value=fake.bothify(text="???###").upper()).upper()
+        instructor = prompt_required_text("Enter Instructor Name:", default_value=f"Dr. {fake.name()}")
+        credit_hours = prompt_positive_int("Enter Credit Hours:", default_value=str(fake.random_int(min=2, max=4)))
+
+    for s in data["subjects"]:
+        if s.code == code:
+            print_error(f"Subject with code '{code}' already exists.")
             return
 
-    name = prompt_required_text("Enter Subject Name (e.g., Software Engineering):")
-    if name is None:
-        return
-
-    instructor = prompt_required_text("Enter Instructor Name:")
-    if instructor is None:
-        return
-
-    hours = prompt_positive_int("Enter Credit Hours:", default_value="3")
-    if hours is None:
-        return
-
     new_id = generate_next_subject_id(data["subjects"])
-    new_subject = Subject(new_id, name, code, instructor, hours)
+    new_subject = Subject(new_id, name, code, instructor, credit_hours)
 
-    show_spinner("Saving new subject...")
+    show_spinner("Saving subject...")
     data["subjects"].append(new_subject)
     save_data(data)
-    print_success(f"Subject '{new_subject.code} - {new_subject.name}' added successfully.")
-
-
-def choose_subject(subjects, prompt_text="Select a Subject:"):
-    """Helper to select a subject interactively."""
-    if len(subjects) == 0:
-        print_info("No subjects available.")
-        return None
-
-    choices = []
-    for s in subjects:
-        choices.append(f"[{s.subject_id}] {s.code} - {s.name}")
-    choices.append("Cancel")
-
-    selected = prompt_select(prompt_text, choices)
-    if selected is None or selected == "Cancel":
-        return None
-
-    for s in subjects:
-        if f"[{s.subject_id}]" in selected:
-            return s
-    return None
-
-
-def edit_subject(data):
-    """Edit an existing subject's details."""
-    print_header("ACTION: Edit Subject", "Select a course to update its details")
-    subject = choose_subject(data["subjects"], "Select the subject you want to edit:")
-    if subject is None:
-        return
-
-    new_code = prompt_required_text("Course Code:", default_value=subject.code)
-    if new_code is None:
-        return
-
-    new_name = prompt_required_text("Subject Name:", default_value=subject.name)
-    if new_name is None:
-        return
-
-    new_instructor = prompt_required_text("Instructor Name:", default_value=subject.instructor)
-    if new_instructor is None:
-        return
-
-    new_hours = prompt_positive_int("Credit Hours:", default_value=str(subject.credit_hours))
-    if new_hours is None:
-        return
-
-    subject.code = new_code.upper()
-    subject.name = new_name
-    subject.instructor = new_instructor
-    subject.credit_hours = new_hours
-
-    show_spinner("Updating subject...")
-    save_data(data)
-    print_success(f"Subject '{subject.code}' updated successfully.")
-
+    print_success(f"Subject '{name}' ({code}) with {instructor} added successfully.")
 
 def delete_subject(data):
-    """Delete a subject if not linked to tasks."""
-    print_header("ACTION: Delete Subject", "Remove a subject if it has no linked items")
-    subject = choose_subject(data["subjects"], "Select the subject to delete:")
-    if subject is None:
+    print_header("ACTION: Delete Subject", "Remove an existing course")
+    if not data["subjects"]:
+        print_info("No subjects available to delete.")
         return
 
-    linked_tasks = sum(1 for t in data["tasks"] if t.subject_id == subject.subject_id)
-    linked_exams = sum(1 for e in data["exams"] if e.subject_id == subject.subject_id)
+    choices = [f"[{s.subject_id}] {s.code} - {s.name}" for s in data["subjects"]]
+    choices.append("Cancel")
 
-    if linked_tasks > 0 or linked_exams > 0:
-        print_warning(
-            f"Cannot delete '{subject.code}'. It is linked to {linked_tasks} task(s) and {linked_exams} exam(s)."
-        )
+    selected = prompt_select("Select subject to delete:", choices)
+    if not selected or selected == "Cancel":
         return
 
-    if prompt_confirm(f"Are you sure you want to delete '{subject.code} - {subject.name}'?"):
-        data["subjects"].remove(subject)
+    sub_id = selected.split("]")[0].replace("[", "").strip()
+
+    linked_tasks = any(t.subject_id == sub_id for t in data["tasks"])
+    linked_exams = any(e.subject_id == sub_id for e in data["exams"])
+
+    if linked_tasks or linked_exams:
+        print_error("Cannot delete this subject because it has linked tasks or exams.")
+        return
+
+    if prompt_confirm("Are you sure you want to delete this subject?"):
+        data["subjects"] = [s for s in data["subjects"] if s.subject_id != sub_id]
         save_data(data)
         print_success("Subject deleted successfully.")
