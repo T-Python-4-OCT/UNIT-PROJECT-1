@@ -1,0 +1,25 @@
+
+{
+    "routes": [
+        {
+            "origin": "Al Narjis",
+            "destination": "KAFD",
+            "options": [
+                {
+                    "mode": "Car",
+                    "base_duration_minutes": 20,
+                    "cost_sar": 25,
+                    "walking_minutes": 2,
+                    "data_status": "sample"
+                },
+                {
+                    "mode": "Metro",
+                    "base_duration_minutes": 40,
+                    "cost_sar": 8,
+                    "walking_minutes": 10,
+                    "data_status": "sample"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,205 @@
+
+{
+    "routes": [
+        {
+            "origin": "Al Narjis",
+            "destination": "KAFD",
+            "base_duration_minutes": 20
+        },
+        {
+            "origin": "KAFD",
+            "destination": "Al Narjis",
+            "base_duration_minutes": 20
+        },
+        {
+            "origin": "Al Narjis",
+            "destination": "King Khalid International Airport",
+            "base_duration_minutes": 25
+        },
+        {
+            "origin": "King Khalid International Airport",
+            "destination": "Al Narjis",
+            "base_duration_minutes": 25
+        },
+        {
+            "origin": "Al Olaya",
+            "destination": "KAFD",
+            "base_duration_minutes": 15
+        },
+        {
+            "origin": "KAFD",
+            "destination": "Al Olaya",
+            "base_duration_minutes": 15
+        },
+        {
+            "origin": "Al Olaya",
+            "destination": "Kingdom Centre",
+            "base_duration_minutes": 10
+        },
+        {
+            "origin": "Kingdom Centre",
+            "destination": "Al Olaya",
+            "base_duration_minutes": 10
+        },
+        {
+            "origin": "Al Malqa",
+            "destination": "KAFD",
+            "base_duration_minutes": 15
+        },
+        {
+            "origin": "KAFD",
+            "destination": "Al Malqa",
+            "base_duration_minutes": 15
+        },
+        {
+            "origin": "Al Malqa",
+            "destination": "Riyadh Park",
+            "base_duration_minutes": 12
+        },
+        {
+            "origin": "Riyadh Park",
+            "destination": "Al Malqa",
+            "base_duration_minutes": 12
+        },
+        {
+            "origin": "Al Yasmin",
+            "destination": "Al Narjis",
+            "base_duration_minutes": 10
+        },
+        {
+            "origin": "Al Narjis",
+            "destination": "Al Yasmin",
+            "base_duration_minutes": 10
+        },
+        {
+            "origin": "Al Yasmin",
+            "destination": "King Khalid International Airport",
+            "base_duration_minutes": 20
+        },
+        {
+            "origin": "King Khalid International Airport",
+            "destination": "Al Yasmin",
+            "base_duration_minutes": 20
+        },
+        {
+            "origin": "Al Wurud",
+            "destination": "Kingdom Centre",
+            "base_duration_minutes": 12
+        },
+        {
+            "origin": "Kingdom Centre",
+            "destination": "Al Wurud",
+            "base_duration_minutes": 12
+        },
+        {
+            "origin": "Al Wurud",
+            "destination": "KAFD",
+            "base_duration_minutes": 15
+        },
+        {
+            "origin": "KAFD",
+            "destination": "Al Wurud",
+            "base_duration_minutes": 15
+        },
+        {
+            "origin": "Al Muruj",
+            "destination": "Riyadh Park",
+            "base_duration_minutes": 15
+        },
+        {
+            "origin": "Riyadh Park",
+            "destination": "Al Muruj",
+            "base_duration_minutes": 15
+        },
+        {
+            "origin": "Al Muruj",
+            "destination": "KAFD",
+            "base_duration_minutes": 15
+        },
+        {
+            "origin": "KAFD",
+            "destination": "Al Muruj",
+            "base_duration_minutes": 15
+        },
+        {
+            "origin": "Al Suwaidi",
+            "destination": "King Salman Park",
+            "base_duration_minutes": 20
+        },
+        {
+            "origin": "King Salman Park",
+            "destination": "Al Suwaidi",
+            "base_duration_minutes": 20
+        },
+        {
+            "origin": "Al Suwaidi",
+            "destination": "Al Olaya",
+            "base_duration_minutes": 25
+        },
+        {
+            "origin": "Al Olaya",
+            "destination": "Al Suwaidi",
+            "base_duration_minutes": 25
+        },
+        {
+            "origin": "Al Shifa",
+            "destination": "King Salman Park",
+            "base_duration_minutes": 25
+        },
+        {
+            "origin": "King Salman Park",
+            "destination": "Al Shifa",
+            "base_duration_minutes": 25
+        },
+        {
+            "origin": "Al Shifa",
+            "destination": "Al Olaya",
+            "base_duration_minutes": 30
+        },
+        {
+            "origin": "Al Olaya",
+            "destination": "Al Shifa",
+            "base_duration_minutes": 30
+        },
+        {
+            "origin": "Al Rabwah",
+            "destination": "Granada Mall",
+            "base_duration_minutes": 20
+        },
+        {
+            "origin": "Granada Mall",
+            "destination": "Al Rabwah",
+            "base_duration_minutes": 20
+        },
+        {
+            "origin": "Al Rabwah",
+            "destination": "King Abdullah Financial District",
+            "base_duration_minutes": 25
+        },
+        {
+            "origin": "King Abdullah Financial District",
+            "destination": "Al Rabwah",
+            "base_duration_minutes": 25
+        },
+        {
+            "origin": "Diplomatic Quarter",
+            "destination": "KAFD",
+            "base_duration_minutes": 20
+        },
+        {
+            "origin": "KAFD",
+            "destination": "Diplomatic Quarter",
+            "base_duration_minutes": 20
+        },
+        {
+            "origin": "Diplomatic Quarter",
+            "destination": "Kingdom Centre",
+            "base_duration_minutes": 20
+        },
+        {
+            "origin": "Kingdom Centre",
+            "destination": "Diplomatic Quarter",
+            "base_duration_minutes": 20
+        }
+    ]
+}

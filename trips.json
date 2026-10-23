@@ -1,0 +1,10 @@
+[
+    {
+        "origin": "Al Narjis",
+        "destination": "KAFD",
+        "departure_time": "08:30",
+        "base_minutes": 20,
+        "traffic_period": "Morning Peak",
+        "estimated_minutes": 34
+    }
+]
