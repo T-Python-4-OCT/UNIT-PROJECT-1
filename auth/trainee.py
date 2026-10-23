@@ -4,17 +4,20 @@ from prompt_toolkit.layout.containers import HSplit, Window
 from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
+from courses.course_manager import browse_courses
+from courses.course_search import search_course
+from courses.enrollment import enroll_in_course
+from courses.my_courses import view_my_courses
+from courses.enrollment import enroll_in_course
 
-
-choices = [
-    "View My Profile",
-    "Browse Training Courses",
-    "Search for a Course",
-    "View My Courses",
-    "View My Attendance",
-    "View My Progress",
-    "Log Out",
-]
+choices = [ "View My Profile", 
+           "Browse Training Courses",
+             "Search for a Course",
+               "Enroll in a Course",
+            "View My Courses", 
+            "View My Attendance",
+              "View My Progress", 
+              "Log Out", ]
 
 selected = 0
 
@@ -111,13 +114,16 @@ def trainee_page(user):
             print(f"Role: {user['role']}")
 
         elif choice == "Browse Training Courses":
-            print("\nCourse browsing will be added soon.")
+            browse_courses()
 
         elif choice == "Search for a Course":
-            print("\nCourse search will be added soon.")
+            search_course()
+
+        elif choice == "Enroll in a Course":
+            enroll_in_course(user)
 
         elif choice == "View My Courses":
-            print("\nYour enrolled courses will appear here.")
+            view_my_courses(user)
 
         elif choice == "View My Attendance":
             print("\nYour attendance records will appear here.")

@@ -1,20 +1,38 @@
 [
-{
-"user_id": 1,
-"course_id": 1,
-"enrollment_date": "2026-10-22",
-"status": "enrolled"
-},
-{
-"user_id": 2,
-"course_id": 1,
-"enrollment_date": "2026-10-22",
-"status": "enrolled"
-},
-{
-"user_id": 2,
-"course_id": 3,
-"enrollment_date": "2026-10-22",
-"status": "enrolled"
-}
+    {
+        "user_id": 1,
+        "course_id": 1,
+        "enrollment_date": "2026-10-22",
+        "status": "enrolled"
+    },
+    {
+        "user_id": 2,
+        "course_id": 1,
+        "enrollment_date": "2026-10-22",
+        "status": "enrolled"
+    },
+    {
+        "user_id": 2,
+        "course_id": 3,
+        "enrollment_date": "2026-10-22",
+        "status": "enrolled"
+    },
+    {
+        "user_id": 2,
+        "course_id": 2,
+        "enrollment_date": "2026-10-22",
+        "status": "enrolled"
+    },
+    {
+        "user_id": 4,
+        "course_id": 2,
+        "enrollment_date": "2026-10-23",
+        "status": "enrolled"
+    },
+    {
+        "user_id": 4,
+        "course_id": 1,
+        "enrollment_date": "2026-10-23",
+        "status": "enrolled"
+    }
 ]
