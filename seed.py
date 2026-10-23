@@ -7,17 +7,19 @@ fake = Faker()
 
 def generate_seed():
     try:
-        subjects_data = [
-            ("Software Engineering", "SWE301", "Dr. Ahmed", 3),
-            ("Human-Computer Interaction", "HCI202", "Dr. Sarah", 3),
-            ("Database Systems", "CIS311", "Dr. Mohammed", 4),
-            ("Web Development", "SWE363", "Dr. Faisal", 3),
-        ]
-
         subjects = []
-        for i, (name, code, instructor, hours) in enumerate(subjects_data, start=1):
+        subject_prefixes = ["CS", "SWE", "CIS", "IT", "HCI", "SE"]
+        
+        # Generate 4 dynamic subjects using Faker
+        for i in range(1, 5):
             sub_id = f"SUB-{i:03d}"
-            subjects.append(Subject(sub_id, name, code, instructor, hours))
+            prefix = fake.random_element(elements=subject_prefixes)
+            code = f"{prefix}{fake.random_int(min=100, max=400)}"
+            name = f"{fake.word().capitalize()} {fake.random_element(['Engineering', 'Systems', 'Analysis', 'Design', 'Development'])}"
+            instructor = f"Dr. {fake.name()}"
+            credit_hours = fake.random_element(elements=[3, 4])
+            
+            subjects.append(Subject(sub_id, name, code, instructor, credit_hours))
 
         tasks = []
         task_counter = 1
@@ -28,7 +30,7 @@ def generate_seed():
                 t_id = f"TSK-{task_counter:03d}"
                 task_counter += 1
                 
-                title = f"{sub.code} - Assignment {j}"
+                title = f"{sub.code} - {fake.sentence(nb_words=3).replace('.', '')}"
                 description = fake.sentence()
                 
                 days_offset = fake.random_int(min=-7, max=10)
@@ -52,7 +54,7 @@ def generate_seed():
             e_id = f"EXM-{exam_counter:03d}"
             exam_counter += 1
             
-            title = f"{sub.code} Midterm"
+            title = f"{sub.code} {fake.random_element(['Midterm Exam', 'Final Assessment', 'Quiz'])}"
             days_offset = fake.random_int(min=-10, max=15)
             exam_date = (date.today() + timedelta(days=days_offset)).strftime("%Y-%m-%d")
             earned = float(fake.random_int(min=70, max=98)) if days_offset < 0 else None
@@ -76,7 +78,7 @@ def generate_seed():
         }
 
         save_data(data)
-        print("Seed data generated successfully.")
+        print("Seed data generated completely using Faker.")
 
     except Exception as e:
         print(f"Error generating seed data: {e}")
