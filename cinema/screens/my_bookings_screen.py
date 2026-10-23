@@ -1,4 +1,4 @@
-"""'My bookings': find bookings by name or invoice, then view, change seats or export."""
+"""'My bookings': find bookings by name or invoice, then view, change seats, cancel or export."""
 
 from cinema.models.booking import Booking
 from cinema.models.hall_types import get_hall_by_name
@@ -9,7 +9,7 @@ from cinema.storage.tickets import export_ticket
 from cinema.ui.display import clear_screen, print_error, print_info, print_success, print_title
 from cinema.ui.inputs import ask_menu, ask_number, ask_yes_no
 
-ACTIONS = ["View ticket", "Change seats", "Save ticket as text file", "Back to main menu"]
+ACTIONS = ["View ticket", "Change seats", "Cancel a booking", "Save ticket as text file", "Back to main menu"]
 
 
 def search_bookings(bookings: list[Booking]) -> list[Booking]:
@@ -77,6 +77,16 @@ def change_seats(booking: Booking, bookings: list[Booking]) -> None:
         print_info("No changes were made.")
 
 
+def cancel_booking(booking: Booking, bookings: list[Booking], found: list[Booking]) -> None:
+    if not ask_yes_no(f"Are you sure you want to cancel booking {booking.invoice}?"):
+        print_info("The booking was not cancelled.")
+        return
+    bookings.remove(booking)
+    found.remove(booking)
+    save_bookings(bookings)
+    print_success(f"Booking cancelled. {booking.total:.0f} SAR will be refunded.")
+
+
 def my_bookings_menu() -> None:
     clear_screen()
     print_title("My Bookings")
@@ -87,14 +97,14 @@ def my_bookings_menu() -> None:
         input("\nPress Enter to return to the main menu...")
         return
 
-    while True:
+    while found:
         clear_screen()
         print_title(f"Bookings of {found[0].customer}")
         found.sort(key=lambda booking: (booking.show_date, booking.show_time))  # nearest show first
         print_bookings_table(found)
         print()
         action = ask_menu(ACTIONS)
-        if action == 4:
+        if action == 5:
             return
 
         booking = pick_booking(found)
@@ -104,6 +114,11 @@ def my_bookings_menu() -> None:
         elif action == 2:
             change_seats(booking, bookings)
         elif action == 3:
+            cancel_booking(booking, bookings, found)
+        elif action == 4:
             path = export_ticket(booking)
             print_success(f"Ticket saved to {path}")
         input("\nPress Enter to continue...")
+
+    print_info("You have no more bookings.")
+    input("\nPress Enter to return to the main menu...")
