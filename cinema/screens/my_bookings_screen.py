@@ -1,13 +1,15 @@
-"""'My bookings': find bookings by name or invoice, then view or export the ticket."""
+"""'My bookings': find bookings by name or invoice, then view, change seats or export."""
 
 from cinema.models.booking import Booking
-from cinema.storage.bookings_file import load_bookings
-from cinema.storage.search import find_by_invoice, find_by_name
+from cinema.models.hall_types import get_hall_by_name
+from cinema.screens.seat_picker import calculate_total, select_seats
+from cinema.storage.bookings_file import load_bookings, save_bookings
+from cinema.storage.search import booked_seats, find_by_invoice, find_by_name
 from cinema.storage.tickets import export_ticket
-from cinema.ui.display import clear_screen, print_error, print_success, print_title
-from cinema.ui.inputs import ask_menu, ask_number
+from cinema.ui.display import clear_screen, print_error, print_info, print_success, print_title
+from cinema.ui.inputs import ask_menu, ask_number, ask_yes_no
 
-ACTIONS = ["View ticket", "Save ticket as text file", "Back to main menu"]
+ACTIONS = ["View ticket", "Change seats", "Save ticket as text file", "Back to main menu"]
 
 
 def search_bookings(bookings: list[Booking]) -> list[Booking]:
@@ -38,6 +40,43 @@ def pick_booking(found: list[Booking]) -> Booking:
     return found[number - 1]
 
 
+def print_price_difference(old_total: float, new_total: float) -> None:
+    difference = new_total - old_total
+    if difference > 0:
+        print_info(f"You will pay {difference:.0f} SAR more.")
+    elif difference < 0:
+        print_info(f"You will get {abs(difference):.0f} SAR back.")
+
+
+def change_seats(booking: Booking, bookings: list[Booking]) -> None:
+    hall = get_hall_by_name(booking.hall)
+    if hall is None:
+        print_error("Unknown hall in this booking.")
+        return
+
+    # Your old seats are free again, so they show green on the map
+    taken = hall.taken_by_others(booking.show_key()) | booked_seats(bookings, booking.show_key(), booking.invoice)
+    print_info(f"Your current seats: {booking.seats_text()} ({booking.total:.0f} SAR). Choose your new seats:")
+    new_seats = select_seats(hall, taken)
+    if not new_seats:
+        print_info("No seats were chosen. Your booking stays the same.")
+        return
+
+    new_total = calculate_total(hall, new_seats)
+    print()
+    print(f"Old seats: {booking.seats_text():<20} {booking.total:.0f} SAR")
+    print(f"New seats: {', '.join(new_seats):<20} {new_total:.0f} SAR")
+    print_price_difference(booking.total, new_total)
+
+    if ask_yes_no("Save the new seats?"):
+        booking.seats = new_seats
+        booking.total = new_total
+        save_bookings(bookings)
+        print_success("Seats updated.")
+    else:
+        print_info("No changes were made.")
+
+
 def my_bookings_menu() -> None:
     clear_screen()
     print_title("My Bookings")
@@ -55,7 +94,7 @@ def my_bookings_menu() -> None:
         print_bookings_table(found)
         print()
         action = ask_menu(ACTIONS)
-        if action == 3:
+        if action == 4:
             return
 
         booking = pick_booking(found)
@@ -63,6 +102,8 @@ def my_bookings_menu() -> None:
         if action == 1:
             booking.print_ticket()
         elif action == 2:
+            change_seats(booking, bookings)
+        elif action == 3:
             path = export_ticket(booking)
             print_success(f"Ticket saved to {path}")
         input("\nPress Enter to continue...")
