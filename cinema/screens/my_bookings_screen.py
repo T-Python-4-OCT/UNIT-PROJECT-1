@@ -1,9 +1,13 @@
-"""'My bookings': find bookings by name or invoice, then show them."""
+"""'My bookings': find bookings by name or invoice, then view or export the ticket."""
 
 from cinema.models.booking import Booking
 from cinema.storage.bookings_file import load_bookings
 from cinema.storage.search import find_by_invoice, find_by_name
-from cinema.ui.display import clear_screen, print_error, print_title
+from cinema.storage.tickets import export_ticket
+from cinema.ui.display import clear_screen, print_error, print_success, print_title
+from cinema.ui.inputs import ask_menu, ask_number
+
+ACTIONS = ["View ticket", "Save ticket as text file", "Back to main menu"]
 
 
 def search_bookings(bookings: list[Booking]) -> list[Booking]:
@@ -27,6 +31,13 @@ def print_bookings_table(found: list[Booking]) -> None:
         print("-" * 60)
 
 
+def pick_booking(found: list[Booking]) -> Booking:
+    if len(found) == 1:
+        return found[0]
+    number = ask_number("Which booking? (number in [ ]): ", 1, len(found))
+    return found[number - 1]
+
+
 def my_bookings_menu() -> None:
     clear_screen()
     print_title("My Bookings")
@@ -37,8 +48,21 @@ def my_bookings_menu() -> None:
         input("\nPress Enter to return to the main menu...")
         return
 
-    clear_screen()
-    print_title(f"Bookings of {found[0].customer}")
-    found.sort(key=lambda booking: (booking.show_date, booking.show_time))  # nearest show first
-    print_bookings_table(found)
-    input("\nPress Enter to return to the main menu...")
+    while True:
+        clear_screen()
+        print_title(f"Bookings of {found[0].customer}")
+        found.sort(key=lambda booking: (booking.show_date, booking.show_time))  # nearest show first
+        print_bookings_table(found)
+        print()
+        action = ask_menu(ACTIONS)
+        if action == 3:
+            return
+
+        booking = pick_booking(found)
+        print()
+        if action == 1:
+            booking.print_ticket()
+        elif action == 2:
+            path = export_ticket(booking)
+            print_success(f"Ticket saved to {path}")
+        input("\nPress Enter to continue...")
