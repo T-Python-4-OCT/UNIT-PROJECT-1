@@ -114,6 +114,55 @@ def dispatcher_menu(user):
             console.print("[bold red]Invalid option. Please try again.[/bold red]")
 
 
+def field_supervisor_menu(user):
+    while True:
+        zone = getattr(user, "crisis_zone", "General Zone")
+        console.print(f"\n[bold cyan]--- Field Supervisor Dashboard ({user.user_name} | Zone: {zone}) ---[/bold cyan]")
+        console.print("1. View Supplies Inventory")
+        console.print("2. Report Urgent Field Request")
+        console.print("3. Logout / Switch User")
+        
+        choice = input("Choose an option (1-3): ").strip()
+        
+        if choice == "1":
+            supplies = view_supplies()
+            display_supplies_table(supplies)
+        elif choice == "2":
+            req_item = input("Enter required material name: ").strip()
+            req_qty = input("Enter required quantity: ").strip()
+            console.print(f"[bold green]✅ Success: Urgent request for {req_qty} units of '{req_item}' submitted for zone {zone}![/bold green]")
+        elif choice == "3":
+            console.print("[yellow]Logging out...[/yellow]")
+            break
+        else:
+            console.print("[bold red]Invalid option. Please try again.[/bold red]")
+
+
+def fleet_officer_menu(user):
+    while True:
+        specialty = getattr(user, "specialty", "Logistics")
+        console.print(f"\n[bold cyan]--- Fleet Officer Dashboard ({user.user_name} | Specialty: {specialty}) ---[/bold cyan]")
+        console.print("1. View Supplies Inventory")
+        console.print("2. Check Fleet Vehicle Capacities")
+        console.print("3. Logout / Switch User")
+        
+        choice = input("Choose an option (1-3): ").strip()
+        
+        if choice == "1":
+            supplies = view_supplies()
+            display_supplies_table(supplies)
+        elif choice == "2":
+            console.print(f"\n[bold yellow]--- Fleet Status ({specialty} Unit) ---[/bold yellow]")
+            console.print("🚚 Truck Alpha (Capacity: 500 kg) - [green]Ready[/green]")
+            console.print("🚁 Cargo Drone Beta (Capacity: 50 kg) - [green]Ready[/green]")
+            console.print("🚛 Heavy Transporter Gamma (Capacity: 2000 kg) - [yellow]In Maintenance[/yellow]")
+        elif choice == "3":
+            console.print("[yellow]Logging out...[/yellow]")
+            break
+        else:
+            console.print("[bold red]Invalid option. Please try again.[/bold red]")
+
+
 def general_user_menu(user):
     while True:
         console.print(f"\n[bold cyan]--- General Dashboard ({user.user_name} - {user.role}) ---[/bold cyan]")
@@ -152,6 +201,10 @@ def main():
                     manager_menu(current_user)
                 elif role == "dispatcher":
                     dispatcher_menu(current_user)
+                elif role == "field_supervisor":
+                    field_supervisor_menu(current_user)
+                elif role == "fleet_officer":
+                    fleet_officer_menu(current_user)
                 else:
                     general_user_menu(current_user)
                     
