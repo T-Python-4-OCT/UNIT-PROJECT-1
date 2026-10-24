@@ -1,0 +1,5 @@
+rich>=13.7        # colored tables, panels and input prompts
+pyfiglet>=1.0     # big ASCII-art title when the app starts
+plotext>=5.2,<6   # bar chart API used by the app (plotext 6 removed these functions)
+humanize>=4.9     # friendly dates: "today", "yesterday", "in 14 days"
+pytest>=8.0       # automatic tests (run: pytest)
