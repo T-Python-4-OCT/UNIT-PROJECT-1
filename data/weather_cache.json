@@ -1,70 +1,70 @@
 {
   "riyadh": {
     "current": {
-      "temperature": 34.0,
-      "wind_speed": 6.0
+      "temperature": 30.6,
+      "wind_speed": 6.7
     },
     "daily": [
       {
-        "date": "2026-10-22",
-        "temp_max": 35.9,
-        "temp_min": 25.6,
-        "rain_mm": 0.0,
-        "wind_max": 8.0,
-        "et0_mm": 5.17
-      },
-      {
-        "date": "2026-10-23",
-        "temp_max": 35.3,
-        "temp_min": 23.6,
-        "rain_mm": 0.0,
-        "wind_max": 8.3,
-        "et0_mm": 4.71
-      },
-      {
         "date": "2026-10-24",
-        "temp_max": 34.6,
-        "temp_min": 23.9,
+        "temp_max": 34.8,
+        "temp_min": 24.2,
         "rain_mm": 0.0,
-        "wind_max": 8.8,
-        "et0_mm": 5.03
+        "wind_max": 8.6,
+        "et0_mm": 5.19
       },
       {
         "date": "2026-10-25",
-        "temp_max": 34.5,
-        "temp_min": 23.8,
+        "temp_max": 34.8,
+        "temp_min": 23.4,
         "rain_mm": 0.0,
-        "wind_max": 11.9,
-        "et0_mm": 5.77
+        "wind_max": 9.7,
+        "et0_mm": 5.47
       },
       {
         "date": "2026-10-26",
-        "temp_max": 34.8,
-        "temp_min": 24.5,
+        "temp_max": 35.2,
+        "temp_min": 25.1,
         "rain_mm": 0.0,
-        "wind_max": 12.0,
-        "et0_mm": 5.76
+        "wind_max": 13.5,
+        "et0_mm": 5.69
       },
       {
         "date": "2026-10-27",
-        "temp_max": 35.1,
-        "temp_min": 24.4,
+        "temp_max": 35.2,
+        "temp_min": 24.7,
         "rain_mm": 0.0,
-        "wind_max": 11.2,
-        "et0_mm": 5.59
+        "wind_max": 12.0,
+        "et0_mm": 6.01
       },
       {
         "date": "2026-10-28",
-        "temp_max": 35.6,
-        "temp_min": 24.7,
+        "temp_max": 35.3,
+        "temp_min": 25.2,
         "rain_mm": 0.0,
-        "wind_max": 6.6,
-        "et0_mm": 4.57
+        "wind_max": 10.6,
+        "et0_mm": 5.65
+      },
+      {
+        "date": "2026-10-29",
+        "temp_max": 35.1,
+        "temp_min": 24.4,
+        "rain_mm": 0.0,
+        "wind_max": 8.5,
+        "et0_mm": 4.96
+      },
+      {
+        "date": "2026-10-30",
+        "temp_max": 34.0,
+        "temp_min": 24.5,
+        "rain_mm": 0.0,
+        "wind_max": 7.2,
+        "et0_mm": 4.49
       }
     ],
     "latitude": 24.68773,
     "longitude": 46.72185,
     "location_name": "Riyadh, Saudi Arabia",
-    "fetched_at": "2026-10-22 10:53"
+    "fetched_at": "2026-10-24 20:44"
   }
 }

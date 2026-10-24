@@ -41,7 +41,7 @@ def main():
         elif choice == "7":
             manager_panel(farm, crops)
         else:
-            display.print_success("Goodbye!")
+            display.print_success("Goodbye..")
             break
 
 
