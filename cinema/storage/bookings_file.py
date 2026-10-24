@@ -15,20 +15,28 @@ def ensure_folders() -> None:
 
 
 def load_bookings() -> list[Booking]:
-    if not os.path.exists(BOOKINGS_FILE):
+    try:
+        with open(BOOKINGS_FILE, "r", encoding="utf-8") as file:
+            raw_data = json.load(file)
+    except FileNotFoundError:
         return []  # first run: no bookings yet
-    with open(BOOKINGS_FILE, "r", encoding="utf-8") as file:
-        raw_data = json.load(file)
-    bookings = []
-    for item in raw_data:
-        bookings.append(booking_from_dict(item))
-    return bookings
+    except json.JSONDecodeError:
+        print("Warning: the bookings file is damaged, starting with an empty list.")
+        return []
+    else:
+        bookings = []
+        for item in raw_data:
+            bookings.append(booking_from_dict(item))
+        return bookings
 
 
 def save_bookings(bookings: list[Booking]) -> bool:
     """Save all bookings. Returns True if it worked."""
     ensure_folders()
     data = [booking.to_dict() for booking in bookings]
-    with open(BOOKINGS_FILE, "w", encoding="utf-8") as file:
-        json.dump(data, file, indent=4, ensure_ascii=False)
+    try:
+        with open(BOOKINGS_FILE, "w", encoding="utf-8") as file:
+            json.dump(data, file, indent=4, ensure_ascii=False)
+    except OSError:
+        return False
     return True

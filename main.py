@@ -44,8 +44,12 @@ def run() -> None:
 
 def main() -> None:
     init()  # makes colors work on Windows too
-    run()
-    print("Thank you for choosing VOX Cinemas. See you soon! 🍿")
+    try:
+        run()
+    except (KeyboardInterrupt, EOFError):
+        print("\n\nProgram closed by the user.")
+    finally:
+        print("Thank you for choosing VOX Cinemas. See you soon! 🍿")
 
 
 if __name__ == "__main__":
