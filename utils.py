@@ -76,8 +76,30 @@ def prompt_checkbox(prompt_text, choices, checked_items=None):
         ])
     ).ask()
 
-def prompt_confirm(prompt_text):
-    return questionary.confirm(prompt_text).ask()
+def confirm_delete(item_name):
+    """Display a red warning panel and ask for explicit delete confirmation."""
+    console.print(
+        Panel(
+            f"[bold red]⚠ WARNING: You are about to permanently delete:[/bold red]\n[bold white]{item_name}[/bold white]",
+            title="[bold red]Confirm Deletion[/bold red]",
+            border_style="red"
+        )
+    )
+    ans = questionary.select(
+        "Are you sure you want to delete this item?",
+        choices=[
+            "No, Cancel and Keep Item",
+            "Yes, Permanently Delete"
+        ],
+        style=questionary.Style([
+            ('qmark', 'fg:red bold'),
+            ('question', 'fg:red bold'),
+            ('pointer', 'fg:red bold'),
+            ('highlighted', 'fg:red bold'),
+            ('selected', 'fg:red bold'),
+        ])
+    ).ask()
+    return ans == "Yes, Permanently Delete"
 
 def show_spinner(message="Loading..."):
     with console.status(f"[bold cyan]{message}[/bold cyan]"):

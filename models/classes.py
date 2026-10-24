@@ -21,6 +21,7 @@ class Subject:
             "credit_hours": self.credit_hours
         }
 
+
 class Task:
     def __init__(self, task_id, title, description, subject_id, due_date, priority="Medium", status="Not Started", earned_score=None, max_score=None, created_at=None):
         self.task_id = str(task_id).strip()
@@ -115,6 +116,8 @@ class Task:
             "max_score": self.__max_score,
             "created_at": self.created_at
         }
+
+
 class Project:
     MILESTONES = [
         "1. Planning & Requirements",
@@ -124,7 +127,7 @@ class Project:
         "5. Testing & Final Delivery"
     ]
 
-    def __init__(self, project_id, title, subject_id, deadline, completed_steps=None, phase=None, progress=None, earned_score=None, max_score=100.0):
+    def __init__(self, project_id, title, subject_id, deadline, completed_steps=None, phase=None, progress=0, earned_score=None, max_score=100.0):
         self.project_id = str(project_id).strip()
         self.title = str(title).strip()
         self.subject_id = str(subject_id).strip()
@@ -139,9 +142,10 @@ class Project:
 
         if completed_steps is not None:
             self.update_milestones(completed_steps)
+            if progress and int(progress) > self.__progress:
+                self.set_progress(progress)
         elif progress is not None:
-            count = int(progress) // 20
-            self.update_milestones(self.MILESTONES[:count])
+            self.set_progress(progress)
         else:
             self.update_milestones([])
 
@@ -163,6 +167,37 @@ class Project:
                 if m not in self.completed_steps:
                     self.phase = m.split(". ", 1)[1]
                     break
+
+    def set_progress(self, value):
+        try:
+            val = int(value)
+            self.__progress = max(0, min(100, val))
+            count = self.__progress // 20
+            self.completed_steps = self.MILESTONES[:count]
+            
+            if self.__progress == 100:
+                self.completed_steps = list(self.MILESTONES)
+                self.phase = "Completed"
+            else:
+                for m in self.MILESTONES:
+                    if m not in self.completed_steps:
+                        self.phase = m.split(". ", 1)[1]
+                        break
+        except (ValueError, TypeError):
+            self.__progress = 0
+
+    def add_progress_amount(self, amount):
+        """Add percentage points directly (e.g., +10% or +20%) and sync milestones."""
+        try:
+            new_val = self.__progress + int(amount)
+            self.set_progress(new_val)
+        except (ValueError, TypeError):
+            pass
+
+    def complete_single_milestone(self, milestone_name):
+        if milestone_name in self.MILESTONES and milestone_name not in self.completed_steps:
+            self.completed_steps.append(milestone_name)
+            self.update_milestones(self.completed_steps)
 
     def get_progress(self):
         return self.__progress
@@ -195,6 +230,10 @@ class Project:
     def progress(self):
         return self.__progress
 
+    @progress.setter
+    def progress(self, value):
+        self.set_progress(value)
+
     @property
     def earned_score(self):
         return self.__earned_score
@@ -223,6 +262,8 @@ class Project:
             "earned_score": self.__earned_score,
             "max_score": self.__max_score
         }
+
+
 class Exam:
     def __init__(self, exam_id, title, subject_id, exam_date, exam_time="09:00", exam_type="Midterm", earned_score=None, max_score=100.0):
         self.exam_id = str(exam_id).strip()
@@ -298,6 +339,7 @@ class Exam:
             "earned_score": self.__earned_score,
             "max_score": self.__max_score
         }
+
 
 class StudyNote:
     def __init__(self, note_id, title, content, subject_id=None, created_at=None):

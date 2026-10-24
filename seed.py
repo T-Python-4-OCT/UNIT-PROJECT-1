@@ -51,9 +51,10 @@ def generate_seed():
                 priority = fake.random_element(elements=("High", "Medium", "Low"))
                 tasks.append(Task(t_id, title, description, sub.subject_id, due_date, priority, status, earned, max_s))
 
-        # Generate term projects using milestone steps
+        # Generate term projects (including one at 90% and one at 80% for easy testing)
         projects = []
         project_counter = 1
+        sample_progress = [90, 80, 60, 40, 100]
         
         for idx, sub in enumerate(subjects):
             min_s, max_s_range = score_brackets[idx % len(score_brackets)]
@@ -62,11 +63,12 @@ def generate_seed():
             title = f"{sub.code} Project: {fake.catch_phrase().title()}"
             deadline = (date.today() + timedelta(days=fake.random_int(min=5, max=40))).strftime("%Y-%m-%d")
             
-            steps_done_count = fake.random_int(min=1, max=5)
+            prog = sample_progress[idx % len(sample_progress)]
+            steps_done_count = prog // 20
             completed_steps = Project.MILESTONES[:steps_done_count]
-            earned = float(fake.random_int(min=min_s, max=max_s_range)) if steps_done_count == 5 else None
+            earned = float(fake.random_int(min=min_s, max=max_s_range)) if prog == 100 else None
                 
-            projects.append(Project(p_id, title, sub.subject_id, deadline, completed_steps=completed_steps, earned_score=earned, max_score=100.0))
+            projects.append(Project(p_id, title, sub.subject_id, deadline, completed_steps=completed_steps, progress=prog, earned_score=earned, max_score=100.0))
 
         # Generate exams
         exams = []
@@ -104,7 +106,7 @@ def generate_seed():
         }
 
         save_data(data)
-        print("Seed data generated successfully with milestone-based projects!")
+        print("Seed data generated successfully!")
 
     except Exception as e:
         print(f"Error generating seed data: {e}")

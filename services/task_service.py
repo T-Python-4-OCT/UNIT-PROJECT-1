@@ -10,6 +10,7 @@ from utils import (
     print_info,
     prompt_required_text,
     prompt_select,
+    confirm_delete,
     show_spinner
 )
 
@@ -39,6 +40,31 @@ def manage_tasks_menu(data):
         elif "4." in choice:
             delete_task(data)
 
+def format_task_score(earned, max_s):
+    """Format and colorize task score based on percentage."""
+    if earned is None or max_s is None or max_s <= 0:
+        return "[dim]Pending[/dim]"
+    
+    pct = (earned / max_s) * 100
+    if pct >= 85:
+        color = "bold green"
+    elif pct >= 70:
+        color = "cyan"
+    elif pct >= 60:
+        color = "yellow"
+    else:
+        color = "bold red"
+        
+    return f"[{color}]{earned:g}/{max_s:g} ({pct:.0f}%)[/{color}]"
+
+def format_priority(priority):
+    """Colorize task priority for better visual scanning."""
+    if priority == "High":
+        return "[bold red]High[/bold red]"
+    elif priority == "Medium":
+        return "[yellow]Medium[/yellow]"
+    return "[green]Low[/green]"
+
 def display_tasks_table(tasks, subjects):
     if not tasks:
         print_info("No tasks available.")
@@ -48,24 +74,25 @@ def display_tasks_table(tasks, subjects):
 
     table = Table(title=f"Academic Tasks (Total: {len(tasks)})", show_header=True, header_style="bold cyan")
     table.add_column("Task ID", width=10)
-    table.add_column("Title", width=25)
-    table.add_column("Course", width=12)
+    table.add_column("Title", width=28)
+    table.add_column("Course", width=10)
     table.add_column("Due Date", width=12)
     table.add_column("Priority", width=10)
     table.add_column("Status", width=14)
-    table.add_column("Score", width=12)
+    table.add_column("Score", width=18)
 
     for t in tasks:
         course_code = sub_map.get(t.subject_id, "N/A")
-        score_str = f"{t.earned_score}/{t.max_score}" if t.earned_score is not None else "-"
+        score_str = format_task_score(t.earned_score, t.max_score)
+        priority_str = format_priority(t.priority)
         status_color = "green" if t.status == "Completed" else "yellow"
 
         table.add_row(
             t.task_id,
             t.title,
-            course_code,
+            f"[bold]{course_code}[/bold]",
             t.due_date,
-            t.priority,
+            priority_str,
             f"[{status_color}]{t.status}[/{status_color}]",
             score_str
         )
@@ -74,7 +101,7 @@ def display_tasks_table(tasks, subjects):
     console.print(table)
 
 def view_all_tasks(data):
-    print_header("VIEW: All Tasks", "Complete list of assignments")
+    print_header("VIEW: All Tasks", "Complete list of assignments and grades")
     show_spinner("Loading tasks...")
     display_tasks_table(data["tasks"], data["subjects"])
 
@@ -137,7 +164,7 @@ def complete_task(data):
     if not target_task:
         return
 
-    earned = prompt_required_text("Enter Earned Score:", default_value="100")
+    earned = prompt_required_text("Enter Earned Score:", default_value="95")
     max_s = prompt_required_text("Enter Maximum Score:", default_value="100")
 
     target_task.mark_completed(earned, max_s)
@@ -160,6 +187,9 @@ def delete_task(data):
         return
 
     task_id = selected.split("]")[0].replace("[", "").strip()
-    data["tasks"] = [t for t in data["tasks"] if t.task_id != task_id]
-    save_data(data)
-    print_success("Task deleted successfully.")
+    if confirm_delete(selected):
+        data["tasks"] = [t for t in data["tasks"] if t.task_id != task_id]
+        save_data(data)
+        print_success("Task deleted successfully.")
+    else:
+        print_info("Deletion cancelled.")

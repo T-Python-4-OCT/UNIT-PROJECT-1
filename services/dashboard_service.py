@@ -1,139 +1,161 @@
+from datetime import date
 from rich.table import Table
-from rich.panel import Panel
-from utils import console, print_header, print_info, prompt_select, show_spinner
+from models.classes import Exam
+from storage import save_data
+from utils import (
+    console,
+    print_header,
+    print_success,
+    print_error,
+    print_info,
+    prompt_required_text,
+    prompt_select,
+    confirm_delete,
+    show_spinner
+)
 
-def format_colored_score(score):
-    """Return colored percentage string based on academic performance."""
-    if score >= 85:
-        return f"[bold green]{score:.1f}% (High)[/bold green]"
-    elif score >= 70:
-        return f"[bold cyan]{score:.1f}% (Good)[/bold cyan]"
-    elif score >= 60:
-        return f"[bold yellow]{score:.1f}% (Moderate)[/bold yellow]"
-    else:
-        return f"[bold red]{score:.1f}% (Low)[/bold red]"
+def manage_exams_menu(data):
+    while True:
+        print_header(
+            "SECTION: Exam Management",
+            "Schedule exams, record scores, or remove exams"
+        )
+        choices = [
+            "1. View All Exams",
+            "2. Add New Exam",
+            "3. Record Exam Score",
+            "4. Delete Exam",
+            "5. Back to Main Menu"
+        ]
+        choice = prompt_select("Select an action:", choices)
 
-def get_course_status_and_color(avg):
-    """Return formatted course average and multi-scenario status."""
-    if avg >= 90:
-        return f"[bold green]{avg:.1f}%[/bold green]", "[bold green]★ Excellent (A)[/bold green]"
-    elif avg >= 80:
-        return f"[cyan]{avg:.1f}%[/cyan]", "[cyan]✔ Very Good (B)[/cyan]"
-    elif avg >= 70:
-        return f"[blue]{avg:.1f}%[/blue]", "[blue]● Good Standing (C)[/blue]"
-    elif avg >= 60:
-        return f"[yellow]{avg:.1f}%[/yellow]", "[bold yellow]⚠ Needs Attention (D)[/bold yellow]"
-    else:
-        return f"[bold red]{avg:.1f}%[/bold red]", "[bold red]✖ At Risk (F)[/bold red]"
+        if choice is None or "5." in choice:
+            break
+        elif "1." in choice:
+            view_all_exams(data)
+        elif "2." in choice:
+            add_exam(data)
+        elif "3." in choice:
+            record_exam_score(data)
+        elif "4." in choice:
+            delete_exam(data)
 
-def show_dashboard(data):
-    print_header("Dashboard: Academic Progress & Grades", "Overview of your performance, tasks, projects, and exams")
-    show_spinner("Calculating your academic stats...")
+def format_exam_score(earned, max_s):
+    if earned is None or max_s is None or max_s <= 0:
+        return "[dim]Pending[/dim]"
+    pct = (earned / max_s) * 100
+    color = "bold green" if pct >= 85 else ("cyan" if pct >= 70 else ("yellow" if pct >= 60 else "bold red"))
+    return f"[{color}]{earned:g}/{max_s:g} ({pct:.0f}%)[/{color}]"
 
-    subjects = data.get("subjects", [])
-    tasks = data.get("tasks", [])
-    projects = data.get("projects", [])
-    exams = data.get("exams", [])
-
-    if not subjects:
-        print_info("No subjects found. Please add subjects first.")
+def view_all_exams(data):
+    print_header("VIEW: All Exams", "Scheduled assessments and recorded grades")
+    show_spinner("Loading exams...")
+    exams = data["exams"]
+    
+    if not exams:
+        print_info("No exams scheduled yet.")
         return
 
-    total_subjects = len(subjects)
-    total_hours = sum(s.credit_hours for s in subjects)
-    
-    total_tasks = len(tasks)
-    completed_tasks = sum(1 for t in tasks if t.status == "Completed")
-    task_completion_rate = (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0.0
+    sub_map = {s.subject_id: s.code for s in data["subjects"]}
 
-    total_projects = len(projects)
-    avg_project_progress = (sum(p.progress for p in projects) / total_projects) if total_projects > 0 else 0.0
+    table = Table(title=f"Scheduled Exams (Total: {len(exams)})", show_header=True, header_style="bold cyan")
+    table.add_column("Exam ID", width=10)
+    table.add_column("Title", width=28)
+    table.add_column("Course", width=10)
+    table.add_column("Type", width=12)
+    table.add_column("Date", width=12)
+    table.add_column("Time", width=8)
+    table.add_column("Score", width=18)
 
-    task_scores = [
-        (t.earned_score / t.max_score) * 100
-        for t in tasks
-        if t.earned_score is not None and t.max_score and t.max_score > 0
-    ]
-    avg_task_score = (sum(task_scores) / len(task_scores)) if task_scores else 0.0
-
-    exam_scores = [
-        (e.earned_score / e.max_score) * 100
-        for e in exams
-        if e.earned_score is not None and e.max_score and e.max_score > 0
-    ]
-    avg_exam_score = (sum(exam_scores) / len(exam_scores)) if exam_scores else 0.0
-
-    # Color-coded progress indicators for top summary panel
-    task_prog_color = "green" if task_completion_rate >= 75 else ("yellow" if task_completion_rate >= 40 else "red")
-    proj_prog_color = "green" if avg_project_progress >= 75 else ("yellow" if avg_project_progress >= 40 else "red")
-
-    summary_text = (
-        f"[bold white]Total Courses:[/bold white]         [cyan]{total_subjects} Courses ({total_hours} Credit Hours)[/cyan]\n"
-        f"[bold white]Tasks Completion:[/bold white]      [{task_prog_color}]{completed_tasks}/{total_tasks} completed ({task_completion_rate:.1f}%)[/{task_prog_color}]\n"
-        f"[bold white]Projects Progress:[/bold white]     [{proj_prog_color}]{avg_project_progress:.1f}% across {total_projects} projects[/{proj_prog_color}]\n"
-        f"[bold white]Average Task Score:[/bold white]    {format_colored_score(avg_task_score)}\n"
-        f"[bold white]Average Exam Score:[/bold white]    {format_colored_score(avg_exam_score)}"
-    )
-    console.print(Panel(summary_text, title="[bold cyan]Overall Performance Summary[/bold cyan]", border_style="cyan"))
-
-    table = Table(title="Course Performance Breakdown", show_header=True, header_style="bold cyan")
-    table.add_column("Code", width=10)
-    table.add_column("Course Name", width=28)
-    table.add_column("Hours", width=7)
-    table.add_column("Tasks Done", width=12)
-    table.add_column("Project %", width=12)
-    table.add_column("Course Avg", width=12)
-    table.add_column("Academic Status", width=22)
-
-    for sub in subjects:
-        sub_tasks = [t for t in tasks if t.subject_id == sub.subject_id]
-        sub_done = sum(1 for t in sub_tasks if t.status == "Completed")
-        
-        if len(sub_tasks) > 0:
-            t_ratio = sub_done / len(sub_tasks)
-            t_color = "green" if t_ratio == 1 else ("yellow" if t_ratio >= 0.5 else "red")
-            tasks_str = f"[{t_color}]{sub_done}/{len(sub_tasks)}[/{t_color}]"
-        else:
-            tasks_str = "[dim]0/0[/dim]"
-
-        sub_projects = [p for p in projects if p.subject_id == sub.subject_id]
-        if sub_projects:
-            p_val = sum(p.progress for p in sub_projects) // len(sub_projects)
-            p_color = "green" if p_val >= 80 else ("cyan" if p_val >= 50 else "yellow")
-            proj_str = f"[{p_color}]{p_val}%[/{p_color}]"
-        else:
-            proj_str = "[dim]N/A[/dim]"
-
-        sub_exams = [e for e in exams if e.subject_id == sub.subject_id]
-        
-        scores = []
-        for t in sub_tasks:
-            if t.earned_score is not None and t.max_score:
-                scores.append((t.earned_score / t.max_score) * 100)
-        for p in sub_projects:
-            if p.earned_score is not None and p.max_score:
-                scores.append((p.earned_score / p.max_score) * 100)
-        for e in sub_exams:
-            if e.earned_score is not None and e.max_score:
-                scores.append((e.earned_score / e.max_score) * 100)
-
-        if scores:
-            avg = sum(scores) / len(scores)
-            avg_str, status = get_course_status_and_color(avg)
-        else:
-            avg_str = "[dim]N/A[/dim]"
-            status = "[dim]⏳ Pending Grades[/dim]"
-
-        table.add_row(
-            f"[bold]{sub.code}[/bold]",
-            sub.name,
-            str(sub.credit_hours),
-            tasks_str,
-            proj_str,
-            avg_str,
-            status
-        )
+    for e in exams:
+        course_code = sub_map.get(e.subject_id, "N/A")
+        score_str = format_exam_score(e.earned_score, e.max_score)
+        table.add_row(e.exam_id, e.title, f"[bold]{course_code}[/bold]", e.exam_type, e.exam_date, e.exam_time, score_str)
 
     console.print()
     console.print(table)
-    prompt_select("Return to menu:", ["Back to Main Menu"])
+
+def generate_next_exam_id(exams):
+    max_num = 0
+    for e in exams:
+        if e.exam_id.startswith("EXM-"):
+            num_part = e.exam_id.replace("EXM-", "")
+            if num_part.isdigit():
+                num = int(num_part)
+                if num > max_num:
+                    max_num = num
+    return f"EXM-{max_num + 1:03d}"
+
+def add_exam(data):
+    print_header("ACTION: Add New Exam", "Schedule a new test or exam")
+    if not data["subjects"]:
+        print_error("Please add a subject first.")
+        return
+
+    sub_choices = [f"[{s.subject_id}] {s.code} - {s.name}" for s in data["subjects"]]
+    selected_sub = prompt_select("Select Course:", sub_choices)
+    if not selected_sub:
+        return
+
+    sub_id = selected_sub.split("]")[0].replace("[", "").strip()
+    title = prompt_required_text("Enter Exam Title:")
+    exam_type = prompt_select("Select Exam Type:", ["Midterm", "Final", "Quiz", "Practical"]) or "Midterm"
+    exam_date = prompt_required_text("Enter Exam Date (YYYY-MM-DD):", default_value=str(date.today()))
+    exam_time = prompt_required_text("Enter Exam Time (HH:MM):", default_value="09:00")
+
+    new_id = generate_next_exam_id(data["exams"])
+    new_exam = Exam(new_id, title, sub_id, exam_date, exam_time, exam_type)
+
+    show_spinner("Saving exam...")
+    data["exams"].append(new_exam)
+    save_data(data)
+    print_success(f"Exam '{title}' scheduled successfully.")
+
+def record_exam_score(data):
+    print_header("ACTION: Record Exam Score", "Enter or update grade for an exam")
+    if not data["exams"]:
+        print_info("No exams available.")
+        return
+
+    choices = [f"[{e.exam_id}] {e.title}" for e in data["exams"]]
+    choices.append("Cancel")
+
+    selected = prompt_select("Select exam:", choices)
+    if not selected or selected == "Cancel":
+        return
+
+    exam_id = selected.split("]")[0].replace("[", "").strip()
+    target_exam = next((e for e in data["exams"] if e.exam_id == exam_id), None)
+    if not target_exam:
+        return
+
+    earned = prompt_required_text("Enter Earned Score:", default_value="90")
+    max_s = prompt_required_text("Enter Maximum Score:", default_value="100")
+
+    target_exam.set_earned_score(earned)
+    target_exam.set_max_score(max_s)
+
+    show_spinner("Updating exam score...")
+    save_data(data)
+    print_success("Exam score updated successfully.")
+
+def delete_exam(data):
+    print_header("ACTION: Delete Exam", "Remove an exam from schedule")
+    if not data["exams"]:
+        print_info("No exams available.")
+        return
+
+    choices = [f"[{e.exam_id}] {e.title}" for e in data["exams"]]
+    choices.append("Cancel")
+
+    selected = prompt_select("Select exam to delete:", choices)
+    if not selected or selected == "Cancel":
+        return
+
+    exam_id = selected.split("]")[0].replace("[", "").strip()
+    if confirm_delete(selected):
+        data["exams"] = [e for e in data["exams"] if e.exam_id != exam_id]
+        save_data(data)
+        print_success("Exam deleted successfully.")
+    else:
+        print_info("Deletion cancelled.")
