@@ -1,0 +1,17 @@
+[
+    {
+        "shipment_id": "SHIP-001",
+        "destination_crisis": "riadh",
+        "transport_type": "Truck",
+        "status": "Pending",
+        "total_weight_kg": 15.0,
+        "items": [
+            {
+                "item_id": "SUPP-001",
+                "item_name": "Advanced First Aid Kit",
+                "quantity": 5,
+                "total_weight_kg": 15.0
+            }
+        ]
+    }
+]

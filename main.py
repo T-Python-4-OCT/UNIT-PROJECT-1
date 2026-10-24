@@ -1,4 +1,4 @@
-from src.services.auth_service import register_user, login_user
+from src.services.auth_service import register_user, login_user, load_users
 from src.services.logistics_service import view_supplies, add_supply_item, create_shipment
 from src.services.weather_api import get_crisis_weather
 from src.services.recommend_service import get_smart_recommendations
@@ -12,16 +12,38 @@ def manager_menu(user):
         console.print(f"\n[bold cyan]--- Manager Dashboard ({user.user_name}) ---[/bold cyan]")
         console.print("1. View Supplies Inventory")
         console.print("2. Add New Supply Item")
-        console.print("3. Logout / Switch User")
+        console.print("3. View Active Shipments & Tracking")
+        console.print("4. View System Users")
+        console.print("5. Logout / Switch User")
         
-        choice = input("Choose an option (1-3): ").strip()
+        choice = input("Choose an option (1-5): ").strip()
         
         if choice == "1":
             supplies = view_supplies()
             display_supplies_table(supplies)
+            
         elif choice == "2":
             add_supply_item()
+            
         elif choice == "3":
+            console.print("\n[bold yellow]--- Active Shipments & Tracking ---[/bold yellow]")
+            console.print("🚚 Shipment #SHP-101: 50x Advanced First Aid Kit -> Riyadh Zone [green]Delivered[/green]")
+            console.print("🚁 Shipment #SHP-102: 25x Heavy-Duty Tents -> Tabuk Zone [yellow]In Transit (70%)[/yellow]")
+            console.print("🚛 Shipment #SHP-103: 150x Drinking Water -> Jeddah Zone [cyan]Preparing[/cyan]")
+            
+        elif choice == "4":
+            console.print("\n[bold yellow]--- Registered System Users ---[/bold yellow]")
+            users = load_users()
+            if users:
+                for idx, u in enumerate(users, 1):
+                    role_str = u.get('role', 'general')
+                    username = u.get('user_name', 'Unknown')
+                    email = u.get('email', 'N/A')
+                    console.print(f"{idx}. User: [cyan]{username}[/cyan] | Role: [green]{role_str}[/green] | Email: {email}")
+            else:
+                console.print("[yellow]No registered users found in database yet.[/yellow]")
+                
+        elif choice == "5":
             console.print("[yellow]Logging out...[/yellow]")
             break
         else:

@@ -1,24 +1,15 @@
 [
-    {
-        "user_name": "hail",
-        "email": "asawaq135@gmail.com",
-        "role": "dispatcher",
-        "assigned_shipments": []
-    },
-    {
-        "user_name": "fayz",
-        "email": "fayz@gmail.com",
-        "role": "manager"
-    },
-    {
-        "user_name": "mohammed",
-        "email": "mohammed@gmail.com",
-        "role": "field_supervisor",
-        "crisis_zone": "tabuk"
-    },
-    {
-        "user_name": "amer",
-        "email": "amer@gmail.com",
-        "role": "fleet_officer"
-    }
+  {
+    "user_name": "hail",
+    "email": "asawaq135@gmail.com",
+    "password": "Hail1422",
+    "role": "manager",
+    "department": "Operations"
+  },
+  {
+    "user_name": "fayz",
+    "email": "amer@gmail.com",
+    "password": "123",
+    "role": "dispatcher"
+  }
 ]
