@@ -1,162 +1,180 @@
 
 from datetime import datetime
-from html import escape                  
-
+from pathlib import Path
+from html import escape
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import (
-    getSampleStyleSheet,
-    ParagraphStyle,
-)
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import cm
 from reportlab.platypus import (
     SimpleDocTemplate,
     Paragraph,
     Spacer,
-    PageBreak,
+    HRFlowable,
 )
 
 
 class PDFReport:
-
     def generate_report(self, news_sections, weather_data=None):
         filename = (
-            "daily_report_"
-            + datetime.now().strftime("%Y%m%d_%H%M%S")
-            + ".pdf"
+            f"daily_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         )
+        output_path = Path(__file__).resolve().parent / filename
 
-        document = SimpleDocTemplate(
-            filename,
-            pagesize=A4,
-            rightMargin=2 * cm,
-            leftMargin=2 * cm,
-            topMargin=2 * cm,
-            bottomMargin=2 * cm,
-        )
-
-        styles = getSampleStyleSheet()
-
-        title_style = ParagraphStyle(
-            "ReportTitle",
-            parent=styles["Title"],
-            alignment=TA_CENTER,
-            textColor=colors.darkblue,
-            fontSize=20,
-            spaceAfter=15,
-        )
-
-        story = []
-
-        story.append(
-            Paragraph("DAILY NEWS &amp; WEATHER REPORT", title_style)
-        )
-
-        story.append(
-            Paragraph(
-                "Generated: "
-                + datetime.now().strftime("%d %B %Y, %H:%M"),
-                styles["Normal"],
-            )
-        )
-
-        story.append(Spacer(1, 20))
-
-        story.append(
-            Paragraph("NEWS SUMMARY", styles["Heading1"])
-        )
-
-        if not news_sections:
-            story.append(
-                Paragraph("No news was collected.", styles["BodyText"])
+        try:
+            doc = SimpleDocTemplate(
+                str(output_path),
+                pagesize=A4,
+                rightMargin=2 * cm,
+                leftMargin=2 * cm,
+                topMargin=2 * cm,
+                bottomMargin=2 * cm,
             )
 
-        for category, articles in news_sections.items():
-            story.append(
-                Paragraph(escape(category), styles["Heading2"])
+            styles = getSampleStyleSheet()
+
+            title_style = ParagraphStyle(
+                "ReportTitle",
+                parent=styles["Title"],
+                fontSize=22,
+                leading=28,
+                alignment=TA_CENTER,
+                textColor=colors.HexColor("#1565C0"),
+                spaceAfter=10,
             )
 
-            for number, article in enumerate(articles, start=1):
-                title = escape(article.get("title") or "No title")
-                description = (
-                    article.get("description")
-                    or article.get("content")
-                    or "No summary available for this article."
-                )
-                description = escape(description)
+            heading_style = ParagraphStyle(
+                "CategoryHeading",
+                parent=styles["Heading1"],
+                textColor=colors.HexColor("#1565C0"),
+                spaceBefore=14,
+                spaceAfter=8,
+            )
 
-                source = escape(
-                    article.get("source", {}).get("name", "Unknown")
-                )
+            article_style = ParagraphStyle(
+                "ArticleTitle",
+                parent=styles["Heading2"],
+                fontSize=11,
+                leading=15,
+                spaceBefore=8,
+                spaceAfter=4,
+            )
 
+            body_style = ParagraphStyle(
+                "ReportBody",
+                parent=styles["BodyText"],
+                fontSize=9,
+                leading=13,
+                spaceAfter=5,
+            )
+
+            story = [
+                Paragraph("Daily News &amp; Weather", title_style),
+                Paragraph(
+                    "Generated: "
+                    + datetime.now().strftime("%d %B %Y, %H:%M"),
+                    body_style,
+                ),
+                Spacer(1, 8),
+                HRFlowable(
+                    width="100%",
+                    thickness=1,
+                    color=colors.HexColor("#1565C0"),
+                ),
+            ]
+
+            for category, articles in (news_sections or {}).items():
                 story.append(
-                    Paragraph(
-                        f"<b>{number}. {title}</b>",
-                        styles["BodyText"],
-                    )
+                    Paragraph(escape(str(category)), heading_style)
                 )
 
-                story.append(Spacer(1, 5))
-
-                story.append(
-                    Paragraph(
-                        f"<b>Source:</b> {source}",
-                        styles["BodyText"],
+                if not articles:
+                    story.append(
+                        Paragraph("No articles available.", body_style)
                     )
-                )
+                    continue
 
-                story.append(Paragraph(description, styles["BodyText"]))
+                for number, article in enumerate(articles, start=1):
+                    title = article.get("title") or "No title"
+                    source = article.get("source") or {}
 
-                link = article.get("url", "")
+                    if isinstance(source, dict):
+                        source_name = source.get("name", "Unknown")
+                    else:
+                        source_name = str(source)
 
-                if link.startswith(("https://", "http://")):
-                    safe_link = escape(link, quote=True)
+                    description = (
+                        article.get("description")
+                        or "No description available."
+                    )
+
                     story.append(
                         Paragraph(
-                            f'<link href="{safe_link}" '
-                            'color="blue">Read full article</link>',
-                            styles["BodyText"],
+                            f"{number}. {escape(str(title))}",
+                            article_style,
+                        )
+                    )
+                    story.append(
+                        Paragraph(
+                            f"<b>Source:</b> {escape(str(source_name))}",
+                            body_style,
+                        )
+                    )
+                    story.append(
+                        Paragraph(
+                            f"<b>Description:</b> "
+                            f"{escape(str(description))}",
+                            body_style,
                         )
                     )
 
-                story.append(Spacer(1, 12))
+                    link = article.get("url") or ""
 
-        story.append(Spacer(1, 15))
-        story.append(
-            Paragraph("WEATHER SUMMARY", styles["Heading1"])
-        )
+                    if link.startswith(("https://", "http://")):
+                        story.append(
+                            Paragraph(
+                                f'<link href="{escape(link, quote=True)}" '
+                                'color="blue">Read full article</link>',
+                                body_style,
+                            )
+                        )
 
-        if weather_data:
-            weather_rows = [
-                ("City", weather_data.get("city", "Unknown")),
-                ("Condition", weather_data.get("condition", "Unknown")),
-                ("Temperature", f"{weather_data.get('temperature', 'N/A')} °C"),
-                ("Feels like", f"{weather_data.get('feels_like', 'N/A')} °C"),
-                ("Humidity", f"{weather_data.get('humidity', 'N/A')}%"),
-                ("Wind speed", f"{weather_data.get('wind_speed', 'N/A')} km/h"),
-                ("Updated", weather_data.get("time", "Unknown")),
-            ]
+                    story.append(Spacer(1, 6))
 
-            for label, value in weather_rows:
+            if weather_data:
                 story.append(
-                    Paragraph(
-                        f"<b>{escape(label)}:</b> {escape(str(value))}",
-                        styles["BodyText"],
-                    )
+                    Paragraph("Weather Report", heading_style)
                 )
-                story.append(Spacer(1, 6))
 
-        else:
-            story.append(
-                Paragraph(
-                    "No weather data collected. Select Check Weather "
-                    "before generating the report to include it.",
-                    styles["BodyText"],
-                )
-            )
+                fields = [
+                    ("City", "city", ""),
+                    ("Condition", "condition", ""),
+                    ("Temperature", "temperature", " °C"),
+                    ("Feels like", "feels_like", " °C"),
+                    ("Humidity", "humidity", "%"),
+                    ("Wind speed", "wind_speed", " km/h"),
+                    ("Updated at", "time", ""),
+                ]
 
-        document.build(story)
+                for label, key, suffix in fields:
+                    value = weather_data.get(key)
 
-        return filename
+                    if value is not None:
+                        story.append(
+                            Paragraph(
+                                f"<b>{escape(label)}:</b> "
+                                f"{escape(str(value))}{suffix}",
+                                body_style,
+                            )
+                        )
+
+            doc.build(story)
+
+            print(f"\nPDF saved successfully:\n{output_path}")
+            return str(output_path)
+
+        except Exception as err:
+            print(f"\nPDF generation failed: {err}")
+            return None

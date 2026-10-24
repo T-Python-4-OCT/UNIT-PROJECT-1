@@ -1,3 +1,4 @@
+
 import os
 from datetime import datetime
 
@@ -23,25 +24,39 @@ def format_arabic(text):
 
 def format_date(value):
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00")).strftime("%d %b %Y, %H:%M")
+        return datetime.fromisoformat(
+            value.replace("Z", "+00:00")
+        ).strftime("%d %b %Y, %H:%M")
     except (ValueError, AttributeError):
         return "Date unavailable"
 
 
-def print_article(number, title, link, source=None, published=None, color="cyan"):
+def print_article(
+    number,
+    title,
+    link,
+    source=None,
+    published=None,
+    color="cyan",
+):
     lines = [Text(title, style="bold white")]
-
     meta = Text()
+
     if source:
         meta.append(source, style=f"bold {color}")
+
     if source and published:
         meta.append("  •  ", style="dim")
+
     if published:
         meta.append(published, style="dim")
+
     if meta.plain:
         lines.append(meta)
 
-    lines.append(Text(link, style="blue underline", overflow="fold"))
+    lines.append(
+        Text(link, style="blue underline", overflow="fold")
+    )
 
     console.print(
         Panel(
@@ -52,7 +67,6 @@ def print_article(number, title, link, source=None, published=None, color="cyan"
             padding=(0, 2),
         )
     )
-
 
 
 def show_newsapi(query, heading, color):
@@ -73,15 +87,23 @@ def show_newsapi(query, heading, color):
     try:
         with console.status(
             f"[{color}]Loading {heading.lower()}...[/]",
-            spinner="dots"
+            spinner="dots",
         ):
             response = requests.get(
-                NEWS_API_URL, params=params, timeout=10
+                NEWS_API_URL,
+                params=params,
+                timeout=10,
             )
             response.raise_for_status()
-            articles = response.json().get("articles", [])
+            data = response.json()
 
-    except requests.exceptions.RequestException as err:
+        if data.get("status") != "ok":
+            error(data.get("message", "News service failed."))
+            return []
+
+        articles = data.get("articles", [])
+
+    except (requests.exceptions.RequestException, ValueError) as err:
         error(f"The news request failed: {err}")
         return []
 
@@ -92,11 +114,18 @@ def show_newsapi(query, heading, color):
     section(heading, color)
 
     for number, article in enumerate(articles, start=1):
+        source = article.get("source") or {}
+
+        if isinstance(source, dict):
+            source_name = source.get("name", "Unknown")
+        else:
+            source_name = str(source)
+
         print_article(
             number,
             article.get("title") or "No title",
             article.get("url") or "No link",
-            source=article.get("source", {}).get("name", "Unknown"),
+            source=source_name,
             published=format_date(article.get("publishedAt")),
             color=color,
         )
@@ -112,29 +141,13 @@ def show_top_news():
     )
 
 
-def show_sports_news():
-    return show_newsapi(
-        "sports OR football OR soccer",
-        "SPORTS NEWS",
-        "green",
-    )
-
-
-def show_technology_news():
-    return show_newsapi(
-        "technology OR artificial intelligence OR programming",
-        "TECHNOLOGY NEWS",
-        "magenta",
-    )
-
-
 def show_saudi_news():
     url = "https://www.alwatan.com.sa/rssFeed/1"
 
     try:
         with console.status(
             "[yellow]Loading Saudi news...[/]",
-            spinner="dots"
+            spinner="dots",
         ):
             response = requests.get(url, timeout=15)
             response.raise_for_status()
@@ -147,8 +160,10 @@ def show_saudi_news():
     articles = []
 
     for item in feed.entries[:5]:
+        raw_title = item.get("title", "No title")
+
         articles.append({
-            "title": format_arabic(item.get("title", "No title")),
+            "title": format_arabic(raw_title),
             "description": item.get("summary", ""),
             "url": item.get("link", ""),
             "source": {"name": "Al Watan"},
@@ -172,3 +187,35 @@ def show_saudi_news():
         )
 
     return articles
+
+
+def show_sports_news():
+    return show_newsapi(
+        "sports OR football OR soccer",
+        "SPORTS NEWS",
+        "green",
+    )
+
+
+def show_technology_news():
+    return show_newsapi(
+        "technology OR artificial intelligence OR programming",
+        "TECHNOLOGY NEWS",
+        "magenta",
+    )
+
+
+def search_news():
+    keyword = console.input(
+        "[bold cyan]Enter a keyword to search for:[/] "
+    ).strip()
+
+    if not keyword:
+        info("Please enter a keyword.")
+        return []
+
+    return show_newsapi(
+        keyword,
+        f"SEARCH RESULTS: {keyword.upper()}",
+        "cyan",
+    )
