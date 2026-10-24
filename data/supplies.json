@@ -1,0 +1,44 @@
+[
+  {
+    "item_id": "SUPP-001",
+    "name": "Advanced First Aid Kit",
+    "category": "Medical",
+    "quantity": 45,
+    "unit_weight_kg": 3.0
+  },
+  {
+    "item_id": "SUPP-002",
+    "name": "Emergency Surgical Masks (Box)",
+    "category": "Medical",
+    "quantity": 8,
+    "unit_weight_kg": 1.2
+  },
+  {
+    "item_id": "SUPP-003",
+    "name": "Drinking Water Bottles (Pack)",
+    "category": "Food",
+    "quantity": 150,
+    "unit_weight_kg": 12.0
+  },
+  {
+    "item_id": "SUPP-004",
+    "name": "High-Energy Protein Rations",
+    "category": "Food",
+    "quantity": 5,
+    "unit_weight_kg": 5.5
+  },
+  {
+    "item_id": "SUPP-005",
+    "name": "Heavy-Duty All-Weather Tent",
+    "category": "Shelter",
+    "quantity": 25,
+    "unit_weight_kg": 18.5
+  },
+  {
+    "item_id": "SUPP-006",
+    "name": "Thermal Emergency Blankets",
+    "category": "Shelter",
+    "quantity": 60,
+    "unit_weight_kg": 4.0
+  }
+]
