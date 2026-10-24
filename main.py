@@ -1,58 +1,202 @@
 from trips import plan_trip
-from storage import load_trips
+from storage import load_trips, update_trip, delete_trip
+from traffic_data import estimate_trip_duration , suggest_departure_time
+from datetime import datetime
+from transport_advisor import compare_transport_options
+from traffic_stats import display_traffic_report
+
 def display_menu():
-     print("\n"+"="*40)
-     print("Riyadh Smart Trip")
-     print("="*40)
-     print("1. Plan a Trip")
-     print("2. View Saved Trips")
-     print("3. View Trip Report")
-     print("4. Exit")
-     print("="*40)
-     
-     
+    print("\n" + "=" * 46)
+    print("          RIYADH SMART TRIP")
+    print("   Your Smart Journey Planning Assistant")
+    print("=" * 46)
+
+    print("\n  MAIN MENU")
+    print("  " + "-" * 42)
+    print("  [1]  Plan a Trip")
+    print("  [2]  View Saved Trips")
+    print("  [3]  View Trip Report")
+    print("  [4]  Update a Trip")
+    print("  [5]  Delete a Trip")
+    print("  [6]  Compare Transport Options")
+    print("  [7]  Suggest Departure Time")
+    print("  [8]  Exit")
+    print("  " + "-" * 42)
+
 def main():
     while True:
         display_menu()
-        
-        choice=input("Enter your choice (1-4):").strip()
-        
-        if choice=="1":
-            trip=plan_trip()
 
+        choice = input("Enter your choice (1-8): ").strip()
+
+        if choice == "1":
+            plan_trip()
+
+        
         elif choice == "2":
+            trips = load_trips()
+
+            print("\n" + "=" * 46)
+            print("             SAVED TRIPS")
+            print("=" * 46)
+
+            if not trips:
+                print("  No saved trips found!")
+            else:
+                for index, trip in enumerate(trips, start=1):
+                    print(f"\n  TRIP #{index}")
+                    print("  " + "-" * 42)
+                    print(f"  From       : {trip['origin']}")
+                    print(f"  To         : {trip['destination']}")
+                    print(f"  Departure  : {trip['departure_time']}")
+                    print(f"  Traffic    : {trip['traffic_period']}")
+                    print(f"  Duration   : {trip['estimated_minutes']} minutes")
+
+            print("=" * 46)
+
+        
+        elif choice == "3":
+            trips = load_trips()
+
+            print("\n" + "=" * 46)
+            print("              TRIP REPORT")
+            print("=" * 46)
+
+            if not trips:
+                print("  No saved trips available for reporting.")
+            else:
+                total = len(trips)
+                average = sum(
+                    trip["estimated_minutes"] for trip in trips
+                ) / total
+
+                print(f"  Total Saved Trips : {total}")
+                print(f"  Average Duration  : {average:.1f} minutes")
+
+                fastest = min(
+                    trips, key=lambda trip: trip["estimated_minutes"]
+                )
+                longest = max(
+                    trips, key=lambda trip: trip["estimated_minutes"]
+                )
+
+                print("\n  FASTEST TRIP")
+                print(f"  {fastest['origin']} -> {fastest['destination']}")
+                print(f"  {fastest['estimated_minutes']} minutes")
+
+                print("\n  LONGEST TRIP")
+                print(f"  {longest['origin']} -> {longest['destination']}")
+                print(f"  {longest['estimated_minutes']} minutes")
+
+            print("=" * 46)
+            display_traffic_report()
+            
+        elif choice == "4":
             trips = load_trips()
 
             if not trips:
                 print("\nNo saved trips found!")
+                continue
 
-            else:
-                print("\n--- Saved Trips ---")
+            for index, trip in enumerate(trips, start=1):
+                print(f"{index}. {trip['origin']} -> {trip['destination']}")
 
-                for index, trip in enumerate(trips, start=1):
-                    print(f"\nTrip {index}")
-                    print(f"From: {trip['origin']}")
-                    print(f"To: {trip['destination']}")
-                    print(f"Departure: {trip['departure_time']}")
-                    print(f"Traffic period: {trip['traffic_period']}")
-                    print(f"Estimated duration: {trip['estimated_minutes']} Minutes")
-            
-        elif choice=="3":
-            print("\nTrip report selected!")
-        
-        elif choice=="4":
+            try:
+                number = int(input("Enter trip number to update: "))
+
+                if not 1 <= number <= len(trips):
+                    print("Invalid trip number!")
+                    continue
+
+                new_time = input("Enter new departure time (HH:MM): ").strip()
+                datetime.strptime(new_time, "%H:%M")
+
+                trip = trips[number - 1]
+
+                period, duration = estimate_trip_duration(
+                    trip["base_minutes"], new_time
+                )
+
+                update_trip(
+                    number - 1,
+                    {
+                        "departure_time": new_time,
+                        "traffic_period": period,
+                        "estimated_minutes": duration
+                    }
+                )
+
+            except ValueError:
+                print("Invalid time!")
+
+        elif choice == "5":
+            trips = load_trips()
+
+            if not trips:
+                print("\nNo saved trips found!")
+                continue
+
+            for index, trip in enumerate(trips, start=1):
+                print(f"{index}. {trip['origin']} -> {trip['destination']}")
+
+            try:
+                number = int(input("Enter trip number to delete: "))
+
+                if not 1 <= number <= len(trips):
+                    print("Invalid trip number!")
+                    continue
+
+                delete_trip(number - 1)
+
+            except ValueError:
+                print("Invalid trip number!")
+                
+         
+      
+        elif choice == "6":
+            origin = input("Enter starting location: ").strip()
+            destination = input("Enter destination: ").strip()
+            departure_time = input("Enter departure time (HH:MM): ").strip()
+
+            if not origin or not destination:
+                print("\nError: Locations cannot be empty.")
+                continue
+
+            try:
+                datetime.strptime(departure_time, "%H:%M")
+                compare_transport_options(
+                    origin, destination, departure_time
+                )
+            except ValueError:
+                print("\nInvalid time. Please use HH:MM, for example 08:30.")
+
+    
+        elif choice =="7":
+            try:
+                base_minutes=int(input("Enter base trip duration in  minutes:"))
+                arrival_time=input("Enter desired arrival time (HH:MM):").strip()
+                
+                datetime.strptime(arrival_time,"%H:%M")
+                
+                if base_minutes <=0:
+                    print("Trip duration must be greater than zero.")
+                    continue
+                
+                suggest_departure_time(base_minutes, arrival_time)
+                
+            except ValueError:
+                print("Please enter a valid duration and time .")
+                    
+                
+                
+                
+        elif choice == "8":
             print("\nThank you for using Riyadh Smart Trip!")
             break
-            
+
         else:
-            print("\nInvalid,Please enter a number from (1-4)")
-            
-            
-            
+            print("\nInvalid choice, Please enter a number from 1 to 8. ")
 
-if __name__=="__main__":
-    main() 
-    
-    
-    
 
+if __name__ == "__main__":
+    main()

@@ -1,9 +1,9 @@
-
+from models import Trip
 from datetime import datetime
 from traffic_data import estimate_trip_duration
 import json
 from storage import save_trip
-
+from transport_advisor import compare_transport_options
 
 def load_routes():
     with open("routes.json", "r", encoding="utf-8") as file:
@@ -51,23 +51,42 @@ def plan_trip():
         base_minutes, departure_time
     )
 
-    trip = {
-        "origin": origin,
-        "destination": destination,
-        "departure_time": departure_time,
-        "base_minutes": base_minutes,
-        "traffic_period": period,
-        "estimated_minutes": estimated_minutes
-    }
+    trip = Trip(
+        origin,
+        destination,
+        departure_time,
+        base_minutes,
+        period,
+        estimated_minutes
+)
     
-    save_trip(trip)
+    
+    save_trip({
+        "origin": trip.origin,
+        "destination": trip.destination,
+        "departure_time": trip.departure_time,
+        "base_minutes": trip.base_minutes,
+        "traffic_period": trip.traffic_period,
+        "estimated_minutes": trip.estimated_minutes
+})
     
 
-    print("\n ----Trip Estimate----")
-    print(f"from:{origin}")
-    print(f"To: {destination}")
-    print(f"Departure: {departure_time}")
-    print(f"Traffic period: {period}")
-    print(f"Estimated duration: {estimated_minutes} Minutes")
+    
+    print("\n" + "=" * 40)
+    print("           TRIP SUMMARY")
+    print("=" * 40)
+    print(f"  From              : {trip.origin}")
+    print(f"  To                : {trip.destination}")
+    print(f"  Departure Time    : {trip.departure_time}")
+    print(f"  Traffic Condition : {trip.traffic_period}")
+    print(f"  Estimated Duration: {trip.estimated_minutes} minutes")
+    print("=" * 40)
+    print("  Trip saved successfully!")
+    
+    compare_transport_options(
+        trip.origin,
+        trip.destination,
+        trip.departure_time
+    )
 
     return trip

@@ -1,0 +1,272 @@
+[
+    {
+        "name": "Dr Sulaiman Al Habib",
+        "name_ar": "د.سليمان الحبيب",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.81155379383345,
+        "longitude": 46.62654386725997,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "KAFD",
+        "name_ar": "المركز المالي",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.76800392512061,
+        "longitude": 46.64364447641301,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Al Murooj",
+        "name_ar": "المروج",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.75474607607529,
+        "longitude": 46.65422135694412,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "King Fahad District",
+        "name_ar": "حي الملك فهد",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.74491442205136,
+        "longitude": 46.65932671648558,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Al Wurud 2",
+        "name_ar": "الورود 2",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.72172740595173,
+        "longitude": 46.67112888545265,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Al Urubah",
+        "name_ar": "العروبة",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.71321629407025,
+        "longitude": 46.67536633589778,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "King Fahad Library",
+        "name_ar": "مكتبة الملك فهد",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.68969024261919,
+        "longitude": 46.6873653489969,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Ministry of Interior",
+        "name_ar": "وزارة الداخلية",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.67424257882058,
+        "longitude": 46.6950479643063,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Passport Department",
+        "name_ar": "الجوازات",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.65956045632056,
+        "longitude": 46.70439494253413,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Skirinah",
+        "name_ar": "سكيرينة",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.61755176745255,
+        "longitude": 46.72540678332071,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Al Iman Hospital",
+        "name_ar": "مستشفى الايمان",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.60100804986984,
+        "longitude": 46.7352437098454,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Al Aziziah",
+        "name_ar": "العزيزية",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.58613720640573,
+        "longitude": 46.76119639347265,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Ad Dar Al Baida",
+        "name_ar": "الدار البيضاء",
+        "type": "Metro Station",
+        "metro_line": "Blue line",
+        "latitude": 24.55958910448547,
+        "longitude": 46.77654712393894,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "King Salman Oasis",
+        "name_ar": "واحة الملك سلمان",
+        "type": "Metro Station",
+        "metro_line": "Red line",
+        "latitude": 24.71662928533406,
+        "longitude": 46.63877718460973,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "stc",
+        "name_ar": "stc",
+        "type": "Metro Station",
+        "metro_line": "Red line",
+        "latitude": 24.72655843698455,
+        "longitude": 46.66654513995131,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Al Wurud",
+        "name_ar": "الورود",
+        "type": "Metro Station",
+        "metro_line": "Red line",
+        "latitude": 24.73304010012863,
+        "longitude": 46.67749338636222,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Khalid Bin Alwaleed Road",
+        "name_ar": "طريق خالد بن الوليد",
+        "type": "Metro Station",
+        "metro_line": "Red line",
+        "latitude": 24.76705804271704,
+        "longitude": 46.75897415966957,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "King Fahad Sport City",
+        "name_ar": "مدينة الملك فهد الرياضية",
+        "type": "Metro Station",
+        "metro_line": "Red line",
+        "latitude": 24.79243565532622,
+        "longitude": 46.83699440610236,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Aishah bint Abi Bakr Street",
+        "name_ar": "شارع عائشة بنت ابي بكر",
+        "type": "Metro Station",
+        "metro_line": "Orange line",
+        "latitude": 24.60052873723215,
+        "longitude": 46.64374907224175,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Dhahrat Al Badiah",
+        "name_ar": "ظهره البديعة",
+        "type": "Metro Station",
+        "metro_line": "Orange line",
+        "latitude": 24.6073754409049,
+        "longitude": 46.65497375326466,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Sultanah",
+        "name_ar": "سلطانه",
+        "type": "Metro Station",
+        "metro_line": "Orange line",
+        "latitude": 24.61481195473457,
+        "longitude": 46.6861039999333,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Al Jarradiyah",
+        "name_ar": "الجرادية",
+        "type": "Metro Station",
+        "metro_line": "Orange line",
+        "latitude": 24.61845741064425,
+        "longitude": 46.69821822387604,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Al Malaz",
+        "name_ar": "الملز",
+        "type": "Metro Station",
+        "metro_line": "Orange line",
+        "latitude": 24.66109427633321,
+        "longitude": 46.74505406619882,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Al Rajhi Grand Mosque",
+        "name_ar": "جامع الراجحي",
+        "type": "Metro Station",
+        "metro_line": "Orange line",
+        "latitude": 24.67971156503735,
+        "longitude": 46.77849737862974,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Harun Ar Rashid Road",
+        "name_ar": "طريق هارون الرشيد",
+        "type": "Metro Station",
+        "metro_line": "Orange line",
+        "latitude": 24.68608501392891,
+        "longitude": 46.79601710504106,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "KAFD",
+        "name_ar": "المركز المالي",
+        "type": "Metro Station",
+        "metro_line": "Yellow line",
+        "latitude": 24.7681786337211,
+        "longitude": 46.64360617754577,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "National Museum",
+        "name_ar": "المتحف الوطني",
+        "type": "Metro Station",
+        "metro_line": "Green line",
+        "latitude": 24.64607279558212,
+        "longitude": 46.71427983670233,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "GOSI",
+        "name_ar": "التأمينات الاجتماعية",
+        "type": "Metro Station",
+        "metro_line": "Green line",
+        "latitude": 24.686692275556,
+        "longitude": 46.71819918138066,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "Officers Club",
+        "name_ar": "نادي الضباط",
+        "type": "Metro Station",
+        "metro_line": "Green line",
+        "latitude": 24.69752283785252,
+        "longitude": 46.71802902980748,
+        "data_source": "RCRC Open Data"
+    },
+    {
+        "name": "KAFD",
+        "name_ar": "المركز المالي",
+        "type": "Metro Station",
+        "metro_line": "Purple line",
+        "latitude": 24.7681786337211,
+        "longitude": 46.64360617754577,
+        "data_source": "RCRC Open Data"
+    }
+]

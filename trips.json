@@ -2,7 +2,31 @@
     {
         "origin": "Al Narjis",
         "destination": "KAFD",
-        "departure_time": "08:30",
+        "departure_time": "2:00",
+        "base_minutes": 20,
+        "traffic_period": "Off-Peak",
+        "estimated_minutes": 20
+    },
+    {
+        "origin": "al narjis",
+        "destination": "kafd",
+        "departure_time": "8:30",
+        "base_minutes": 20,
+        "traffic_period": "Morning Peak",
+        "estimated_minutes": 34
+    },
+    {
+        "origin": "al narjis",
+        "destination": "kafd",
+        "departure_time": "8:30",
+        "base_minutes": 20,
+        "traffic_period": "Morning Peak",
+        "estimated_minutes": 34
+    },
+    {
+        "origin": "al narjis",
+        "destination": "kafd",
+        "departure_time": "8:30",
         "base_minutes": 20,
         "traffic_period": "Morning Peak",
         "estimated_minutes": 34

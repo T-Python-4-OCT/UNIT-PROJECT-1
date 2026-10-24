@@ -1,0 +1,21 @@
+
+{
+    "city": "Riyadh",
+    "year": 2025,
+    "source": "TomTom Traffic Index",
+    "data_type": "Historical statistics",
+    "average_congestion_percent": 43.7,
+    "average_speed_kmh": 48.4,
+    "average_speed_rush_hour_kmh": 28.5,
+    "average_10km_trip_minutes": 16.8,
+    "morning_rush_hour": {
+        "average_congestion_percent": 50.2,
+        "average_speed_kmh": 33.5,
+        "travel_time_10km_minutes": 17.92
+    },
+    "evening_rush_hour": {
+        "average_congestion_percent": 90.4,
+        "average_speed_kmh": 24.8,
+        "travel_time_10km_minutes": 24.2
+    }
+}
