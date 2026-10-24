@@ -5,11 +5,10 @@ from colorama import init
 from cinema.config.settings import APP_NAME
 from cinema.screens.booking_screen import new_booking
 from cinema.screens.help_screen import show_help
-from cinema.screens.insights_screen import show_recommendations
+from cinema.screens.insights_screen import show_recommendations, show_statistics
 from cinema.screens.my_bookings_screen import my_bookings_menu
 from cinema.storage.bookings_file import ensure_folders
-from cinema.ui.decorators import pause_after
-from cinema.ui.display import clear_screen, print_info, print_title
+from cinema.ui.display import clear_screen, print_title
 from cinema.ui.inputs import ask_menu
 
 MAIN_MENU = [
@@ -20,11 +19,6 @@ MAIN_MENU = [
     "How to use",
     "Exit",
 ]
-
-
-@pause_after
-def show_coming_soon() -> None:
-    print_info("This feature is coming soon...")
 
 
 def run() -> None:
@@ -41,7 +35,7 @@ def run() -> None:
         elif choice == 3:
             show_recommendations()
         elif choice == 4:
-            show_coming_soon()
+            show_statistics()
         elif choice == 5:
             show_help()
         elif choice == 6:
