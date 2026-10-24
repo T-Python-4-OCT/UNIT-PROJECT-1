@@ -4,14 +4,17 @@ from prompt_toolkit.layout.containers import HSplit, Window
 from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
+
 from courses.course_manager import browse_courses
 from courses.course_search import search_course
 from auth.users import login_page, create_account_page
+from auth.admin import admin_page
 from auth.trainee import trainee_page
 from auth.trainer import trainer_page
+from auth.trainers import view_trainers
 
 
-choices = [
+base_choices = [
     "Log In",
     "Create Trainee Account",
     "Browse Training Courses",
@@ -19,11 +22,11 @@ choices = [
     "View Trainers",
     "Verify Certificate",
     "About the Academy",
-    "Log Out",
     "Exit",
 ]
 
 selected = 0
+choices = base_choices.copy()
 
 
 def get_menu():
@@ -91,36 +94,83 @@ def show_menu():
 
 
 def main():
-    global selected
+    global selected, choices
+
     logged_in_user = None
 
     while True:
+        if logged_in_user is None:
+            choices = base_choices.copy()
+        else:
+            choices = [
+                "Browse Training Courses",
+                "Search for a Course",
+                "View Trainers",
+                "Verify Certificate",
+                "About the Academy",
+                "Log Out",
+                "Exit",
+            ]
+
+            if logged_in_user.role == "admin":
+                choices.insert(0, "Admin Dashboard")
+
+            elif logged_in_user.role == "trainer":
+                choices.insert(0, "Trainer Dashboard")
+
+            elif logged_in_user.role == "trainee":
+                choices.insert(0, "My Trainee Dashboard")
+
+        selected = min(selected, len(choices) - 1)
+
         print("\n" + "=" * 50)
+
+        if logged_in_user is not None:
+            print(f"    Welcome, {logged_in_user.full_name}!")
+
         print("    Learn with Excellence, Grow with Skills")
         print("=" * 50)
 
         choice = show_menu()
 
         if choice == "Log In":
-            if logged_in_user is not None:
-                print("\nYou are already logged in.")
-            else:
-                user = login_page()
+            user = login_page()
 
-                if user is not None:
-                    logged_in_user = user
+            if user is not None:
+                logged_in_user = user
 
-                    if user.role == "trainee":
-                        trainee_page(user)
+                if user.role == "admin":
+                    result = admin_page(user)
+
+                    if result == "logout":
                         logged_in_user = None
 
-                    elif user.role == "trainer":
-                        trainer_page(user)
-                        logged_in_user = None
+                elif user.role == "trainer":
+                    trainer_page(user)
 
-                    else:
-                        print(f"\nWelcome, {user.full_name}!")
-                        print(f"Role: {user.role}")
+                elif user.role == "trainee":
+                    trainee_page(user)
+
+                else:
+                    print("\nUnsupported user role.")
+                    logged_in_user = None
+
+        elif choice == "Admin Dashboard":
+            if logged_in_user is not None and logged_in_user.role == "admin":
+                result = admin_page(logged_in_user)
+
+                if result == "logout":
+                    print(f"\nGoodbye, {logged_in_user.full_name}!")
+                    logged_in_user = None
+                    print("You have logged out successfully.")
+
+        elif choice == "Trainer Dashboard":
+            if logged_in_user is not None and logged_in_user.role == "trainer":
+                trainer_page(logged_in_user)
+
+        elif choice == "My Trainee Dashboard":
+            if logged_in_user is not None and logged_in_user.role == "trainee":
+                trainee_page(logged_in_user)
 
         elif choice == "Create Trainee Account":
             create_account_page()
@@ -132,7 +182,7 @@ def main():
             search_course()
 
         elif choice == "View Trainers":
-            print("\n[+] Loading Trainers List...")
+            view_trainers()
 
         elif choice == "Verify Certificate":
             print("\n[+] Certificate Verification Portal...")
@@ -150,8 +200,6 @@ def main():
                 print(f"\nGoodbye, {logged_in_user.full_name}!")
                 logged_in_user = None
                 print("You have logged out successfully.")
-            else:
-                print("\nYou are not logged in.")
 
         elif choice == "Exit" or choice is None:
             print("\nThank you for using our system. Goodbye!")

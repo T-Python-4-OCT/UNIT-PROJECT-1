@@ -1,0 +1,58 @@
+[
+    {
+        "id": 1,
+        "course_id": 2,
+        "title": "Introduction to Web Development",
+        "description": "Learn the basics of web development.",
+        "order": 1
+    },
+    {
+        "id": 2,
+        "course_id": 2,
+        "title": "HTML Fundamentals",
+        "description": "Learn the structure of web pages using HTML.",
+        "order": 2
+    },
+    {
+        "id": 3,
+        "course_id": 1,
+        "title": "Introduction to Python",
+        "description": "Learn what Python is and how it is used.",
+        "order": 1
+    },
+    {
+        "id": 4,
+        "course_id": 1,
+        "title": "Variables and Data Types",
+        "description": "Learn variables and basic data types in Python.",
+        "order": 2
+    },
+    {
+        "id": 5,
+        "course_id": 1,
+        "title": "Conditions and Loops",
+        "description": "Learn how to use conditions and loops in Python.",
+        "order": 3
+    },
+    {
+        "id": 6,
+        "course_id": 3,
+        "title": "Introduction to Data Analysis",
+        "description": "Understand data analysis and its applications.",
+        "order": 1
+    },
+    {
+        "id": 7,
+        "course_id": 3,
+        "title": "Working with Python Data",
+        "description": "Learn how to organize and process data using Python.",
+        "order": 2
+    },
+    {
+        "id": 8,
+        "course_id": 3,
+        "title": "Data Analysis and Results",
+        "description": "Learn basic techniques for analyzing data and interpreting results.",
+        "order": 3
+    }
+]

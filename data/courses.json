@@ -12,8 +12,8 @@
         "id": 2,
         "title": "Web Development Fundamentals",
         "description": "Learn the basics of web development.",
-        "trainer": "Sara Mohammed",
-        "trainer_id": 2,
+        "trainer": "bb@.com",
+        "trainer_id": 6,
         "duration": "6 weeks",
         "price": 400
     },

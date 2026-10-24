@@ -26,5 +26,19 @@
         "email": "kk@.com",
         "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
         "role": "trainee"
+    },
+    {
+        "id": 5,
+        "full_name": "mm",
+        "email": "mm@.com",
+        "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
+        "role": "admin"
+    },
+    {
+        "id": 6,
+        "full_name": "bb@.com",
+        "email": "bb@.com",
+        "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
+        "role": "trainer"
     }
 ]

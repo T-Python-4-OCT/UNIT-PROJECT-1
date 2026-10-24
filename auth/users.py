@@ -4,6 +4,7 @@ import hashlib
 import questionary
 from models.trainee import Trainee
 from models.trainer import Trainer
+from models.user import User
 
 
 DATA_FOLDER = "data"
@@ -27,7 +28,7 @@ def load_users():
 
 def save_users(users):
     with open(USERS_FILE, "w", encoding="utf-8") as file:
-        json.dump(users, file, indent=4)
+        json.dump(users, file, indent=4, ensure_ascii=False)
 
 
 def hash_password(password):
@@ -139,6 +140,13 @@ def login_page():
                     user["id"],
                     user["full_name"],
                     user["email"]
+                )
+            elif user["role"] == "admin":
+                logged_in_user = User(
+                    user["id"],
+                    user["full_name"],
+                    user["email"],
+                    "admin"
                 )
             else:
                 print("\nThis user role is not supported.")

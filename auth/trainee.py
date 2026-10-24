@@ -10,14 +10,18 @@ from courses.enrollment import enroll_in_course
 from courses.my_courses import view_my_courses
 from courses.enrollment import enroll_in_course
 
-choices = [ "View My Profile", 
-           "Browse Training Courses",
-             "Search for a Course",
-               "Enroll in a Course",
-            "View My Courses", 
-            "View My Attendance",
-              "View My Progress", 
-              "Log Out", ]
+
+choices = [
+    "View My Profile",
+    "Browse Training Courses",
+    "Search for a Course",
+    "Enroll in a Course",
+    "View My Courses",
+    "View My Attendance",
+    "View My Progress",
+    "Back to Main Menu",
+    "Log Out",
+]
 
 selected = 0
 
@@ -130,6 +134,9 @@ def trainee_page(user):
 
         elif choice == "View My Progress":
             print("\nYour training progress will appear here.")
+            
+        elif choice == "Back to Main Menu":
+            return
 
         elif choice == "Log Out" or choice is None:
             print("\nYou have logged out successfully.")
