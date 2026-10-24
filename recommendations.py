@@ -178,6 +178,10 @@ def show_interests():
             f"{interest}"
         )
 
+    print(
+        f"  {YELLOW}0{RESET}. ↩️ Back"
+    )
+
     print()
 
     print(
@@ -201,6 +205,9 @@ def choose_interests():
             + "\n➜ Choose interests separated by commas: "
             + RESET
         ).strip()
+
+        if choice == "0":
+         return None
 
         choices = [
             item.strip()
@@ -731,6 +738,9 @@ def show_other_matches(matches):
 def find_my_destination():
 
     selected_interests = choose_interests()
+
+    if selected_interests is None:
+      return
 
     print()
 

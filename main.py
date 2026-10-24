@@ -213,6 +213,7 @@ def choose_continent():
         )
 
     print()
+    print(f"  {YELLOW}0{RESET}. ↩️ Back")
 
     while True:
         choice = input(
@@ -222,6 +223,8 @@ def choose_continent():
         if choice.isdigit():
             number = int(choice)
 
+            if number == 0:
+             return None
             if 1 <= number <= len(continent_list):
                 return continent_list[number - 1]
 
@@ -263,6 +266,7 @@ def choose_country(continent):
         )
 
     print()
+    print(f"  {YELLOW}0{RESET}. ↩️ Back")
 
     while True:
         choice = input(
@@ -271,6 +275,9 @@ def choose_country(continent):
 
         if choice.isdigit():
             number = int(choice)
+            
+            if number == 0:
+                return None
 
             if 1 <= number <= len(countries):
                 return countries[number - 1]
@@ -326,197 +333,197 @@ def choose_city(country):
 # ============================================================
 
 def explore_country():
-    continent = choose_continent()
-
-    if not continent:
-        return
-
-    country = choose_country(continent)
-
-    if not country:
-        return
-
     while True:
-        print_header(
-            f"🌍 EXPLORE {country['name'].upper()}"
-        )
+        continent = choose_continent()
 
-        print_menu_option(
-            "1",
-            "📖",
-            "Country Information",
-            "Discover what this country is famous for.",
-        )
+        if not continent:
+            return
 
-        print_menu_option(
-            "2",
-            "🍣",
-            "Famous Foods",
-            "Explore popular local dishes.",
-        )
+        while True:
+            country = choose_country(continent)
 
-        print_menu_option(
-            "3",
-            "🎉",
-            "Events & Experiences",
-            "Discover festivals and unique experiences.",
-        )
+            if not country:
+                break
 
-        print_menu_option(
-            "4",
-            "🏯",
-            "Famous Places",
-            "Explore famous cities and attractions.",
-        )
-
-        print_menu_option(
-            "5",
-            "🌤️",
-            "Live Weather",
-            "Check current weather conditions.",
-        )
-
-        print_menu_option(
-            "6",
-            "💰",
-            "Currency",
-            "Check currency and live exchange rate.",
-        )
-
-        print_menu_option(
-            "7",
-            "📅",
-            "Holidays",
-            "View public holidays for 2026.",
-        )
-
-        print_menu_option(
-            "8",
-            "⭐",
-            "Add to Favorites",
-            "Save this country for later.",
-        )
-
-        print_menu_option(
-            "9",
-            "🗑️",
-            "Remove from Favorites",
-            "Remove this country from your favorites.",
-        )
-
-        print_menu_option(
-            "0",
-            "↩️",
-            "Back",
-            "Return to the main menu.",
-        )
-
-        choice = input(
-            f"{CYAN}➜ Choose an option: {RESET}"
-        ).strip()
-
-        if choice == "1":
-            clear_screen()
-            show_destination_info(
-                country["name"]
-            )
-            pause()
-
-        elif choice == "2":
-            clear_screen()
-            show_destination_info(
-                country["name"],
-                section="foods",
-            )
-            pause()
-
-        elif choice == "3":
-            clear_screen()
-            show_destination_info(
-                country["name"],
-                section="events",
-            )
-            pause()
-
-        elif choice == "4":
-            clear_screen()
-            show_destination_info(
-                country["name"],
-                section="places",
-            )
-            pause()
-
-        elif choice == "5":
-            city = choose_city(country)
-
-            if city:
-                clear_screen()
-                show_weather(city)
-                pause()
-
-        elif choice == "6":
-            clear_screen()
-            show_currency(country["name"])
-            pause()
-
-        elif choice == "7":
-            clear_screen()
-            show_holidays(country["name"])
-            pause()
-
-        elif choice == "8":
-            clear_screen()
-
-            if is_favorite(country["name"]):
-                print(
-                    YELLOW +
-                    "⭐ This country is already in your favorites."
-                    + RESET
-                )
-            else:
-                add_favorite(country["name"])
-
-                print(
-                    GREEN +
-                    f"✓ {country['name']} added to favorites!"
-                    + RESET
+            while True:
+                print_header(
+                    f"🌍 EXPLORE {country['name'].upper()}"
                 )
 
-            pause()
-
-        elif choice == "9":
-            clear_screen()
-
-            if is_favorite(country["name"]):
-                remove_favorite(country["name"])
-
-                print(
-                    GREEN +
-                    f"✓ {country['name']} removed from favorites."
-                    + RESET
-                )
-            else:
-                print(
-                    YELLOW +
-                    "ℹ This country is not in your favorites."
-                    + RESET
+                print_menu_option(
+                    "1",
+                    "📖",
+                    "Country Information",
+                    "Discover what this country is famous for.",
                 )
 
-            pause()
+                print_menu_option(
+                    "2",
+                    "🍣",
+                    "Famous Foods",
+                    "Explore popular local dishes.",
+                )
 
-        elif choice == "0":
-            break
+                print_menu_option(
+                    "3",
+                    "🎉",
+                    "Events & Experiences",
+                    "Discover festivals and unique experiences.",
+                )
 
-        else:
-            print(
-                RED +
-                "❌ Invalid option."
-                + RESET
-            )
+                print_menu_option(
+                    "4",
+                    "🏯",
+                    "Famous Places",
+                    "Explore famous cities and attractions.",
+                )
 
-            time.sleep(1)
+                print_menu_option(
+                    "5",
+                    "🌤️",
+                    "Live Weather",
+                    "Check current weather conditions.",
+                )
 
+                print_menu_option(
+                    "6",
+                    "💰",
+                    "Currency",
+                    "Check currency and live exchange rate.",
+                )
 
+                print_menu_option(
+                    "7",
+                    "📅",
+                    "Holidays",
+                    "View public holidays for 2026.",
+                )
+
+                print_menu_option(
+                    "8",
+                    "⭐",
+                    "Add to Favorites",
+                    "Save this country for later.",
+                )
+
+                print_menu_option(
+                    "9",
+                    "🗑️",
+                    "Remove from Favorites",
+                    "Remove this country from your favorites.",
+                )
+
+                print_menu_option(
+                    "0",
+                    "↩️",
+                    "Back",
+                    "Return to the country list.",
+                )
+
+                choice = input(
+                    f"{CYAN}➜ Choose an option: {RESET}"
+                ).strip()
+
+                if choice == "1":
+                    clear_screen()
+                    show_destination_info(
+                        country["name"]
+                    )
+                    pause()
+
+                elif choice == "2":
+                    clear_screen()
+                    show_destination_info(
+                        country["name"],
+                        section="foods",
+                    )
+                    pause()
+
+                elif choice == "3":
+                    clear_screen()
+                    show_destination_info(
+                        country["name"],
+                        section="events",
+                    )
+                    pause()
+
+                elif choice == "4":
+                    clear_screen()
+                    show_destination_info(
+                        country["name"],
+                        section="places",
+                    )
+                    pause()
+
+                elif choice == "5":
+                    city = choose_city(country)
+
+                    if city:
+                        clear_screen()
+                        show_weather(city)
+                        pause()
+
+                elif choice == "6":
+                    clear_screen()
+                    show_currency(country["name"])
+                    pause()
+
+                elif choice == "7":
+                    clear_screen()
+                    show_holidays(country["name"])
+                    pause()
+
+                elif choice == "8":
+                    clear_screen()
+
+                    if is_favorite(country["name"]):
+                        print(
+                            YELLOW +
+                            "⭐ This country is already in your favorites."
+                            + RESET
+                        )
+                    else:
+                        add_favorite(country["name"])
+
+                        print(
+                            GREEN +
+                            f"✓ {country['name']} added to favorites!"
+                            + RESET
+                        )
+
+                    pause()
+
+                elif choice == "9":
+                    clear_screen()
+
+                    if is_favorite(country["name"]):
+                        remove_favorite(country["name"])
+
+                        print(
+                            GREEN +
+                            f"✓ {country['name']} removed from favorites."
+                            + RESET
+                        )
+                    else:
+                        print(
+                            YELLOW +
+                            "ℹ This country is not in your favorites."
+                            + RESET
+                        )
+
+                    pause()
+
+                elif choice == "0":
+                    break
+
+                else:
+                    print(
+                        RED +
+                        "❌ Invalid option."
+                        + RESET
+                    )
+
+                    time.sleep(1)
 # ============================================================
 # FAVORITES
 # ============================================================
