@@ -5,6 +5,7 @@ from colorama import init
 from cinema.config.settings import APP_NAME
 from cinema.screens.booking_screen import new_booking
 from cinema.screens.help_screen import show_help
+from cinema.screens.insights_screen import show_recommendations
 from cinema.screens.my_bookings_screen import my_bookings_menu
 from cinema.storage.bookings_file import ensure_folders
 from cinema.ui.decorators import pause_after
@@ -38,7 +39,7 @@ def run() -> None:
         elif choice == 2:
             my_bookings_menu()
         elif choice == 3:
-            show_coming_soon()
+            show_recommendations()
         elif choice == 4:
             show_coming_soon()
         elif choice == 5:
