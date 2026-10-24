@@ -11,12 +11,14 @@ actions_done = 0          # a global variable (top level): how many menu choices
 
 ui.console.print("[bold cyan]KICKOFF TICKETS[/bold cyan]  -  Roshn Saudi League 2026-27")
 
+
 MAIN_OPTIONS = {
     1: "Book tickets",
     2: "League standings",
     3: "Matches",
     4: "My bookings",
     5: "My cart and checkout",
+    6: "Team profiles and logos",
     0: "Exit",
 }
 
@@ -26,6 +28,7 @@ ACTIONS = {
     3: fan_menu.matches_menu,
     4: fan_menu.my_bookings,
     5: fan_menu.cart_menu,
+    6: fan_menu.team_profile,
 }
 
 try:
