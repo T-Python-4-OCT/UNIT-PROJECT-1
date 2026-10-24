@@ -10,6 +10,7 @@ from utils import (
     print_info,
     prompt_required_text,
     prompt_select,
+    confirm_delete,
     show_spinner
 )
 
@@ -58,7 +59,7 @@ def view_all_notes(data):
 
     for n in notes:
         course_code = sub_map.get(n.subject_id, "General")
-        table.add_row(n.note_id, n.title, course_code, n.created_at)
+        table.add_row(n.note_id, n.title, f"[bold]{course_code}[/bold]", n.created_at)
 
     console.print()
     console.print(table)
@@ -130,6 +131,9 @@ def delete_note(data):
         return
 
     note_id = selected.split("]")[0].replace("[", "").strip()
-    data["notes"] = [n for n in data["notes"] if n.note_id != note_id]
-    save_data(data)
-    print_success("Note deleted successfully.")
+    if confirm_delete(selected):
+        data["notes"] = [n for n in data["notes"] if n.note_id != note_id]
+        save_data(data)
+        print_success("Note deleted successfully.")
+    else:
+        print_info("Deletion cancelled.")

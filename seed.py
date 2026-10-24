@@ -7,7 +7,7 @@ fake = Faker()
 
 def generate_seed():
     try:
-        # Generate 5 random subjects to showcase different grade scenarios
+        # Generate 5 random subjects
         subjects = []
         for i in range(1, 6):
             sub_id = f"SUB-{i:03d}"
@@ -51,24 +51,52 @@ def generate_seed():
                 priority = fake.random_element(elements=("High", "Medium", "Low"))
                 tasks.append(Task(t_id, title, description, sub.subject_id, due_date, priority, status, earned, max_s))
 
-        # Generate term projects (including one at 90% and one at 80% for easy testing)
+        # Generate projects with 5 UNIQUE custom steps per subject using Faker
         projects = []
         project_counter = 1
-        sample_progress = [90, 80, 60, 40, 100]
-        
+        weight_distributions = [
+            [15, 20, 25, 25, 15],
+            [10, 20, 30, 25, 15],
+            [20, 20, 20, 20, 20],
+            [15, 15, 30, 20, 20],
+            [10, 25, 25, 20, 20]
+        ]
+        completed_counts = [4, 3, 2, 1, 5]
+
         for idx, sub in enumerate(subjects):
             min_s, max_s_range = score_brackets[idx % len(score_brackets)]
             p_id = f"PRJ-{project_counter:03d}"
             project_counter += 1
-            title = f"{sub.code} Project: {fake.catch_phrase().title()}"
-            deadline = (date.today() + timedelta(days=fake.random_int(min=5, max=40))).strftime("%Y-%m-%d")
+            title = f"{sub.code}: {fake.catch_phrase().title()}"
+            deadline = (date.today() + timedelta(days=fake.random_int(min=7, max=40))).strftime("%Y-%m-%d")
             
-            prog = sample_progress[idx % len(sample_progress)]
-            steps_done_count = prog // 20
-            completed_steps = Project.MILESTONES[:steps_done_count]
-            earned = float(fake.random_int(min=min_s, max=max_s_range)) if prog == 100 else None
+            weights = weight_distributions[idx % len(weight_distributions)]
+            done_steps_target = completed_counts[idx % len(completed_counts)]
+            
+            custom_steps = []
+            for step_num in range(5):
+                w = weights[step_num]
+                max_pts = float(w)
+                is_done = step_num < done_steps_target
                 
-            projects.append(Project(p_id, title, sub.subject_id, deadline, completed_steps=completed_steps, progress=prog, earned_score=earned, max_score=100.0))
+                # Dynamic unique step name tailored to each course via Faker
+                step_name = f"{sub.code} - {fake.bs().title()}"
+                
+                if is_done:
+                    ratio = fake.random_int(min=min_s, max=max_s_range) / 100.0
+                    earned_pts = round(max_pts * ratio, 1)
+                else:
+                    earned_pts = None
+
+                custom_steps.append({
+                    "name": step_name,
+                    "weight": w,
+                    "max_points": max_pts,
+                    "earned_points": earned_pts,
+                    "completed": is_done
+                })
+
+            projects.append(Project(p_id, title, sub.subject_id, deadline, steps=custom_steps))
 
         # Generate exams
         exams = []
@@ -106,7 +134,7 @@ def generate_seed():
         }
 
         save_data(data)
-        print("Seed data generated successfully!")
+        print("Seed data generated successfully with unique custom steps per project!")
 
     except Exception as e:
         print(f"Error generating seed data: {e}")

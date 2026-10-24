@@ -119,85 +119,80 @@ class Task:
 
 
 class Project:
-    MILESTONES = [
-        "1. Planning & Requirements",
-        "2. Research & Analysis",
-        "3. UI/UX & System Design",
-        "4. Implementation & Coding",
-        "5. Testing & Final Delivery"
-    ]
-
-    def __init__(self, project_id, title, subject_id, deadline, completed_steps=None, phase=None, progress=0, earned_score=None, max_score=100.0):
+    def __init__(self, project_id, title, subject_id, deadline, steps=None, phase=None, progress=0, earned_score=None, max_score=100.0, **kwargs):
         self.project_id = str(project_id).strip()
         self.title = str(title).strip()
         self.subject_id = str(subject_id).strip()
         self.deadline = str(deadline).strip()
         
         self.__progress = 0
-        self.phase = "Planning & Requirements"
-        self.completed_steps = []
-        
         self.__earned_score = None
         self.__max_score = 100.0
+        self.phase = "Not Started"
+        self.steps = []
 
-        if completed_steps is not None:
-            self.update_milestones(completed_steps)
-            if progress and int(progress) > self.__progress:
-                self.set_progress(progress)
-        elif progress is not None:
-            self.set_progress(progress)
+        if steps and isinstance(steps, list):
+            for s in steps:
+                self.steps.append({
+                    "name": str(s.get("name", "Step")).strip(),
+                    "weight": int(s.get("weight", 20)),
+                    "max_points": float(s.get("max_points", 20.0)),
+                    "earned_points": float(s["earned_points"]) if s.get("earned_points") is not None else None,
+                    "completed": bool(s.get("completed", False))
+                })
+            self.recalculate_status()
         else:
-            self.update_milestones([])
+            self.set_earned_score(earned_score)
+            self.set_max_score(max_score)
 
-        self.set_earned_score(earned_score)
-        self.set_max_score(max_score)
+    def recalculate_status(self):
+        """Automatically calculate total progress %, current phase, and total score from custom steps."""
+        if not self.steps:
+            self.__progress = 0
+            self.phase = "No Steps Defined"
+            return
 
-    def update_milestones(self, selected_steps):
-        valid_steps = [s for s in self.MILESTONES if s in (selected_steps or [])]
-        self.completed_steps = valid_steps
-        
-        step_weight = 100 // len(self.MILESTONES)
-        self.__progress = len(self.completed_steps) * step_weight
+        total_prog = sum(int(s["weight"]) for s in self.steps if s.get("completed"))
+        self.__progress = max(0, min(100, total_prog))
 
-        if len(self.completed_steps) == len(self.MILESTONES):
+        total_max = sum(float(s.get("max_points", 0.0)) for s in self.steps)
+        self.__max_score = total_max if total_max > 0 else 100.0
+
+        completed_steps = [s for s in self.steps if s.get("completed")]
+        if completed_steps:
+            self.__earned_score = sum(
+                float(s["earned_points"]) if s.get("earned_points") is not None else float(s.get("max_points", 0.0))
+                for s in completed_steps
+            )
+        else:
+            self.__earned_score = None
+
+        pending_steps = [s for s in self.steps if not s.get("completed")]
+        if not pending_steps or self.__progress >= 100:
             self.__progress = 100
             self.phase = "Completed"
         else:
-            for m in self.MILESTONES:
-                if m not in self.completed_steps:
-                    self.phase = m.split(". ", 1)[1]
-                    break
+            self.phase = pending_steps[0]["name"]
 
-    def set_progress(self, value):
-        try:
-            val = int(value)
-            self.__progress = max(0, min(100, val))
-            count = self.__progress // 20
-            self.completed_steps = self.MILESTONES[:count]
-            
-            if self.__progress == 100:
-                self.completed_steps = list(self.MILESTONES)
-                self.phase = "Completed"
-            else:
-                for m in self.MILESTONES:
-                    if m not in self.completed_steps:
-                        self.phase = m.split(". ", 1)[1]
-                        break
-        except (ValueError, TypeError):
-            self.__progress = 0
+    def complete_step(self, step_index, earned_points=None):
+        if 0 <= step_index < len(self.steps):
+            step = self.steps[step_index]
+            step["completed"] = True
+            if earned_points is not None:
+                try:
+                    val = float(earned_points)
+                    step["earned_points"] = max(0.0, min(val, float(step["max_points"])))
+                except ValueError:
+                    step["earned_points"] = float(step["max_points"])
+            elif step.get("earned_points") is None:
+                step["earned_points"] = float(step["max_points"])
+            self.recalculate_status()
 
-    def add_progress_amount(self, amount):
-        """Add percentage points directly (e.g., +10% or +20%) and sync milestones."""
-        try:
-            new_val = self.__progress + int(amount)
-            self.set_progress(new_val)
-        except (ValueError, TypeError):
-            pass
-
-    def complete_single_milestone(self, milestone_name):
-        if milestone_name in self.MILESTONES and milestone_name not in self.completed_steps:
-            self.completed_steps.append(milestone_name)
-            self.update_milestones(self.completed_steps)
+    def uncomplete_step(self, step_index):
+        if 0 <= step_index < len(self.steps):
+            self.steps[step_index]["completed"] = False
+            self.steps[step_index]["earned_points"] = None
+            self.recalculate_status()
 
     def get_progress(self):
         return self.__progress
@@ -230,10 +225,6 @@ class Project:
     def progress(self):
         return self.__progress
 
-    @progress.setter
-    def progress(self, value):
-        self.set_progress(value)
-
     @property
     def earned_score(self):
         return self.__earned_score
@@ -256,7 +247,7 @@ class Project:
             "title": self.title,
             "subject_id": self.subject_id,
             "deadline": self.deadline,
-            "completed_steps": self.completed_steps,
+            "steps": self.steps,
             "phase": self.phase,
             "progress": self.__progress,
             "earned_score": self.__earned_score,
