@@ -1,12 +1,25 @@
+import os
 from datetime import date, timedelta
+from dotenv import load_dotenv
 from faker import Faker
-from models.classes import Subject, Task, Project, Exam, StudyNote
+from models.classes import User, Subject, Task, Project, Exam, StudyNote
 from storage import save_data
 
+# Load environment variables from .env file
+load_dotenv()
 fake = Faker()
 
 def generate_seed():
     try:
+        # Read default student credentials from Environment Variables (.env)
+        env_user = os.getenv("DEFAULT_USERNAME", "student")
+        env_pass = os.getenv("DEFAULT_PASSWORD", "1234")
+        env_major = os.getenv("DEFAULT_MAJOR", "Software Engineering")
+
+        users = [
+            User(env_user, fake.name(), env_major, env_pass)
+        ]
+
         # Generate 5 random subjects
         subjects = []
         for i in range(1, 6):
@@ -51,7 +64,7 @@ def generate_seed():
                 priority = fake.random_element(elements=("High", "Medium", "Low"))
                 tasks.append(Task(t_id, title, description, sub.subject_id, due_date, priority, status, earned, max_s))
 
-        # Generate projects with 5 UNIQUE custom steps per subject using Faker
+        # Generate projects with 5 unique custom steps per subject
         projects = []
         project_counter = 1
         weight_distributions = [
@@ -78,8 +91,6 @@ def generate_seed():
                 w = weights[step_num]
                 max_pts = float(w)
                 is_done = step_num < done_steps_target
-                
-                # Dynamic unique step name tailored to each course via Faker
                 step_name = f"{sub.code} - {fake.bs().title()}"
                 
                 if is_done:
@@ -126,6 +137,7 @@ def generate_seed():
 
         # Save all generated data to JSON
         data = {
+            "users": users,
             "subjects": subjects,
             "tasks": tasks,
             "projects": projects,
@@ -134,7 +146,7 @@ def generate_seed():
         }
 
         save_data(data)
-        print("Seed data generated successfully with unique custom steps per project!")
+        print("Seed data generated successfully using Faker and .env variables!")
 
     except Exception as e:
         print(f"Error generating seed data: {e}")

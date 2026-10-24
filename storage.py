@@ -1,10 +1,14 @@
 import json
 import os
+from dotenv import load_dotenv
 
-DATA_FILE = "studymate_data.json"
+# Load environment variables from .env file
+load_dotenv()
+
+DATA_FILE = os.getenv("DATA_FILE", "studymate_data.json")
 
 def load_data():
-    default_data = {"subjects": [], "tasks": [], "projects": [], "exams": [], "notes": []}
+    default_data = {"users": [], "subjects": [], "tasks": [], "projects": [], "exams": [], "notes": []}
     if not os.path.exists(DATA_FILE):
         return default_data
     try:
@@ -20,6 +24,7 @@ def load_data():
 def save_data(data):
     try:
         serializable_data = {
+            "users": [u.to_dict() if hasattr(u, "to_dict") else u for u in data.get("users", [])],
             "subjects": [s.to_dict() if hasattr(s, "to_dict") else s for s in data.get("subjects", [])],
             "tasks": [t.to_dict() if hasattr(t, "to_dict") else t for t in data.get("tasks", [])],
             "projects": [p.to_dict() if hasattr(p, "to_dict") else p for p in data.get("projects", [])],

@@ -348,3 +348,25 @@ class StudyNote:
             "subject_id": self.subject_id,
             "created_at": self.created_at
         }
+
+
+class User:
+    def __init__(self, username, full_name, major, password):
+        self.username = str(username).strip()
+        self.full_name = str(full_name).strip()
+        self.major = str(major).strip()
+        self.__password = str(password).strip()
+
+    def check_password(self, input_password):
+        return self.__password == str(input_password).strip()
+
+    def get_password(self):
+        return self.__password
+
+    def to_dict(self):
+        return {
+            "username": self.username,
+            "full_name": self.full_name,
+            "major": self.major,
+            "password": self.__password
+        }

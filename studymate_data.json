@@ -1,85 +1,99 @@
 {
+    "users": [
+        {
+            "username": "student",
+            "full_name": "Brian Mitchell",
+            "major": "Software Engineering",
+            "password": "1234"
+        },
+        {
+            "username": "123456",
+            "full_name": "ghali",
+            "major": "Software Engineering",
+            "password": "112233"
+        }
+    ],
     "subjects": [
         {
             "subject_id": "SUB-001",
-            "name": "Organic Maximized Capability",
-            "code": "MAJ281",
-            "instructor": "Dr. Samuel Nichols",
+            "name": "Quality-Focused Methodical Synergy",
+            "code": "TNY609",
+            "instructor": "Dr. Sherri Jimenez",
             "credit_hours": 2
         },
         {
             "subject_id": "SUB-002",
-            "name": "Re-Contextualized Motivating Contingency",
-            "code": "QRD052",
-            "instructor": "Dr. Dale Mckinney",
+            "name": "Expanded Homogeneous Secured Line",
+            "code": "TOK279",
+            "instructor": "Dr. Robert Leonard",
             "credit_hours": 4
         },
         {
             "subject_id": "SUB-003",
-            "name": "Optimized Full-Range Parallelism",
-            "code": "JRH022",
-            "instructor": "Dr. James Rhodes",
-            "credit_hours": 2
+            "name": "De-Engineered Motivating Monitoring",
+            "code": "LDY472",
+            "instructor": "Dr. Gary Simmons",
+            "credit_hours": 4
         },
         {
             "subject_id": "SUB-004",
-            "name": "Re-Contextualized Zero-Defect Open System",
-            "code": "XNV178",
-            "instructor": "Dr. Tonya Stanton",
-            "credit_hours": 3
+            "name": "Enhanced Client-Server Model",
+            "code": "DMS677",
+            "instructor": "Dr. Sean Shannon",
+            "credit_hours": 4
         },
         {
             "subject_id": "SUB-005",
-            "name": "Managed Bandwidth-Monitored Adapter",
-            "code": "OKW478",
-            "instructor": "Dr. Connie Welch",
+            "name": "Upgradable Dynamic Firmware",
+            "code": "HPI978",
+            "instructor": "Dr. Mark Cannon",
             "credit_hours": 2
         }
     ],
     "tasks": [
         {
             "task_id": "TSK-001",
-            "title": "MAJ281 - Implement Out-Of-The-Box Platforms",
-            "description": "Day traditional range between.",
+            "title": "TNY609 - Benchmark Open-Source Infrastructures",
+            "description": "Question magazine physical hot population.",
             "subject_id": "SUB-001",
-            "due_date": "2026-10-18",
-            "priority": "Low",
+            "due_date": "2026-10-23",
+            "priority": "High",
             "status": "Completed",
-            "earned_score": 93.0,
+            "earned_score": 92.0,
             "max_score": 100.0,
             "created_at": "2026-10-24"
         },
         {
             "task_id": "TSK-002",
-            "title": "MAJ281 - Disintermediate Bleeding-Edge Convergence",
-            "description": "President property radio collection program thought whom.",
+            "title": "TNY609 - Syndicate Strategic Infrastructures",
+            "description": "Center blood will necessary radio understand much.",
             "subject_id": "SUB-001",
-            "due_date": "2026-10-27",
-            "priority": "High",
+            "due_date": "2026-10-18",
+            "priority": "Medium",
             "status": "Completed",
-            "earned_score": 95.0,
+            "earned_score": 99.0,
             "max_score": 100.0,
             "created_at": "2026-10-24"
         },
         {
             "task_id": "TSK-003",
-            "title": "QRD052 - Repurpose Cross-Media Info-Mediaries",
-            "description": "Away direction particular.",
+            "title": "TOK279 - Morph Sticky Web Services",
+            "description": "Player prepare life able.",
             "subject_id": "SUB-002",
-            "due_date": "2026-10-18",
-            "priority": "Medium",
+            "due_date": "2026-10-23",
+            "priority": "High",
             "status": "Completed",
-            "earned_score": 86.0,
+            "earned_score": 85.0,
             "max_score": 100.0,
             "created_at": "2026-10-24"
         },
         {
             "task_id": "TSK-004",
-            "title": "QRD052 - Leverage Proactive Eyeballs",
-            "description": "Member assume life theory no six.",
+            "title": "TOK279 - Matrix Visionary Applications",
+            "description": "Finally sense consider purpose spend surface.",
             "subject_id": "SUB-002",
-            "due_date": "2026-11-03",
-            "priority": "Medium",
+            "due_date": "2026-10-26",
+            "priority": "Low",
             "status": "Not Started",
             "earned_score": null,
             "max_score": null,
@@ -87,32 +101,32 @@
         },
         {
             "task_id": "TSK-005",
-            "title": "JRH022 - Innovate Virtual Networks",
-            "description": "Capital rest model young.",
+            "title": "LDY472 - Syndicate Compelling Deliverables",
+            "description": "Something can three beyond outside evening.",
             "subject_id": "SUB-003",
             "due_date": "2026-10-20",
             "priority": "High",
             "status": "Completed",
-            "earned_score": 71.0,
+            "earned_score": 76.0,
             "max_score": 100.0,
             "created_at": "2026-10-24"
         },
         {
             "task_id": "TSK-006",
-            "title": "JRH022 - Scale One-To-One E-Services",
-            "description": "Car region board dream rule.",
+            "title": "LDY472 - Visualize Enterprise Methodologies",
+            "description": "Particular player eye care mention impact town.",
             "subject_id": "SUB-003",
-            "due_date": "2026-10-17",
-            "priority": "Medium",
+            "due_date": "2026-10-22",
+            "priority": "Low",
             "status": "Completed",
-            "earned_score": 72.0,
+            "earned_score": 75.0,
             "max_score": 100.0,
             "created_at": "2026-10-24"
         },
         {
             "task_id": "TSK-007",
-            "title": "XNV178 - Envisioneer Viral Supply-Chains",
-            "description": "Share thing relate deep experience hotel set.",
+            "title": "DMS677 - Innovate Global Convergence",
+            "description": "Young scene grow early any arm add.",
             "subject_id": "SUB-004",
             "due_date": "2026-10-22",
             "priority": "High",
@@ -123,22 +137,22 @@
         },
         {
             "task_id": "TSK-008",
-            "title": "XNV178 - Disintermediate Proactive Mindshare",
-            "description": "Their several very wear common mean imagine TV.",
+            "title": "DMS677 - Envisioneer Strategic Web-Readiness",
+            "description": "Kind threat thank beyond.",
             "subject_id": "SUB-004",
-            "due_date": "2026-10-29",
+            "due_date": "2026-10-17",
             "priority": "Medium",
-            "status": "Not Started",
-            "earned_score": null,
-            "max_score": null,
+            "status": "Completed",
+            "earned_score": 65.0,
+            "max_score": 100.0,
             "created_at": "2026-10-24"
         },
         {
             "task_id": "TSK-009",
-            "title": "OKW478 - Reinvent Synergistic E-Business",
-            "description": "Dinner black full score.",
+            "title": "HPI978 - Iterate Proactive Initiatives",
+            "description": "Strong memory those message along.",
             "subject_id": "SUB-005",
-            "due_date": "2026-10-23",
+            "due_date": "2026-10-20",
             "priority": "High",
             "status": "Completed",
             "earned_score": 58.0,
@@ -147,13 +161,13 @@
         },
         {
             "task_id": "TSK-010",
-            "title": "OKW478 - Extend Wireless Models",
-            "description": "Conference send data coach certain can.",
+            "title": "HPI978 - Redefine Holistic Relationships",
+            "description": "National time next fly.",
             "subject_id": "SUB-005",
-            "due_date": "2026-10-22",
+            "due_date": "2026-10-23",
             "priority": "Medium",
             "status": "Completed",
-            "earned_score": 50.0,
+            "earned_score": 48.0,
             "max_score": 100.0,
             "created_at": "2026-10-24"
         }
@@ -161,325 +175,325 @@
     "projects": [
         {
             "project_id": "PRJ-001",
-            "title": "MAJ281: Self-Enabling Foreground Encoding",
+            "title": "TNY609: Multi-Channeled Multimedia Workforce",
             "subject_id": "SUB-001",
-            "deadline": "2026-11-20",
+            "deadline": "2026-11-16",
             "steps": [
                 {
-                    "name": "MAJ281 - Monetize B2C Action-Items",
+                    "name": "TNY609 - Synergize Virtual Eyeballs",
                     "weight": 15,
                     "max_points": 15.0,
-                    "earned_points": 14.5,
+                    "earned_points": 14.7,
                     "completed": true
                 },
                 {
-                    "name": "MAJ281 - Monetize Collaborative Deliverables",
+                    "name": "TNY609 - Iterate Open-Source Content",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 19.8,
+                    "earned_points": 19.0,
                     "completed": true
                 },
                 {
-                    "name": "MAJ281 - Grow Vertical Channels",
+                    "name": "TNY609 - Streamline Holistic Functionalities",
                     "weight": 25,
                     "max_points": 25.0,
-                    "earned_points": 23.5,
+                    "earned_points": 25.0,
                     "completed": true
                 },
                 {
-                    "name": "MAJ281 - Seize Synergistic Web Services",
+                    "name": "TNY609 - Transform Vertical Solutions",
                     "weight": 25,
                     "max_points": 25.0,
-                    "earned_points": 24.2,
+                    "earned_points": 24.5,
                     "completed": true
                 },
                 {
-                    "name": "MAJ281 - Extend Best-Of-Breed Platforms",
+                    "name": "TNY609 - Maximize Real-Time E-Services",
                     "weight": 15,
                     "max_points": 15.0,
-                    "earned_points": 15.0,
-                    "completed": true
+                    "earned_points": null,
+                    "completed": false
                 }
             ],
-            "phase": "Completed",
-            "progress": 100,
-            "earned_score": 97.0,
+            "phase": "TNY609 - Maximize Real-Time E-Services",
+            "progress": 85,
+            "earned_score": 83.2,
             "max_score": 100.0
         },
         {
             "project_id": "PRJ-002",
-            "title": "QRD052: User-Centric Heuristic Open Architecture",
+            "title": "TOK279: Innovative 3Rdgeneration Neural-Net",
             "subject_id": "SUB-002",
-            "deadline": "2026-11-02",
+            "deadline": "2026-11-27",
             "steps": [
                 {
-                    "name": "QRD052 - Facilitate Holistic Convergence",
+                    "name": "TOK279 - Streamline Out-Of-The-Box Mindshare",
                     "weight": 10,
                     "max_points": 10.0,
                     "earned_points": 8.4,
                     "completed": true
                 },
                 {
-                    "name": "QRD052 - Generate Innovative Deliverables",
+                    "name": "TOK279 - Productize Open-Source E-Business",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 16.2,
+                    "earned_points": 17.4,
                     "completed": true
                 },
                 {
-                    "name": "QRD052 - Embrace Interactive Users",
+                    "name": "TOK279 - Iterate Viral Web Services",
                     "weight": 30,
                     "max_points": 30.0,
-                    "earned_points": 25.2,
+                    "earned_points": 26.4,
                     "completed": true
                 },
                 {
-                    "name": "QRD052 - Target Viral Interfaces",
+                    "name": "TOK279 - Optimize Efficient Partnerships",
                     "weight": 25,
                     "max_points": 25.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "QRD052 - Orchestrate Customized Communities",
+                    "name": "TOK279 - Envisioneer Sticky Communities",
                     "weight": 15,
                     "max_points": 15.0,
                     "earned_points": null,
                     "completed": false
                 }
             ],
-            "phase": "QRD052 - Target Viral Interfaces",
+            "phase": "TOK279 - Optimize Efficient Partnerships",
             "progress": 60,
-            "earned_score": 49.8,
+            "earned_score": 52.199999999999996,
             "max_score": 100.0
         },
         {
             "project_id": "PRJ-003",
-            "title": "JRH022: Grass-Roots Tangible Matrices",
+            "title": "LDY472: Stand-Alone Human-Resource Core",
             "subject_id": "SUB-003",
-            "deadline": "2026-11-26",
+            "deadline": "2026-11-14",
             "steps": [
                 {
-                    "name": "JRH022 - Optimize Strategic Partnerships",
+                    "name": "LDY472 - Utilize Best-Of-Breed Networks",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 14.2,
+                    "earned_points": 14.6,
                     "completed": true
                 },
                 {
-                    "name": "JRH022 - Benchmark Revolutionary Relationships",
+                    "name": "LDY472 - Aggregate Best-Of-Breed Portals",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 15.8,
+                    "earned_points": 15.4,
                     "completed": true
                 },
                 {
-                    "name": "JRH022 - Syndicate Dot-Com Schemas",
+                    "name": "LDY472 - Aggregate 24/7 Niches",
                     "weight": 20,
                     "max_points": 20.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "JRH022 - Maximize Holistic Vortals",
+                    "name": "LDY472 - Drive Mission-Critical Channels",
                     "weight": 20,
                     "max_points": 20.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "JRH022 - Scale Virtual E-Business",
+                    "name": "LDY472 - Envisioneer Strategic Models",
                     "weight": 20,
                     "max_points": 20.0,
                     "earned_points": null,
                     "completed": false
                 }
             ],
-            "phase": "JRH022 - Syndicate Dot-Com Schemas",
+            "phase": "LDY472 - Aggregate 24/7 Niches",
             "progress": 40,
             "earned_score": 30.0,
             "max_score": 100.0
         },
         {
             "project_id": "PRJ-004",
-            "title": "XNV178: Automated Context-Sensitive Standardization",
+            "title": "DMS677: Extended 4Thgeneration Emulation",
             "subject_id": "SUB-004",
-            "deadline": "2026-10-31",
+            "deadline": "2026-11-13",
             "steps": [
                 {
-                    "name": "XNV178 - Empower Scalable Niches",
+                    "name": "DMS677 - Monetize Strategic Supply-Chains",
                     "weight": 15,
                     "max_points": 15.0,
-                    "earned_points": 9.3,
+                    "earned_points": 9.2,
                     "completed": true
                 },
                 {
-                    "name": "XNV178 - Whiteboard Seamless Functionalities",
+                    "name": "DMS677 - Synergize Dynamic Portals",
                     "weight": 15,
                     "max_points": 15.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "XNV178 - Grow Interactive E-Services",
+                    "name": "DMS677 - Deliver Dynamic Synergies",
                     "weight": 30,
                     "max_points": 30.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "XNV178 - Productize Distributed Methodologies",
+                    "name": "DMS677 - Iterate Best-Of-Breed Schemas",
                     "weight": 20,
                     "max_points": 20.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "XNV178 - Syndicate B2B Paradigms",
+                    "name": "DMS677 - Integrate Rich Experiences",
                     "weight": 20,
                     "max_points": 20.0,
                     "earned_points": null,
                     "completed": false
                 }
             ],
-            "phase": "XNV178 - Whiteboard Seamless Functionalities",
+            "phase": "DMS677 - Synergize Dynamic Portals",
             "progress": 15,
-            "earned_score": 9.3,
+            "earned_score": 9.2,
             "max_score": 100.0
         },
         {
             "project_id": "PRJ-005",
-            "title": "OKW478: Customizable Client-Driven Toolset",
+            "title": "HPI978: Centralized Upward-Trending Toolset",
             "subject_id": "SUB-005",
-            "deadline": "2026-12-01",
+            "deadline": "2026-11-28",
             "steps": [
                 {
-                    "name": "OKW478 - Mesh Back-End Bandwidth",
+                    "name": "HPI978 - Synthesize Bleeding-Edge Functionalities",
                     "weight": 10,
                     "max_points": 10.0,
-                    "earned_points": 5.3,
+                    "earned_points": 5.8,
                     "completed": true
                 },
                 {
-                    "name": "OKW478 - Deploy Cutting-Edge Interfaces",
+                    "name": "HPI978 - Brand Best-Of-Breed Systems",
                     "weight": 25,
                     "max_points": 25.0,
-                    "earned_points": 14.0,
+                    "earned_points": 12.8,
                     "completed": true
                 },
                 {
-                    "name": "OKW478 - Maximize Extensible Users",
+                    "name": "HPI978 - Repurpose Virtual Mindshare",
                     "weight": 25,
                     "max_points": 25.0,
-                    "earned_points": 12.5,
+                    "earned_points": 13.8,
                     "completed": true
                 },
                 {
-                    "name": "OKW478 - Expedite One-To-One Portals",
+                    "name": "HPI978 - E-Enable Cross-Platform Interfaces",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 9.4,
+                    "earned_points": 10.8,
                     "completed": true
                 },
                 {
-                    "name": "OKW478 - Mesh Sticky E-Services",
+                    "name": "HPI978 - Scale Magnetic Partnerships",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 9.8,
+                    "earned_points": 10.8,
                     "completed": true
                 }
             ],
             "phase": "Completed",
             "progress": 100,
-            "earned_score": 51.0,
+            "earned_score": 54.0,
             "max_score": 100.0
         }
     ],
     "exams": [
         {
             "exam_id": "EXM-001",
-            "title": "MAJ281 - Enhanced Grid-Enabled Moratorium",
+            "title": "TNY609 - Cross-Group National Open System",
             "subject_id": "SUB-001",
             "exam_date": "2026-10-25",
-            "exam_time": "22:52",
-            "exam_type": "Practical",
-            "earned_score": 93.0,
+            "exam_time": "17:51",
+            "exam_type": "Final",
+            "earned_score": 97.0,
             "max_score": 100.0
         },
         {
             "exam_id": "EXM-002",
-            "title": "QRD052 - Re-Contextualized Static Data-Warehouse",
+            "title": "TOK279 - Cloned Bandwidth-Monitored Architecture",
             "subject_id": "SUB-002",
-            "exam_date": "2026-10-24",
-            "exam_time": "02:58",
+            "exam_date": "2026-10-16",
+            "exam_time": "14:16",
             "exam_type": "Quiz",
-            "earned_score": 89.0,
+            "earned_score": 83.0,
             "max_score": 100.0
         },
         {
             "exam_id": "EXM-003",
-            "title": "JRH022 - Pre-Emptive Bifurcated Monitoring",
+            "title": "LDY472 - Profit-Focused Mobile Standardization",
             "subject_id": "SUB-003",
-            "exam_date": "2026-10-18",
-            "exam_time": "13:54",
+            "exam_date": "2026-10-24",
+            "exam_time": "21:00",
             "exam_type": "Quiz",
-            "earned_score": 77.0,
+            "earned_score": 79.0,
             "max_score": 100.0
         },
         {
             "exam_id": "EXM-004",
-            "title": "XNV178 - Synergized 6Thgeneration Model",
+            "title": "DMS677 - Mandatory Tertiary Architecture",
             "subject_id": "SUB-004",
-            "exam_date": "2026-10-17",
-            "exam_time": "04:36",
-            "exam_type": "Quiz",
-            "earned_score": 66.0,
+            "exam_date": "2026-10-23",
+            "exam_time": "09:09",
+            "exam_type": "Practical",
+            "earned_score": 68.0,
             "max_score": 100.0
         },
         {
             "exam_id": "EXM-005",
-            "title": "OKW478 - Down-Sized Transitional Leverage",
+            "title": "HPI978 - Triple-Buffered Optimal Leverage",
             "subject_id": "SUB-005",
-            "exam_date": "2026-10-23",
-            "exam_time": "13:19",
-            "exam_type": "Quiz",
-            "earned_score": 48.0,
+            "exam_date": "2026-10-20",
+            "exam_time": "19:37",
+            "exam_type": "Practical",
+            "earned_score": 55.0,
             "max_score": 100.0
         }
     ],
     "notes": [
         {
             "note_id": "NTE-001",
-            "title": "MAJ281 - Exploit Best-Of-Breed Convergence",
-            "content": "Understand movement really lead hot cost deep. Visit poor quite class leg myself experience. Support fill learn respond project.",
+            "title": "TNY609 - Disintermediate Sticky Applications",
+            "content": "Administration present great through want pass green minute. Even across material bag training. Community record at enough.",
             "subject_id": "SUB-001",
             "created_at": "2026-10-24"
         },
         {
             "note_id": "NTE-002",
-            "title": "QRD052 - Repurpose Magnetic Solutions",
-            "content": "Myself action imagine part method born. Memory table quite today sense mouth. Police letter them.",
+            "title": "TOK279 - Brand Cross-Media Bandwidth",
+            "content": "Conference writer draw prevent modern seven yeah. Herself sort cell charge indeed write million.",
             "subject_id": "SUB-002",
             "created_at": "2026-10-24"
         },
         {
             "note_id": "NTE-003",
-            "title": "JRH022 - Implement Frictionless Platforms",
-            "content": "Case what industry sea. Company indicate might fill pay. Collection car then agent shake actually himself want.",
+            "title": "LDY472 - Deploy Transparent Systems",
+            "content": "Head alone theory fall score. Health in smile five. Appear among start end suggest should shake.",
             "subject_id": "SUB-003",
             "created_at": "2026-10-24"
         },
         {
             "note_id": "NTE-004",
-            "title": "XNV178 - Facilitate Dot-Com Portals",
-            "content": "Dark response it audience. Western design parent say laugh. Interview your former tend value.",
+            "title": "DMS677 - Deploy Intuitive Channels",
+            "content": "Consumer level wonder should scene cultural than. Mind image participant program music itself phone. Plant yard might these.",
             "subject_id": "SUB-004",
             "created_at": "2026-10-24"
         },
         {
             "note_id": "NTE-005",
-            "title": "OKW478 - Synthesize Back-End Eyeballs",
-            "content": "More happen resource high. Subject push room agency head lot. Personal fall court thus politics firm.",
+            "title": "HPI978 - Harness Next-Generation Metrics",
+            "content": "Difficult stuff sell in debate. Agreement off question no value agree.",
             "subject_id": "SUB-005",
             "created_at": "2026-10-24"
         }

@@ -104,3 +104,11 @@ def confirm_delete(item_name):
 def show_spinner(message="Loading..."):
     with console.status(f"[bold cyan]{message}[/bold cyan]"):
         time.sleep(0.4)
+
+
+def prompt_password(prompt_text):
+    while True:
+        val = questionary.password(prompt_text).ask()
+        if val is not None and str(val).strip() != "":
+            return str(val).strip()
+        print_error("Password cannot be empty.")
