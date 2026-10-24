@@ -1,12 +1,13 @@
 """Small menus used while booking: cinema, movie, experience and showtime."""
 
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 from cinema.config.branches import BRANCHES
 from cinema.config.movies import MOVIES
 from cinema.config.settings import FIRST_SHOW_DAY, LAST_SHOW_DAY, SHOW_TIMES
 from cinema.models.hall import Hall
 from cinema.models.hall_types import get_halls
+from cinema.ui.display import print_error
 from cinema.ui.inputs import ask_menu
 
 
@@ -42,24 +43,42 @@ def choose_hall() -> Hall:
 
 
 def show_days() -> list[date]:
-    """All days from FIRST_SHOW_DAY to LAST_SHOW_DAY."""
+    """All days from FIRST_SHOW_DAY to LAST_SHOW_DAY, without the days that already passed."""
     first_day = date.fromisoformat(FIRST_SHOW_DAY)
     last_day = date.fromisoformat(LAST_SHOW_DAY)
     days = []
     day = first_day
     while day <= last_day:
-        days.append(day)
+        if day >= date.today():
+            days.append(day)
         day += timedelta(days=1)
     return days
 
 
-def choose_show_time() -> tuple[str, str]:
-    """Return (date, time)."""
-    days = show_days()
-    labels = [format_date(day.isoformat()) for day in days]
-    day_choice = ask_menu(labels, "Choose a day: ")
-    show_date = days[day_choice - 1].isoformat()
+def available_times(show_date: str) -> list[str]:
+    """For today, hide the showtimes that already started."""
+    if show_date != date.today().isoformat():
+        return list(SHOW_TIMES)
+    now = datetime.now().strftime("%H:%M")
+    return [time for time in SHOW_TIMES if time > now]
 
-    print()
-    time_choice = ask_menu(list(SHOW_TIMES), "Choose a showtime: ")
-    return show_date, SHOW_TIMES[time_choice - 1]
+
+def choose_show_time() -> tuple[str, str] | None:
+    """Return (date, time), or None if there are no show days left."""
+    days = show_days()
+    if not days:
+        return None
+
+    while True:
+        labels = [format_date(day.isoformat()) for day in days]
+        day_choice = ask_menu(labels, "Choose a day: ")
+        show_date = days[day_choice - 1].isoformat()
+
+        times = available_times(show_date)
+        if not times:
+            print_error("No more shows today. Please choose another day.")
+            continue
+
+        print()
+        time_choice = ask_menu(times, "Choose a showtime: ")
+        return show_date, times[time_choice - 1]

@@ -58,7 +58,11 @@ def new_booking() -> None:
     hall = choose_hall()
 
     print_step(5, TOTAL_STEPS, "Choose your showtime")
-    show_date, show_time = choose_show_time()
+    showtime = choose_show_time()
+    if showtime is None:
+        print_error("Bookings are closed. There are no more show days.")
+        return
+    show_date, show_time = showtime
 
     bookings = load_bookings()
     show_key = make_show_key(branch, movie["title"], hall.name, show_date, show_time)
