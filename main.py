@@ -14,12 +14,14 @@ ui.console.print("[bold cyan]KICKOFF TICKETS[/bold cyan]  -  Roshn Saudi League 
 MAIN_OPTIONS = {
     2: "League standings",
     3: "Matches",
+    6: "Team profiles and logos",
     0: "Exit",
 }
 
 ACTIONS = {
     2: fan_menu.standings_menu,
     3: fan_menu.matches_menu,
+    6: fan_menu.team_profile,
 }
 
 try:

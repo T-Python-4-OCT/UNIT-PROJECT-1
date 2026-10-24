@@ -1,3 +1,4 @@
+import webbrowser
 from rich.panel import Panel
 from rich.table import Table
 
@@ -87,3 +88,20 @@ def matches_menu(session):
     elif choice == 4:
         day = ui.ask_date()
         list_and_open(session, [m for m in session.matches if m.date == day], f"Matches on {day}")
+
+
+@safe_action
+def team_profile(session):
+    team = pick_team(session)
+    position = standings.positions(session.teams)[team.team_id]
+    ui.console.print(Panel(
+        f"[bold]{team.name_en}[/bold]\n"
+        f"City: {team.city}\n"
+        f"Table position: #{position}   Points: {team.points}\n"
+        f"Played {team.played}  Won {team.won}  Drawn {team.drawn}  Lost {team.lost}\n"
+        f"Goals: {team.gf} for, {team.ga} against ({team.goal_diff:+d})\n"
+        f"Logo: {team.logo}", title="Team profile"))
+    list_and_open(session, [m for m in session.matches if m.involves(team.team_id) and m.is_open],
+                  f"Upcoming matches of {team.name_en}")
+    if ui.confirm("Open the team logo in your browser?"):
+        webbrowser.open(team.logo)
