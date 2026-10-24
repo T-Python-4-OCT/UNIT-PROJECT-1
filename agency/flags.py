@@ -11,6 +11,7 @@ UNKNOWN_FLAG = "🌍"
 _FIRST_LETTER = 0x1F1E6
 
 
+# ترجع علم الدولة كإيموجي من اسمها، أو 🌍 إذا ما عرفت الدولة.
 def flag(country: str) -> str:
     code = COUNTRY_CODES.get(country.strip().lower())
     if not code:

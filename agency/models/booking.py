@@ -1,6 +1,7 @@
 from dataclasses import asdict, dataclass, fields
 
 
+# حجز رحلة: بيانات العميل والوجهة والسعر وحالة الدفع.
 @dataclass
 class Booking:
     id: int
@@ -21,9 +22,11 @@ class Booking:
     reference: str = ""
     promo_code: str = ""
 
+    # تحوّل الحجز إلى قاموس عشان ينحفظ في ملف JSON.
     def to_dict(self) -> dict:
         return asdict(self)
 
+    # تبني حجز من قاموس مقروء من الملف.
     @staticmethod
     def from_dict(data: dict) -> "Booking":
         known = {model_field.name for model_field in fields(Booking)}

@@ -8,6 +8,7 @@ STYLES = {"economy": 0.7, "standard": 1.0, "luxury": 1.8}
 BASE_ITEMS = ("Flights", "Hotel", "Food", "Transport", "Activities")
 
 
+# تحسب تكلفة الرحلة حسب الأيام والمسافرين والمستوى (مع خصم شخصين).
 def estimate(destination: Country, days: int, travelers: int, style: str) -> dict:
     if days < 2:
         raise ServiceError("A trip needs at least 2 days.")
@@ -32,6 +33,7 @@ def estimate(destination: Country, days: int, travelers: int, style: str) -> dic
     return breakdown
 
 
+# تضيف خصم كود المناسبة (نسبة من التكاليف الأساسية) وتعيد حساب الإجمالي.
 def apply_promo(breakdown: dict, code: str, percent: int) -> dict:
     base = sum(breakdown[item] for item in BASE_ITEMS)
     result = {item: value for item, value in breakdown.items() if item != "Total"}
@@ -40,6 +42,7 @@ def apply_promo(breakdown: dict, code: str, percent: int) -> dict:
     return result
 
 
+# تجيب الوجهات اللي تكفيها الميزانية مع أرخص وجهة.
 def find_matches(budget: int, days: int, travelers: int, style: str,
                  category: str = "", limit: int = 10):
     if budget <= 0:
@@ -54,6 +57,7 @@ def find_matches(budget: int, days: int, travelers: int, style: str,
     return affordable[:limit], cheapest
 
 
+# تبني خطة يومية للرحلة من معالم الوجهة المشهورة.
 def build_itinerary(destination: Country, days: int) -> list:
     if days < 2:
         raise ServiceError("A trip needs at least 2 days.")

@@ -1,6 +1,7 @@
 from dataclasses import asdict, dataclass, fields
 
 
+# وجهة سفر: الدولة والمدينة والنوع والأسعار والمعالم وهل هي موقوفة.
 @dataclass
 class Country:
     id: int
@@ -16,9 +17,11 @@ class Country:
     highlights: list
     suspended: bool = False
 
+    # تحوّل الوجهة إلى قاموس عشان ينحفظ في ملف JSON.
     def to_dict(self) -> dict:
         return asdict(self)
 
+    # تبني وجهة من قاموس مقروء من الملف.
     @staticmethod
     def from_dict(data: dict) -> "Country":
         return Country(**{model_field.name: data[model_field.name]

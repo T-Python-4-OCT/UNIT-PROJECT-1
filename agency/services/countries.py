@@ -10,6 +10,7 @@ _TEXT_FIELDS = ("country", "city", "best_season")
 _INT_FIELDS = ("flight", "hotel", "food", "transport", "activities")
 
 
+# تنظف بيانات الوجهة وتتحقق منها.
 def _clean(data: dict) -> dict:
     out = dict(data)
     for field in _TEXT_FIELDS:
@@ -36,10 +37,12 @@ def _clean(data: dict) -> dict:
     return out
 
 
+# ترجع كل الوجهات ككائنات Country.
 def list_all() -> list:
     return [Country.from_dict(record) for record in json_db.load(COUNTRIES_FILE)]
 
 
+# ترجع وجهة بالرقم، أو ترمي ServiceError إذا ما وجدت.
 def get(country_id: int) -> Country:
     for destination in list_all():
         if destination.id == country_id:
@@ -47,6 +50,7 @@ def get(country_id: int) -> Country:
     raise ServiceError(f"No destination with ID {country_id}.")
 
 
+# تبحث بنص وبنوع الرحلة وترجع الوجهات المطابقة.
 def search(query: str = "", category: str = "") -> list:
     q = query.strip().lower()
     results = []
@@ -59,6 +63,7 @@ def search(query: str = "", category: str = "") -> list:
     return results
 
 
+# تبحث في حقل واحد، وتصحح الإملاء إذا ما لقت نتيجة.
 def search_by(field: str, text: str):
     text = text.strip().lower()
     items = list_all()
@@ -69,6 +74,7 @@ def search_by(field: str, text: str):
     return [item for item in items if getattr(item, field).lower() in close], bool(close)
 
 
+# توقف وجهة حتى إشعار آخر أو تعيد تشغيلها.
 def set_suspended(country_id: int, suspended: bool) -> Country:
     items = json_db.load(COUNTRIES_FILE)
     for raw in items:
@@ -79,6 +85,7 @@ def set_suspended(country_id: int, suspended: bool) -> Country:
     raise ServiceError(f"No destination with ID {country_id}.")
 
 
+# تضيف وجهة جديدة بعد التحقق من بياناتها.
 def add(data: dict) -> Country:
     items = json_db.load(COUNTRIES_FILE)
     clean = _clean(data)
@@ -91,6 +98,7 @@ def add(data: dict) -> Country:
     return country
 
 
+# تعدّل بيانات وجهة موجودة.
 def update(country_id: int, changes: dict) -> Country:
     items = json_db.load(COUNTRIES_FILE)
     for i, raw in enumerate(items):
@@ -104,6 +112,7 @@ def update(country_id: int, changes: dict) -> Country:
     raise ServiceError(f"No destination with ID {country_id}.")
 
 
+# تحذف وجهة.
 def delete(country_id: int) -> None:
     items = json_db.load(COUNTRIES_FILE)
     remaining = [i for i in items if i["id"] != country_id]

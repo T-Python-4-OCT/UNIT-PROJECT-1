@@ -1,6 +1,7 @@
 from dataclasses import asdict, dataclass, fields
 
 
+# مستخدم: عميل أو مدير، مع كلمة سر مشفرة (hash) وليس الأصلية.
 @dataclass
 class User:
     id: int
@@ -11,9 +12,11 @@ class User:
     role: str
     phone: str = ""
 
+    # تحوّل المستخدم إلى قاموس عشان ينحفظ في ملف JSON.
     def to_dict(self) -> dict:
         return asdict(self)
 
+    # تبني مستخدم من قاموس مقروء من الملف.
     @staticmethod
     def from_dict(data: dict) -> "User":
         known = {model_field.name for model_field in fields(User)}

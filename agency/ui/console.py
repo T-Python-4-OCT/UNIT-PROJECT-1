@@ -18,27 +18,33 @@ THEME = Theme({
 console = Console(theme=THEME)
 
 
+# تطبع رسالة نجاح بالأخضر.
 def success(msg: str) -> None:
     console.print(f"✔ {escape(msg)}", style="success")
 
 
+# تطبع رسالة خطأ بالأحمر.
 def error(msg: str) -> None:
     console.print(f"✘ {escape(msg)}", style="error")
 
 
+# تطبع معلومة بالسماوي.
 def info(msg: str) -> None:
     console.print(escape(msg), style="info")
 
 
+# تطبع تنبيه بالأصفر.
 def warn(msg: str) -> None:
     console.print(f"! {escape(msg)}", style="warn")
 
 
+# تطبع عنوان قسم بخط تحته.
 def heading(text: str) -> None:
     console.print()
     console.rule(f"[title]{escape(text)}[/title]", style="magenta")
 
 
+# تطبع شعار SkyRoute بحروف كبيرة (pyfiglet)، وإذا فشل تطبع الاسم عادي.
 def show_banner() -> None:
     try:
         import pyfiglet
@@ -52,15 +58,18 @@ def show_banner() -> None:
 BACK_WORDS = ("b", "back")
 
 
+# إشارة أن المستخدم كتب b للرجوع للقائمة.
 class GoBack(Exception):
     pass
 
 
+# إذا كتب المستخدم b أو back ترمي GoBack.
 def _check_back(raw: str) -> None:
     if raw.strip().lower() in BACK_WORDS:
         raise GoBack
 
 
+# تسأل سؤال نصي (مع قيمة افتراضية) وتكرره إذا الإجابة فاضية والحقل مطلوب.
 def ask_text(label: str, default=None, required: bool = True) -> str:
     while True:
         kwargs = {} if default is None else {"default": str(default)}
@@ -71,12 +80,14 @@ def ask_text(label: str, default=None, required: bool = True) -> str:
         error("This field is required.")
 
 
+# تسأل عن كلمة السر بدون ما تظهر على الشاشة.
 def ask_password(label: str = "Password") -> str:
     value = getpass.getpass(f"{label}: ")
     _check_back(value)
     return value
 
 
+# تسأل عن رقم صحيح ضمن حد أدنى وأعلى، وتكرر السؤال إذا الإدخال غلط.
 def ask_int(label: str, minimum=None, maximum=None, default=None) -> int:
     while True:
         kwargs = {} if default is None else {"default": str(default)}
@@ -98,6 +109,7 @@ def ask_int(label: str, minimum=None, maximum=None, default=None) -> int:
         return value
 
 
+# تسأل المستخدم يختار من قائمة خيارات محددة (ويقدر يكتب b للرجوع).
 def ask_choice(label: str, choices, default=None, allow_back: bool = True) -> str:
     options = [*choices, "b"] if allow_back else list(choices)
     kwargs = {} if default is None else {"default": default}
@@ -108,9 +120,11 @@ def ask_choice(label: str, choices, default=None, allow_back: bool = True) -> st
     return value
 
 
+# تسأل سؤال نعم/لا وترجع True أو False.
 def confirm(label: str, default: bool = False) -> bool:
     return Confirm.ask(f"[bold]{escape(label)}[/bold]", console=console, default=default)
 
 
+# توقف الشاشة لين يضغط المستخدم Enter.
 def pause() -> None:
     console.input("\n[dim]Press Enter to continue...[/dim]")

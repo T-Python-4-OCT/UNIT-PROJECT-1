@@ -29,10 +29,12 @@ WEATHER_CODES = {
 }
 
 
+# تحوّل رمز الطقس من الـ API إلى وصف مقروء (مثل Clear sky).
 def describe(code) -> str:
     return WEATHER_CODES.get(code, "Unknown")
 
 
+# ترسل طلب للـ API وترجع JSON، وإذا فشل ترمي ServiceError.
 def _get_json(url: str, params: dict) -> dict:
     full_url = f"{url}?{urllib.parse.urlencode(params)}"
     try:
@@ -43,6 +45,7 @@ def _get_json(url: str, params: dict) -> dict:
                            "Check your internet connection and try again.")
 
 
+# تجيب إحداثيات مدينة الوجهة من خدمة البحث الجغرافي في Open-Meteo.
 def _find_location(destination: Country) -> dict:
     data = _get_json(GEOCODING_URL, {"name": destination.city, "count": 10, "language": "en"})
     results = data.get("results") or []
@@ -58,6 +61,7 @@ def _find_location(destination: Country) -> dict:
     return results[0]
 
 
+# ترجع الطقس الحالي وتوقعات 4 أيام لمدينة الوجهة من Open-Meteo.
 def get_forecast(destination: Country) -> dict:
     location = _find_location(destination)
     data = _get_json(FORECAST_URL, {

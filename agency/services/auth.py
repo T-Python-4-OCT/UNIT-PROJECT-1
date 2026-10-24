@@ -7,6 +7,7 @@ from agency.utils import validators
 from agency.utils.security import hash_password, verify_password
 
 
+# تتحقق من بيانات التسجيل وتنشئ حساب عميل جديد.
 def register(username: str, password: str, full_name: str, email: str, phone: str) -> User:
     username = username.strip().lower()
     full_name = full_name.strip()
@@ -39,6 +40,7 @@ def register(username: str, password: str, full_name: str, email: str, phone: st
     return user
 
 
+# تتحقق من الاسم وكلمة السر وترجع المستخدم.
 def login(username: str, password: str) -> User:
     username = username.strip().lower()
     for user_record in json_db.load(USERS_FILE):

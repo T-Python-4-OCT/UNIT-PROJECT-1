@@ -5,6 +5,7 @@ from pathlib import Path
 from agency.errors import ServiceError
 
 
+# تقرأ ملف JSON، وترجع قائمة فاضية إذا ما وجد.
 def load(path: Path) -> list:
     if not path.exists() or path.stat().st_size == 0:
         return []
@@ -15,6 +16,7 @@ def load(path: Path) -> list:
         raise ServiceError(f"Data file is corrupted: {path.name}")
 
 
+# تحفظ القائمة في ملف JSON (بملف مؤقت أول عشان ما يخرب الملف).
 def save(path: Path, data: list) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
@@ -23,5 +25,6 @@ def save(path: Path, data: list) -> None:
     os.replace(tmp, path)
 
 
+# ترجع الرقم التالي (أكبر رقم موجود + 1).
 def next_id(items: list) -> int:
     return max((item["id"] for item in items), default=0) + 1

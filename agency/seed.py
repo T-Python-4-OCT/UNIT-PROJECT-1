@@ -1,5 +1,6 @@
 from agency.config import BOOKINGS_FILE, COUNTRIES_FILE, USERS_FILE
 from agency.countries_data import COUNTRIES
+from agency.services import promos
 from agency.storage import json_db
 from agency.utils.security import hash_password
 
@@ -7,6 +8,7 @@ COUNTRY_KEYS = ["id", "country", "city", "category", "flight", "hotel", "food",
                 "transport", "activities", "best_season", "highlights"]
 
 
+# تنشئ ملفات البيانات أول تشغيل مع حساب admin.
 def run() -> None:
     if not USERS_FILE.exists():
         json_db.save(USERS_FILE, [{
@@ -24,3 +26,5 @@ def run() -> None:
 
     if not BOOKINGS_FILE.exists():
         json_db.save(BOOKINGS_FILE, [])
+
+    promos.seed()
