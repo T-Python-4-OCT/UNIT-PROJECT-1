@@ -4,6 +4,7 @@ from cinema.models.booking import Booking, make_show_key
 from cinema.models.hall import Hall
 from cinema.screens.choosers import choose_branch, choose_hall, choose_movie, choose_show_time, format_date
 from cinema.screens.seat_picker import calculate_total, select_seats
+from cinema.services.weather import print_weather
 from cinema.storage.bookings_file import load_bookings, save_bookings
 from cinema.storage.search import booked_seats, new_invoice_number
 from cinema.storage.tickets import export_ticket
@@ -29,11 +30,13 @@ def print_summary(customer: str, branch: str, movie: dict, hall: Hall,
 
 
 def finish_booking(booking: Booking) -> None:
-    """Show the ticket and offer to save the ticket file."""
+    """Show the ticket, the weather, and offer to save the ticket file."""
     print()
     print_success(f"Booking confirmed! Keep your invoice number: {booking.invoice}")
     print()
     booking.print_ticket()
+    print()
+    print_weather(booking.show_date)
     print()
     if ask_yes_no("Save the ticket as a text file?"):
         path = export_ticket(booking)
