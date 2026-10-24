@@ -94,7 +94,13 @@ def money(amount: float) -> str:
     return f"{amount:,.2f} SAR"
 
 
-def ask_choice(message: str, options: tuple | list) -> str | None:
+def ask_confirm(message: str) -> bool:
+    """Ask a yes/no question (No is the default, Ctrl+C counts as No)."""
+    answer = questionary.confirm(message, default=False, style=MENU_STYLE).ask()
+    return answer is True
+
+
+def ask_choice(message: str, options: tuple | list):
     """Show a list the user picks from with the arrow keys (None if Ctrl+C)."""
     return questionary.select(
         message,

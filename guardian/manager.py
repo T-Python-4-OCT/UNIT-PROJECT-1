@@ -29,6 +29,10 @@ class SubscriptionManager:
         self.subscriptions.append(subscription)
         self.save()
 
+    def delete(self, subscription: Subscription):
+        self.subscriptions.remove(subscription)
+        self.save()
+
     def view_all(self, sort_by: str = "Days left (soonest first)"):
         """Print all subscriptions in a colored table, sorted by one of SORT_OPTIONS."""
         if not self.subscriptions:

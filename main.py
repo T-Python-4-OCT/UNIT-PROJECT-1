@@ -1,13 +1,15 @@
+from questionary import Choice
 from rich.console import Console
 
 from guardian.manager import SORT_OPTIONS, SubscriptionManager
 from guardian.subscription import CATEGORIES, MonthlySubscription, YearlySubscription
-from guardian.utils import ask_choice, ask_price, ask_start_date, ask_text, show_banner
+from guardian.utils import ask_choice, ask_confirm, ask_price, ask_start_date, ask_text, show_banner
 
 console = Console()
 manager = SubscriptionManager()
 
 EXIT = "Exit"
+CANCEL = "Cancel"
 
 
 def add_subscription():
@@ -47,6 +49,24 @@ def view_subscriptions():
     manager.view_all(sort_by)
 
 
+def delete_subscription():
+    if not manager.subscriptions:
+        console.print("[yellow]You don't have any subscriptions to delete.[/yellow]")
+        return
+
+    # Show each subscription by its text, but give back the object itself
+    choices = [Choice(str(sub), value=sub) for sub in manager.subscriptions]
+    subscription = ask_choice("Which subscription do you want to delete?", choices + [CANCEL])
+    if subscription is None or subscription == CANCEL:
+        return
+
+    if ask_confirm(f'Are you sure you want to delete "{subscription.name}"?'):
+        manager.delete(subscription)
+        console.print(f"[green]Deleted {subscription.name}.[/green]")
+    else:
+        console.print("Nothing was deleted.")
+
+
 def coming_soon():
     console.print("[yellow]Coming soon...[/yellow]")
 
@@ -58,7 +78,7 @@ MENU_OPTIONS = {
     "Spending report": coming_soon,
     "Mark as used today": coming_soon,
     "Suggestions: what to cancel?": coming_soon,
-    "Delete subscription": coming_soon,
+    "Delete subscription": delete_subscription,
 }
 
 
