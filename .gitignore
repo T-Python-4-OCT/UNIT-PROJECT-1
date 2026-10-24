@@ -218,3 +218,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# KickOff Tickets runtime files
+data/teams.json
+data/matches.json
+data/bookings.json
+data/holds.json
+tickets/
