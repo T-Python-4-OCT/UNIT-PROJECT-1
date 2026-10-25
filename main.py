@@ -9,8 +9,7 @@ except KickoffError as problem:
     raise SystemExit(1)
 actions_done = 0          # a global variable (top level): how many menu choices were used
 
-ui.console.print("[bold cyan]KICKOFF TICKETS[/bold cyan]  -  Roshn Saudi League 2026-27")
-
+ui.console.print("[bold cyan]KICKOFF TICKETS[/bold cyan]  -  Roshn Saudi League 2026-2027")
 
 MAIN_OPTIONS = {
     1: "Book tickets",
