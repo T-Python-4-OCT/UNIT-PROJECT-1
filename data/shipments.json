@@ -68,5 +68,13 @@
     "destination": "riadh",
     "status": "Completed & In Transit",
     "vehicle": "Cargo Drone Beta"
+  },
+  {
+    "shipment_id": "SHP-108",
+    "item_name": "Drinking Water Bottles (Pack)",
+    "quantity": 10,
+    "destination": "Riadh",
+    "status": "Completed & In Transit",
+    "vehicle": "Cargo Drone Beta"
   }
 ]

@@ -195,6 +195,9 @@ def create_field_request(zone):
         console.print("[bold red]❌ Invalid quantity format.[/bold red]")
         return False
         
+    priority = {"1": "High", "2": "Medium", "3": "Low"}.get(
+        input("Priority (1=High, 2=Medium, 3=Low) [2]: ").strip() or "2", "Medium")
+
     requests = load_field_requests()
     req_id = f"REQ-{len(requests) + 101}"
     
@@ -203,6 +206,7 @@ def create_field_request(zone):
         "item_name": item_name,
         "quantity": quantity,
         "zone": zone,
+        "priority": priority,
         "status": "Pending"
     }
     
@@ -301,7 +305,6 @@ def assign_vehicle_to_shipment(shipment_id, vehicle_name):
     if updated:
         save_shipments(shipments)
         
-        # تحديث حالة الطلبات الميدانية المرتبطة لتصبح مكتملة تماماً
         requests = load_field_requests()
         for r in requests:
             if r.get('status') != "Completed":

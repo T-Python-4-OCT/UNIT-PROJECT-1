@@ -1,278 +1,275 @@
-from src.services.auth_service import register_user, login_user, load_users
+from src.services.auth_service import register_user, login_user, load_users, migrate_passwords
 from src.services.logistics_service import (
-    view_supplies, add_supply_item, create_shipment, load_shipments, 
-    get_pending_shipments, assign_vehicle_to_shipment, create_field_request, 
-    load_field_requests, display_field_requests_table
+    view_supplies, add_supply_item, create_shipment, load_shipments,
+    get_pending_shipments, assign_vehicle_to_shipment, create_field_request,
+    load_field_requests,
 )
 from src.services.weather_api import get_crisis_weather
 from src.services.recommend_service import get_smart_recommendations
-from src.utils.display import display_header, display_supplies_table, simulate_dispatch_progress
-from rich.console import Console
+from src.utils import display as ui
 
-console = Console()
+console = ui.console
+
+REGIONS = {
+    "1": {"name": "Riyadh", "lat": 24.7136, "lon": 46.6753},
+    "2": {"name": "Tabuk", "lat": 28.3972, "lon": 36.5788},
+    "3": {"name": "Jeddah", "lat": 21.5433, "lon": 39.1728},
+    "4": {"name": "Dammam", "lat": 26.4207, "lon": 50.0888},
+}
+
+VEHICLES = [
+    ("1", "Truck Alpha", "Ground", 500, True),
+    ("2", "Cargo Drone Beta", "Air", 50, True),
+    ("3", "Heavy Transporter Gamma", "Ground", 2000, False),
+]
+
+
+def show_supplies():
+    ui.clear()
+    ui.display_supplies_table(view_supplies())
+    ui.pause()
+
+
+def invalid():
+    ui.error("Invalid option. Please try again.")
+
 
 def manager_menu(user):
-    username = user.get("user_name") if isinstance(user, dict) else getattr(user, "user_name", "Manager")
     while True:
-        console.print(f"\n[bold cyan]--- Manager Dashboard ({username}) ---[/bold cyan]")
-        console.print("1. View Supplies Inventory")
-        console.print("2. Add New Supply Item")
-        console.print("3. View Active Shipments & Tracking")
-        console.print("4. View System Users")
-        console.print("5. Logout / Switch User")
-        
-        choice = input("Choose an option (1-5): ").strip()
-        
+        ui.clear()
+        choice = ui.menu(f"Manager Dashboard ({user.user_name})", [
+            "View Supplies Inventory", "Add New Supply Item",
+            "View Active Shipments & Tracking", "View System Users", "Logout / Switch User"])
         if choice == "1":
-            supplies = view_supplies()
-            display_supplies_table(supplies)
-            
+            show_supplies()
         elif choice == "2":
             add_supply_item()
-            
+            ui.pause()
         elif choice == "3":
-            console.print("\n[bold yellow]--- Active Shipments & Tracking ---[/bold yellow]")
+            ui.clear()
             shipments = load_shipments()
             if shipments:
-                for s in shipments:
-                    status_color = "green" if "Transit" in s.get('status', '') or "Completed" in s.get('status', '') else "yellow"
-                    veh = s.get('vehicle') or "Unassigned"
-                    console.print(f"📦 [{s.get('shipment_id')}]: {s.get('quantity')}x {s.get('item_name')} -> {s.get('destination')} | Vehicle: [magenta]{veh}[/magenta] | Status: [{status_color}]{s.get('status')}[/{status_color}]")
+                ui.display_shipments_table(shipments)
             else:
                 console.print("[yellow]No shipments recorded yet.[/yellow]")
-            
+            ui.pause()
         elif choice == "4":
-            console.print("\n[bold yellow]--- Registered System Users ---[/bold yellow]")
+            ui.clear()
             users = load_users()
             if users:
-                for idx, u in enumerate(users, 1):
-                    role_str = u.get('role', 'general')
-                    uname = u.get('user_name', 'Unknown')
-                    email = u.get('email', 'N/A')
-                    console.print(f"{idx}. User: [cyan]{uname}[/cyan] | Role: [green]{role_str}[/green] | Email: {email}")
+                ui.display_users_table(users)
             else:
-                console.print("[yellow]No registered users found in database yet.[/yellow]")
-                
+                console.print("[yellow]No registered users found.[/yellow]")
+            ui.pause()
         elif choice == "5":
             console.print("[yellow]Logging out...[/yellow]")
             break
         else:
-            console.print("[bold red]Invalid option. Please try again.[/bold red]")
+            invalid()
+            ui.pause()
+
+
+def pick_region():
+    ui.clear()
+    ui.title("Select Crisis Region")
+    for k, r in REGIONS.items():
+        console.print(f"  {k}. {r['name']}")
+    return REGIONS.get(ui.ask("Choose region (1-4):"))
 
 
 def dispatcher_menu(user):
-    username = user.get("user_name") if isinstance(user, dict) else getattr(user, "user_name", "Dispatcher")
     while True:
-        console.print(f"\n[bold cyan]--- Dispatcher Dashboard ({username}) ---[/bold cyan]")
-        console.print("1. View Supplies Inventory")
-        console.print("2. View Field Supervisor Requests & Status")
-        console.print("3. Check Crisis Weather (Live API)")
-        console.print("4. Get Smart Supply Recommendations")
-        console.print("5. Create & Dispatch Shipment Request")
-        console.print("6. Logout / Switch User")
-        
-        choice = input("Choose an option (1-6): ").strip()
-        
+        ui.clear()
+        choice = ui.menu(f"Dispatcher Dashboard ({user.user_name})", [
+            "View Supplies Inventory", "View Field Supervisor Requests & Status",
+            "Check Crisis Weather (Live API)", "Get Smart Supply Recommendations",
+            "Create & Dispatch Shipment Request", "Logout / Switch User"])
         if choice == "1":
-            supplies = view_supplies()
-            display_supplies_table(supplies)
-            
+            show_supplies()
         elif choice == "2":
+            ui.clear()
             requests = load_field_requests()
             if not requests:
                 console.print("[yellow]No pending requests from field supervisors.[/yellow]")
             else:
-                display_field_requests_table(requests)
-                console.print("\n[cyan]Tip: You can now go to option 5 to create and dispatch this shipment based on these requests![/cyan]")
-                
+                ui.display_field_requests_table(requests)
+                console.print(f"\n[{ui.YELLOW}]Tip: You can now go to option 5 to create and dispatch a shipment based on these requests![/]")
+            ui.pause()
         elif choice == "3":
-            console.print("\n[bold yellow]--- Select Crisis Region ---[/bold yellow]")
-            console.print("1. Riyadh\n2. Tabuk\n3. Jeddah\n4. Dammam")
-            reg_choice = input("Choose region (1-4): ").strip()
-            regions_map = {
-                "1": {"name": "Riyadh", "lat": 24.7136, "lon": 46.6753},
-                "2": {"name": "Tabuk", "lat": 28.3972, "lon": 36.5788},
-                "3": {"name": "Jeddah", "lat": 21.5433, "lon": 39.1728},
-                "4": {"name": "Dammam", "lat": 26.4207, "lon": 50.0888}
-            }
-            if reg_choice in regions_map:
-                r = regions_map[reg_choice]
-                weather = get_crisis_weather(r["lat"], r["lon"])
-                if weather:
-                    console.print(f"\n[bold green]Weather in {r['name']}:[/bold green] Temp: {weather.get('temperature')}°C | Wind: {weather.get('windspeed')} km/h")
-                else:
-                    console.print("[bold red]Could not fetch weather.[/bold red]")
+            region = pick_region()
+            if not region:
+                ui.error("Invalid choice.")
             else:
-                console.print("[bold red]Invalid choice.[/bold red]")
-                
+                weather = get_crisis_weather(region["lat"], region["lon"])
+                if weather:
+                    ui.weather_panel(region["name"], weather)
+                else:
+                    ui.error("Could not fetch weather.")
+            ui.pause()
         elif choice == "4":
-            category = input("Enter crisis category (Medical, Food, Shelter): ").strip()
+            ui.clear()
+            ui.heading("💡", "Smart Recommendations")
+            category = ui.ask("Enter crisis category (Medical, Food, Shelter):")
             recs = get_smart_recommendations(category)
             if recs:
-                console.print(f"\n[bold magenta]Smart Recommendations:[/bold magenta]")
-                display_supplies_table(recs)
+                ui.display_recommendations(recs, category)
             else:
                 console.print("[yellow]No recommendations found.[/yellow]")
-                
+            ui.pause()
         elif choice == "5":
+            ui.clear()
             create_shipment()
-                
+            ui.pause()
         elif choice == "6":
             console.print("[yellow]Logging out...[/yellow]")
             break
         else:
-            console.print("[bold red]Invalid option. Please try again.[/bold red]")
+            invalid()
+            ui.pause()
 
 
 def field_supervisor_menu(user):
-    username = user.get("user_name") if isinstance(user, dict) else getattr(user, "user_name", "Supervisor")
+    zone = getattr(user, "crisis_zone", "General Zone")
     while True:
-        zone = user.get("crisis_zone") if isinstance(user, dict) else getattr(user, "crisis_zone", "General Zone")
-        console.print(f"\n[bold cyan]--- Field Supervisor Dashboard ({username} | Zone: {zone}) ---[/bold cyan]")
-        console.print("1. View Supplies Inventory")
-        console.print("2. Report Urgent Field Request (Send to Dispatcher)")
-        console.print("3. Logout / Switch User")
-        
-        choice = input("Choose an option (1-3): ").strip()
-        
+        ui.clear()
+        choice = ui.menu(f"Field Supervisor Dashboard ({user.user_name} | Zone: {zone})", [
+            "View Supplies Inventory", "Report Urgent Field Request (Send to Dispatcher)",
+            "Logout / Switch User"])
         if choice == "1":
-            supplies = view_supplies()
-            display_supplies_table(supplies)
+            show_supplies()
         elif choice == "2":
+            ui.clear()
             create_field_request(zone)
+            ui.pause()
         elif choice == "3":
             console.print("[yellow]Logging out...[/yellow]")
             break
         else:
-            console.print("[bold red]Invalid option. Please try again.[/bold red]")
+            invalid()
+            ui.pause()
+
+
+def fleet_status(specialty):
+    from rich.table import Table
+    ui.clear()
+    t = Table(title=f"🚚 [bold {ui.VIOLET}]Fleet Status ({specialty} Unit)[/]", title_justify="left",
+              border_style=ui.DIM, header_style=f"bold {ui.CYAN}")
+    for c, kw in [("Vehicle", {}), ("Type", {}), ("Capacity (kg)", {"justify": "right"}), ("Status", {})]:
+        t.add_column(c, **kw)
+    for _, name, kind, cap, ready in VEHICLES:
+        t.add_row(("🚁 " if kind == "Air" else "🚚 ") + name, kind, str(cap),
+                  f"[{ui.GREEN}]Ready[/]" if ready else f"[{ui.YELLOW}]In Maintenance[/]")
+    console.print(t)
+    ui.pause()
+
+
+def assign_flow():
+    ui.clear()
+    pending = get_pending_shipments()
+    if not pending:
+        console.print("[yellow]No pending shipments waiting for fleet assignment.[/yellow]")
+        return
+    ui.title("Pending Shipments Awaiting Fleet")
+    for s in pending:
+        console.print(f"📦 ID: [cyan]{s.get('shipment_id')}[/cyan] | Item: {s.get('quantity')}x {s.get('item_name')} | Destination: [magenta]{s.get('destination')}[/magenta]")
+
+    target_id = ui.ask("Enter Shipment ID to process (e.g., SHP-101):")
+    ship = next((s for s in pending if s.get("shipment_id", "").lower() == target_id.lower()), None)
+    if not ship:
+        ui.error("Shipment ID not found.")
+        return
+
+    dest = (ship.get("destination") or "").strip().lower()
+    region = next((r for r in REGIONS.values() if r["name"].lower() == dest), REGIONS["1"])
+    ui.info(f"Checking live weather for destination '{ship.get('destination')}'...")
+    weather = get_crisis_weather(region["lat"], region["lon"])
+    if weather:
+        ui.weather_panel(region["name"], weather)
+        if (weather.get("windspeed") or 0) > 30:
+            console.print(f"[bold {ui.RED}]⚠️  High winds detected! Air drones not recommended. Use ground trucks.[/]")
+        else:
+            console.print(f"[bold {ui.GREEN}]✨ Weather is stable for all transport options.[/]")
+    else:
+        console.print("[yellow]Could not fetch live weather data.[/yellow]")
+
+    console.print("\nSelect Transport Vehicle:")
+    for k, name, kind, cap, ready in VEHICLES:
+        note = "" if ready else f"  [{ui.YELLOW}](In Maintenance)[/]"
+        console.print(f"{k}. {name} ({kind} - {cap} kg){note}")
+    v_choice = ui.ask("Choose vehicle (1-3):")
+    chosen = next((v for v in VEHICLES if v[0] == v_choice), None)
+    if not chosen or not chosen[4]:
+        ui.error("That vehicle isn't available.")
+        return
+
+    sid = ship.get("shipment_id")
+    if assign_vehicle_to_shipment(sid, chosen[1]):
+        ui.ok(f"Shipment {sid} assigned to '{chosen[1]}' and marked 'In Transit'!")
+        ui.simulate_dispatch_progress(sid, chosen[1], ship.get("destination"))
+    else:
+        ui.error("Assignment failed.")
 
 
 def fleet_officer_menu(user):
-    username = user.get("user_name") if isinstance(user, dict) else getattr(user, "user_name", "Officer")
+    specialty = getattr(user, "specialty", "Logistics")
     while True:
-        specialty = user.get("specialty") if isinstance(user, dict) else getattr(user, "specialty", "Logistics")
-        console.print(f"\n[bold cyan]--- Fleet Officer Dashboard ({username} | Specialty: {specialty}) ---[/bold cyan]")
-        console.print("1. View Supplies Inventory")
-        console.print("2. Check Fleet Vehicle Capacities")
-        console.print("3. Review Pending Shipments, Check Weather & Assign Vehicle")
-        console.print("4. Logout / Switch User")
-        
-        choice = input("Choose an option (1-4): ").strip()
-        
+        ui.clear()
+        choice = ui.menu(f"Fleet Officer Dashboard ({user.user_name} | Specialty: {specialty})", [
+            "View Supplies Inventory", "Check Fleet Vehicle Capacities",
+            "Review Pending Shipments, Check Weather & Assign Vehicle", "Logout / Switch User"])
         if choice == "1":
-            supplies = view_supplies()
-            display_supplies_table(supplies)
+            show_supplies()
         elif choice == "2":
-            console.print(f"\n[bold yellow]--- Fleet Status ({specialty} Unit) ---[/bold yellow]")
-            console.print("🚚 Truck Alpha (Ground - Capacity: 500 kg) - [green]Ready[/green]")
-            console.print("🚁 Cargo Drone Beta (Air - Capacity: 50 kg) - [green]Ready[/green]")
-            console.print("🚛 Heavy Transporter Gamma (Ground - Capacity: 2000 kg) - [yellow]In Maintenance[/yellow]")
+            fleet_status(specialty)
         elif choice == "3":
-            pending = get_pending_shipments()
-            if not pending:
-                console.print("[yellow]No pending shipments waiting for fleet assignment.[/yellow]")
-            else:
-                console.print("\n[bold yellow]--- Pending Shipments Awaiting Fleet ---[/bold yellow]")
-                for s in pending:
-                    console.print(f"📦 ID: [cyan]{s.get('shipment_id')}[/cyan] | Item: {s.get('quantity')}x {s.get('item_name')} | Destination: [magenta]{s.get('destination')}[/magenta]")
-                
-                target_id = input("Enter Shipment ID to process (e.g., SHP-101): ").strip()
-                selected_shipment = next((s for s in pending if s.get('shipment_id').lower() == target_id.lower()), None)
-                
-                if not selected_shipment:
-                    console.print("[bold red]❌ Shipment ID not found.[/bold red]")
-                else:
-                    dest = selected_shipment.get('destination').strip().lower()
-                    regions_coords = {
-                        "riyadh": {"lat": 24.7136, "lon": 46.6753},
-                        "tabuk": {"lat": 28.3972, "lon": 36.5788},
-                        "jeddah": {"lat": 21.5433, "lon": 39.1728},
-                        "dammam": {"lat": 26.4207, "lon": 50.0888}
-                    }
-                    
-                    coords = regions_coords.get(dest, {"lat": 24.7136, "lon": 46.6753})
-                    console.print(f"[cyan]Checking live weather for destination '{selected_shipment.get('destination')}'...[/cyan]")
-                    weather = get_crisis_weather(coords["lat"], coords["lon"])
-                    
-                    if weather:
-                        temp = weather.get('temperature')
-                        wind = weather.get('windspeed', 0)
-                        console.print(f"🌡️ Temperature: {temp}°C | 💨 Wind Speed: {wind} km/h")
-                        if wind > 30:
-                            console.print("[bold red]⚠️ High winds detected! Air drones not recommended. Use ground trucks.[/bold red]")
-                        else:
-                            console.print("[bold green]✨ Weather is stable for all transport options.[/bold green]")
-                    else:
-                        console.print("[yellow]Could not fetch live weather data.[/yellow]")
-                        
-                    console.print("\nSelect Transport Vehicle:")
-                    console.print("1. Truck Alpha (Ground - 500 kg)")
-                    console.print("2. Cargo Drone Beta (Air - 50 kg)")
-                    console.print("3. Heavy Transporter Gamma (Ground - 2000 kg)")
-                    
-                    v_choice = input("Choose vehicle (1-3): ").strip()
-                    v_map = {"1": "Truck Alpha", "2": "Cargo Drone Beta", "3": "Heavy Transporter Gamma"}
-                    chosen_vehicle = v_map.get(v_choice, "Truck Alpha")
-                    
-                    if assign_vehicle_to_shipment(selected_shipment.get('shipment_id'), chosen_vehicle):
-                        console.print(f"[bold green]✅ Shipment {selected_shipment.get('shipment_id')} assigned to '{chosen_vehicle}' and marked 'In Transit'![/bold green]")
-                        simulate_dispatch_progress(selected_shipment.get('shipment_id'))
-                    else:
-                        console.print("[bold red]❌ Assignment failed.[/bold red]")
+            assign_flow()
+            ui.pause()
         elif choice == "4":
             console.print("[yellow]Logging out...[/yellow]")
             break
         else:
-            console.print("[bold red]Invalid option. Please try again.[/bold red]")
+            invalid()
+            ui.pause()
 
 
 def general_user_menu(user):
-    username = user.get("user_name") if isinstance(user, dict) else getattr(user, "user_name", "User")
     while True:
-        console.print(f"\n[bold cyan]--- General Dashboard ({username}) ---[/bold cyan]")
-        console.print("1. View Supplies Inventory")
-        console.print("2. Logout / Switch User")
-        choice = input("Choose an option (1-2): ").strip()
+        ui.clear()
+        choice = ui.menu(f"General Dashboard ({user.user_name})", ["View Supplies Inventory", "Logout / Switch User"])
         if choice == "1":
-            supplies = view_supplies()
-            display_supplies_table(supplies)
+            show_supplies()
         elif choice == "2":
             break
         else:
-            console.print("[bold red]Invalid option.[/bold red]")
+            invalid()
+            ui.pause()
 
 
 def main():
-    display_header()
+    migrate_passwords()
     while True:
-        console.print("\n[bold yellow]--- Main Menu ---[/bold yellow]")
-        console.print("1. Login")
-        console.print("2. Register New User")
-        console.print("3. Exit Program")
-        
-        main_choice = input("Choose an option (1-3): ").strip()
-        
-        if main_choice == "1":
+        ui.clear()
+        ui.display_header()
+        choice = ui.menu("Main Menu", ["Login", "Register New User", "Exit Program"])
+        if choice == "1":
             current_user = login_user()
             if current_user:
                 role = current_user.get("role") if isinstance(current_user, dict) else getattr(current_user, "role", None)
-                if role == "manager":
-                    manager_menu(current_user)
-                elif role == "dispatcher":
-                    dispatcher_menu(current_user)
-                elif role == "field_supervisor":
-                    field_supervisor_menu(current_user)
-                elif role == "fleet_officer":
-                    fleet_officer_menu(current_user)
-                else:
-                    general_user_menu(current_user)
-        elif main_choice == "2":
+                {"manager": manager_menu, "dispatcher": dispatcher_menu,
+                 "field_supervisor": field_supervisor_menu,
+                 "fleet_officer": fleet_officer_menu}.get(role, general_user_menu)(current_user)
+            else:
+                ui.pause()
+        elif choice == "2":
             register_user()
-        elif main_choice == "3":
+            ui.pause()
+        elif choice == "3":
             console.print("\n[bold green]Exiting program. Stay safe![/bold green]")
             break
         else:
-            console.print("[bold red]Invalid choice.[/bold red]")
+            invalid()
+            ui.pause()
+
 
 if __name__ == "__main__":
     main()
