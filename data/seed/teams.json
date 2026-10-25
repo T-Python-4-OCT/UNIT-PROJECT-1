@@ -4,59 +4,59 @@
     "name_en": "Al Hilal",
     "city": "Riyadh",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1661266882.png",
-    "played": 9,
-    "won": 8,
+    "played": 10,
+    "won": 9,
     "drawn": 0,
     "lost": 1,
-    "gf": 27,
-    "ga": 7
+    "gf": 30,
+    "ga": 9
   },
   {
     "team_id": "qadsiah",
     "name_en": "Al Qadsiah",
     "city": "Al Khobar",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1717872503.png",
-    "played": 10,
+    "played": 11,
     "won": 8,
     "drawn": 1,
-    "lost": 1,
-    "gf": 24,
-    "ga": 9
+    "lost": 2,
+    "gf": 26,
+    "ga": 12
   },
   {
     "team_id": "nassr",
     "name_en": "Al Nassr",
     "city": "Riyadh",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmallfkCLO1747742996.png",
-    "played": 9,
-    "won": 7,
+    "played": 10,
+    "won": 8,
     "drawn": 1,
     "lost": 1,
-    "gf": 20,
-    "ga": 7
+    "gf": 23,
+    "ga": 8
   },
   {
     "team_id": "ahli",
     "name_en": "Al Ahli",
     "city": "Jeddah",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmallHy6F61756329988.png",
-    "played": 9,
-    "won": 6,
+    "played": 10,
+    "won": 7,
     "drawn": 0,
     "lost": 3,
-    "gf": 23,
-    "ga": 12
+    "gf": 27,
+    "ga": 13
   },
   {
     "team_id": "ittihad",
     "name_en": "Al Ittihad",
     "city": "Jeddah",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1566200867.png",
-    "played": 9,
-    "won": 6,
+    "played": 10,
+    "won": 7,
     "drawn": 2,
     "lost": 1,
-    "gf": 18,
+    "gf": 20,
     "ga": 10
   },
   {
@@ -64,11 +64,11 @@
     "name_en": "Neom",
     "city": "NEOM",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmallk3HfI1736767098.png",
-    "played": 10,
-    "won": 5,
+    "played": 11,
+    "won": 6,
     "drawn": 1,
     "lost": 4,
-    "gf": 14,
+    "gf": 16,
     "ga": 9
   },
   {
@@ -76,11 +76,11 @@
     "name_en": "Al Ettifaq",
     "city": "Dammam",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1661384351.png",
-    "played": 10,
-    "won": 4,
+    "played": 11,
+    "won": 5,
     "drawn": 3,
     "lost": 3,
-    "gf": 14,
+    "gf": 17,
     "ga": 16
   },
   {
@@ -88,131 +88,131 @@
     "name_en": "Al Diriyah",
     "city": "Riyadh",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmallOrZip1757757661.png",
-    "played": 10,
+    "played": 11,
     "won": 4,
     "drawn": 3,
-    "lost": 3,
+    "lost": 4,
     "gf": 9,
-    "ga": 9
+    "ga": 11
   },
   {
     "team_id": "khulood",
     "name_en": "Al Khulood",
     "city": "Ar Rass",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmallD5k291787207108.png",
-    "played": 9,
+    "played": 10,
     "won": 3,
     "drawn": 3,
-    "lost": 3,
+    "lost": 4,
     "gf": 14,
-    "ga": 18
+    "ga": 21
   },
   {
     "team_id": "khaleej",
     "name_en": "Al Khaleej",
     "city": "Saihat",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1566292050.png",
-    "played": 10,
+    "played": 11,
     "won": 2,
     "drawn": 6,
-    "lost": 2,
-    "gf": 9,
-    "ga": 13
+    "lost": 3,
+    "gf": 10,
+    "ga": 17
   },
   {
     "team_id": "hazem",
     "name_en": "Al Hazem",
     "city": "Ar Rass",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1628756061.png",
-    "played": 10,
+    "played": 11,
     "won": 2,
-    "drawn": 3,
+    "drawn": 4,
     "lost": 5,
-    "gf": 10,
-    "ga": 14
+    "gf": 12,
+    "ga": 16
   },
   {
     "team_id": "riyadh",
     "name_en": "Al Riyadh",
     "city": "Riyadh",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1581536401.png",
-    "played": 9,
+    "played": 10,
     "won": 2,
     "drawn": 3,
-    "lost": 4,
-    "gf": 9,
-    "ga": 18
+    "lost": 5,
+    "gf": 10,
+    "ga": 20
   },
   {
     "team_id": "shabab",
     "name_en": "Al Shabab",
     "city": "Riyadh",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1629064138.png",
-    "played": 9,
-    "won": 1,
+    "played": 10,
+    "won": 2,
     "drawn": 5,
     "lost": 3,
-    "gf": 11,
-    "ga": 13
+    "gf": 14,
+    "ga": 14
   },
   {
     "team_id": "fayha",
     "name_en": "Al Fayha",
     "city": "Al Majmaah",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1661203654.png",
-    "played": 10,
+    "played": 11,
     "won": 1,
-    "drawn": 4,
+    "drawn": 5,
     "lost": 5,
-    "gf": 10,
-    "ga": 17
+    "gf": 12,
+    "ga": 19
   },
   {
     "team_id": "faisaly",
     "name_en": "Al Faisaly",
     "city": "Harmah",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall0WKIZ1786063856.png",
-    "played": 9,
+    "played": 10,
     "won": 1,
     "drawn": 4,
-    "lost": 4,
-    "gf": 10,
-    "ga": 17
+    "lost": 5,
+    "gf": 11,
+    "ga": 20
   },
   {
     "team_id": "fateh",
     "name_en": "Al Fateh",
     "city": "Al Ahsa",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1661266908.png",
-    "played": 10,
+    "played": 11,
     "won": 1,
     "drawn": 3,
-    "lost": 6,
-    "gf": 9,
-    "ga": 20
+    "lost": 7,
+    "gf": 10,
+    "ga": 23
   },
   {
     "team_id": "taawoun",
     "name_en": "Al Taawoun",
     "city": "Buraydah",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1661203635.png",
-    "played": 10,
-    "won": 0,
+    "played": 11,
+    "won": 1,
     "drawn": 4,
     "lost": 6,
-    "gf": 4,
-    "ga": 17
+    "gf": 6,
+    "ga": 18
   },
   {
     "team_id": "abha",
     "name_en": "Abha",
     "city": "Abha",
     "logo": "https://www.saff.com.sa/uploadcenter/saffteamsmall1667133437.png",
-    "played": 8,
+    "played": 9,
     "won": 0,
     "drawn": 2,
-    "lost": 6,
+    "lost": 7,
     "gf": 6,
-    "ga": 15
+    "ga": 17
   }
 ]
