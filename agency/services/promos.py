@@ -1,6 +1,7 @@
 from dataclasses import asdict, dataclass
 
-from agency.config import DEFAULT_PROMO_PERCENT, MAX_PROMO_PERCENT, PROMOS_FILE
+from agency.config import (DEFAULT_PROMO_PERCENT, MAX_PROMO_PERCENT, PROMOS_FILE,
+                           YEAR_END_PROMO_PERCENT)
 from agency.errors import ServiceError
 from agency.storage import json_db
 from agency.utils import validators
@@ -15,9 +16,11 @@ class Promo:
     active: bool = True
 
 
+YEAR_END_CODE = "YEAREND10"
+
 STARTER_CODES = [
     ("EID20", "Eid holiday", DEFAULT_PROMO_PERCENT),
-    ("YEAREND20", "End-of-year holiday", DEFAULT_PROMO_PERCENT),
+    (YEAR_END_CODE, "End-of-year holiday", YEAR_END_PROMO_PERCENT),
 ]
 
 

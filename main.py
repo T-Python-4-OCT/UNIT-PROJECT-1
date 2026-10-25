@@ -2,7 +2,7 @@ import sys
 
 from agency import seed
 from agency.errors import ServiceError
-from agency.services import auth, notifications
+from agency.services import auth, notifications, reports
 from agency.ui import customer_menu, manager_menu, views
 from agency.ui.console import (GoBack, ask_choice, ask_password, ask_text, console,
                                error, info, show_banner, success)
@@ -67,7 +67,7 @@ def main() -> None:
             except ServiceError as exc:
                 error(str(exc))
                 continue
-            views.show_welcome(user, [])
+            views.show_welcome(user, reports.welcome_notes(user))
             (manager_menu if user.role == "manager" else customer_menu).run(user)
     except (KeyboardInterrupt, EOFError):
         console.print()
@@ -76,3 +76,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
