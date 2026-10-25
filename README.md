@@ -1,44 +1,66 @@
-# UNIT-PROJECT-1
+# StudyMate
 
+A terminal-based Python app to help students keep track of their university courses, assignments, projects, exams, and notes during the semester.
 
-## Based on what you’ve learned until now , create a project of your choosing (impress us with your imagination) . This project must at least satisfy the following minimum requirements :
+## What it does
 
-- Must be interactive on CLI.
-- Use your coding skills in Python accurately.
-- Organize Your Code into modules & (or packages)
-- Use git & Github to track changes in your code.
+- **Login system:** Simple login and sign-up screen with hidden password input. Default login info is loaded from a `.env` file.
+- **Dashboard:** Shows estimated GPA (out of 4.00), course averages, overdue tasks, and upcoming exams.
+- **Projects tracker:** Lets you break down each course project into custom steps with specific weights (`%`) and points. Marking a step as done updates the progress bar and total score automatically.
+- **Tasks, Exams & Notes:** Add, view, update, and delete tasks, exams, and study notes for each subject.
+- **Charts:** Uses `matplotlib` to plot a bar chart of your course averages and project progress, and saves it as `academic_report.png`.
 
-## Example Project :  An online Grocery Store :
+## Files & Folders
 
-#### Overview : An online store that sells fruits to customers. This online store has 2 main users. The customer and the manager of the store . Each one of them should be able to do the following tasks for the store to function properly . 
+- `main.py` - Entry point of the app and main menu loop.
+- `models/classes.py` - Contains the main OOP classes (`User`, `Subject`, `Task`, `Project`, `Exam`, `StudyNote`).
+- `services/` - Separate files for each section of the app (`auth_service.py`, `dashboard_service.py`, `subject_service.py`, `task_service.py`, `project_service.py`, `exam_service.py`, `note_service.py`).
+- `storage.py` - Handles reading and saving data to `studymate_data.json`.
+- `utils.py` - Helper functions for `rich` tables and `questionary` inputs.
+- `seed.py` - Generates random sample data using `Faker` to test the app quickly.
+- `requirements.txt` - List of libraries used in the project.
 
-### Features & User Stories
-#### As a customer I should be able to do the following :
-- Browse  Products . 
-- View the product info (summary, specs, price, quantity , etc.)
-- Search for Products.
-- Get recommendations for my next purchase based on my purchase history.
-- Add Products to the shopping cart .
-- Remove a product from the shopping cart.
-- List the products in my shopping cart. 
-- Continue to checkout . 
-- Fill in my address for delivery.
-- Get receipt of my purchases.
-- Check delivery status . 
+## Libraries
 
+- `rich`
+- `questionary`
+- `matplotlib`
+- `Faker`
+- `python-dotenv`
 
+## Setup & Run
 
-#### Usage :
- Explain to the user how to use your project . 
- for example:
- - type in search product_name to search for a product.
- - type in list_products to show all the products in the grocery.
- - type in show product_name to get information about this product.
- - type in buy product_name to buy the product . 
- - and so on...
+1. Go to the project folder:
+   ```bash
+   cd UNIT-PROJECT-1
+   ```
 
+2. Install the libraries:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### For your project. Edit this README.md file to include your own project name,  overview, user stories, and usage. 
+3. Make sure you have a `.env` file in the project folder with these values:
+   ```env
+   DEFAULT_USERNAME=student
+   DEFAULT_PASSWORD=1234
+   DEFAULT_MAJOR=Software Engineering
+   DATA_FILE=studymate_data.json
+   ```
 
-### NOTE: before submitting the final project, please do the following command:
-`pip freeze > requirements.txt` to enable use to know & use the packages used in your project.
+4. Run the seed script to generate test data:
+   ```bash
+   python seed.py
+   ```
+
+5. Run the app:
+   ```bash
+   python main.py
+   ```
+
+**Default Login:**
+- Username: `student`
+- Password: `1234`
+
+---
+By Ghali Al-Mazmoumi
