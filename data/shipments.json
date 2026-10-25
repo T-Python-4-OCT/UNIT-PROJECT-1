@@ -36,5 +36,37 @@
     "destination": "Riadh",
     "status": "In Transit",
     "vehicle": "Truck Alpha"
+  },
+  {
+    "shipment_id": "SHP-104",
+    "item_name": "Advanced First Aid Kit",
+    "quantity": 20,
+    "destination": "Riadh",
+    "status": "In Transit",
+    "vehicle": "Truck Alpha"
+  },
+  {
+    "shipment_id": "SHP-105",
+    "item_name": "Advanced First Aid Kit",
+    "quantity": 10,
+    "destination": "Riadh",
+    "status": "In Transit",
+    "vehicle": "Cargo Drone Beta"
+  },
+  {
+    "shipment_id": "SHP-106",
+    "item_name": "fefadol",
+    "quantity": 10,
+    "destination": "riadh",
+    "status": "Completed & In Transit",
+    "vehicle": "Cargo Drone Beta"
+  },
+  {
+    "shipment_id": "SHP-107",
+    "item_name": "Advanced First Aid Kit",
+    "quantity": 12,
+    "destination": "riadh",
+    "status": "Completed & In Transit",
+    "vehicle": "Cargo Drone Beta"
   }
 ]

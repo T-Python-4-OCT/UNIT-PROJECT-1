@@ -1,5 +1,9 @@
 from src.services.auth_service import register_user, login_user, load_users
-from src.services.logistics_service import view_supplies, add_supply_item, create_shipment, load_shipments, get_pending_shipments, assign_vehicle_to_shipment
+from src.services.logistics_service import (
+    view_supplies, add_supply_item, create_shipment, load_shipments, 
+    get_pending_shipments, assign_vehicle_to_shipment, create_field_request, 
+    load_field_requests, display_field_requests_table
+)
 from src.services.weather_api import get_crisis_weather
 from src.services.recommend_service import get_smart_recommendations
 from src.utils.display import display_header, display_supplies_table, simulate_dispatch_progress
@@ -28,10 +32,9 @@ def manager_menu(user):
         elif choice == "3":
             console.print("\n[bold yellow]--- Active Shipments & Tracking ---[/bold yellow]")
             shipments = load_shipments()
-            
             if shipments:
                 for s in shipments:
-                    status_color = "green" if s.get('status') == "In Transit" else "yellow"
+                    status_color = "green" if "Transit" in s.get('status', '') or "Completed" in s.get('status', '') else "yellow"
                     veh = s.get('vehicle') or "Unassigned"
                     console.print(f"📦 [{s.get('shipment_id')}]: {s.get('quantity')}x {s.get('item_name')} -> {s.get('destination')} | Vehicle: [magenta]{veh}[/magenta] | Status: [{status_color}]{s.get('status')}[/{status_color}]")
             else:
@@ -60,24 +63,29 @@ def dispatcher_menu(user):
     while True:
         console.print(f"\n[bold cyan]--- Dispatcher Dashboard ({user.user_name}) ---[/bold cyan]")
         console.print("1. View Supplies Inventory")
-        console.print("2. Check Crisis Weather (Live API)")
-        console.print("3. Get Smart Supply Recommendations")
-        console.print("4. Create & Dispatch Shipment Request")
-        console.print("5. Logout / Switch User")
+        console.print("2. View Field Supervisor Requests & Status")
+        console.print("3. Check Crisis Weather (Live API)")
+        console.print("4. Get Smart Supply Recommendations")
+        console.print("5. Create & Dispatch Shipment Request")
+        console.print("6. Logout / Switch User")
         
-        choice = input("Choose an option (1-5): ").strip()
+        choice = input("Choose an option (1-6): ").strip()
         
         if choice == "1":
             supplies = view_supplies()
             display_supplies_table(supplies)
             
         elif choice == "2":
+            requests = load_field_requests()
+            if not requests:
+                console.print("[yellow]No pending requests from field supervisors.[/yellow]")
+            else:
+                display_field_requests_table(requests)
+                console.print("\n[cyan]Tip: You can now go to option 5 to create and dispatch this shipment based on these requests![/cyan]")
+                
+        elif choice == "3":
             console.print("\n[bold yellow]--- Select Crisis Region ---[/bold yellow]")
-            console.print("1. Riyadh")
-            console.print("2. Tabuk")
-            console.print("3. Jeddah")
-            console.print("4. Dammam")
-            
+            console.print("1. Riyadh\n2. Tabuk\n3. Jeddah\n4. Dammam")
             reg_choice = input("Choose region (1-4): ").strip()
             regions_map = {
                 "1": {"name": "Riyadh", "lat": 24.7136, "lon": 46.6753},
@@ -85,7 +93,6 @@ def dispatcher_menu(user):
                 "3": {"name": "Jeddah", "lat": 21.5433, "lon": 39.1728},
                 "4": {"name": "Dammam", "lat": 26.4207, "lon": 50.0888}
             }
-            
             if reg_choice in regions_map:
                 r = regions_map[reg_choice]
                 weather = get_crisis_weather(r["lat"], r["lon"])
@@ -96,7 +103,7 @@ def dispatcher_menu(user):
             else:
                 console.print("[bold red]Invalid choice.[/bold red]")
                 
-        elif choice == "3":
+        elif choice == "4":
             category = input("Enter crisis category (Medical, Food, Shelter): ").strip()
             recs = get_smart_recommendations(category)
             if recs:
@@ -105,10 +112,10 @@ def dispatcher_menu(user):
             else:
                 console.print("[yellow]No recommendations found.[/yellow]")
                 
-        elif choice == "4":
+        elif choice == "5":
             create_shipment()
                 
-        elif choice == "5":
+        elif choice == "6":
             console.print("[yellow]Logging out...[/yellow]")
             break
         else:
@@ -120,7 +127,7 @@ def field_supervisor_menu(user):
         zone = getattr(user, "crisis_zone", "General Zone")
         console.print(f"\n[bold cyan]--- Field Supervisor Dashboard ({user.user_name} | Zone: {zone}) ---[/bold cyan]")
         console.print("1. View Supplies Inventory")
-        console.print("2. Report Urgent Field Request")
+        console.print("2. Report Urgent Field Request (Send to Dispatcher)")
         console.print("3. Logout / Switch User")
         
         choice = input("Choose an option (1-3): ").strip()
@@ -129,9 +136,7 @@ def field_supervisor_menu(user):
             supplies = view_supplies()
             display_supplies_table(supplies)
         elif choice == "2":
-            req_item = input("Enter required material name: ").strip()
-            req_qty = input("Enter required quantity: ").strip()
-            console.print(f"[bold green]✅ Urgent request for {req_qty} units of '{req_item}' submitted for zone {zone}![/bold green]")
+            create_field_request(zone)
         elif choice == "3":
             console.print("[yellow]Logging out...[/yellow]")
             break
