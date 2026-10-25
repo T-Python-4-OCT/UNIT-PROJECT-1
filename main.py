@@ -239,9 +239,10 @@ def choose_country(continent):
     countries = []
 
     for country_name, country_data in COUNTRIES.items():
-        if country_data["continent"] == continent["name"]:
-            country_data["name"] = country_name
-            countries.append(country_data)
+     if country_data["continent"] == continent["name"]:
+        country = country_data.copy()
+        country["name"] = country_name
+        countries.append(country)
 
     if not countries:
         print(
@@ -307,6 +308,8 @@ def choose_city(country):
             f"  {YELLOW}{index}{RESET}. "
             f"{city['name']}"
         )
+    print()
+    print(f"  {YELLOW}0{RESET}. ↩️ Back")
 
     print()
 
@@ -317,6 +320,9 @@ def choose_city(country):
 
         if choice.isdigit():
             number = int(choice)
+
+            if number == 0:
+               return None
 
             if 1 <= number <= len(cities):
                 return cities[number - 1]
@@ -350,75 +356,26 @@ def explore_country():
                     f"🌍 EXPLORE {country['name'].upper()}"
                 )
 
-                print_menu_option(
-                    "1",
-                    "📖",
-                    "Country Information",
-                    "Discover what this country is famous for.",
-                )
+                menu_options = [
+                    ("1", "📖", "Country Information", "Discover what this country is famous for."),
+                    ("2", "🍣", "Famous Foods", "Explore popular local dishes."),
+                    ("3", "🎉", "Events & Experiences", "Discover festivals and unique experiences."),
+                    ("4", "🏯", "Famous Places", "Explore famous cities and attractions."),
+                    ("5", "🌤️", "Live Weather", "Check current weather conditions."),
+                    ("6", "💰", "Currency", "Check currency and live exchange rate."),
+                    ("7", "📅", "Holidays", "View public holidays for 2026."),
+                    ("8", "⭐", "Add to Favorites", "Save this country for later."),
+                    ("9", "🗑️", "Remove from Favorites", "Remove this country from your favorites."),
+                    ("0", "↩️", "Back", "Return to the country list."),
+                ]
 
-                print_menu_option(
-                    "2",
-                    "🍣",
-                    "Famous Foods",
-                    "Explore popular local dishes.",
-                )
-
-                print_menu_option(
-                    "3",
-                    "🎉",
-                    "Events & Experiences",
-                    "Discover festivals and unique experiences.",
-                )
-
-                print_menu_option(
-                    "4",
-                    "🏯",
-                    "Famous Places",
-                    "Explore famous cities and attractions.",
-                )
-
-                print_menu_option(
-                    "5",
-                    "🌤️",
-                    "Live Weather",
-                    "Check current weather conditions.",
-                )
-
-                print_menu_option(
-                    "6",
-                    "💰",
-                    "Currency",
-                    "Check currency and live exchange rate.",
-                )
-
-                print_menu_option(
-                    "7",
-                    "📅",
-                    "Holidays",
-                    "View public holidays for 2026.",
-                )
-
-                print_menu_option(
-                    "8",
-                    "⭐",
-                    "Add to Favorites",
-                    "Save this country for later.",
-                )
-
-                print_menu_option(
-                    "9",
-                    "🗑️",
-                    "Remove from Favorites",
-                    "Remove this country from your favorites.",
-                )
-
-                print_menu_option(
-                    "0",
-                    "↩️",
-                    "Back",
-                    "Return to the country list.",
-                )
+                for number, icon, title, description in menu_options:
+                    print_menu_option(
+                        number,
+                        icon,
+                        title,
+                        description,
+                    )
 
                 choice = input(
                     f"{CYAN}➜ Choose an option: {RESET}"
