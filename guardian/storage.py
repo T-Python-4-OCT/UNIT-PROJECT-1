@@ -4,7 +4,7 @@ from pathlib import Path
 
 from rich.console import Console
 
-from guardian.subscription import MonthlySubscription, Subscription, YearlySubscription
+from guardian.subscription import Subscription, create_subscription
 
 console = Console()
 
@@ -40,13 +40,10 @@ class Storage:
 
 def subscription_from_dict(data: dict) -> Subscription:
     """Turn a dictionary from the JSON file back into a Subscription object."""
-    last_used = date.fromisoformat(data["last_used"]) if data.get("last_used") else None
-    sub_class = MonthlySubscription if data["cycle"] == "monthly" else YearlySubscription
-
-    return sub_class(
+    return create_subscription(
+        cycle=data["cycle"],
         name=data["name"],
         price=float(data["price"]),
         category=data["category"],
         start_date=date.fromisoformat(data["start_date"]),
-        last_used=last_used,
     )

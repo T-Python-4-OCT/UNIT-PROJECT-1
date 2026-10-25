@@ -13,7 +13,6 @@ MENU_STYLE = questionary.Style([
     ("highlighted", "fg:#5c9dff bold"),
     ("question", "bold"),
     ("answer", "fg:#5c9dff bold"),
-    ("selected", "fg:#5c9dff"),
 ])
 POINTER = "➜"
 
@@ -99,17 +98,6 @@ def ask_confirm(message: str) -> bool:
     """Ask a yes/no question (No is the default, Ctrl+C counts as No)."""
     answer = questionary.confirm(message, default=False, style=MENU_STYLE).ask()
     return answer is True
-
-
-def ask_checkbox(message: str, choices: list) -> list | None:
-    """Show a list where the user ticks many items with Space (None if Ctrl+C)."""
-    return questionary.checkbox(
-        message,
-        choices=choices,
-        pointer=POINTER,
-        style=MENU_STYLE,
-        instruction="(Space to select, Enter to confirm)",
-    ).ask()
 
 
 def ask_choice(message: str, options: tuple | list):

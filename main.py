@@ -1,20 +1,18 @@
-from datetime import date
-
 from questionary import Choice
 from rich.console import Console
 
 from guardian.manager import SORT_OPTIONS, SubscriptionManager
 from guardian.reports import show_spending_report
-from guardian.subscription import CATEGORIES, MonthlySubscription, YearlySubscription
-from guardian.utils import (
-    ask_checkbox, ask_choice, ask_confirm, ask_price, ask_start_date, ask_text, show_banner,
-)
+from guardian.subscription import CATEGORIES, create_subscription
+from guardian.utils import ask_choice, ask_confirm, ask_price, ask_start_date, ask_text, show_banner
 
 console = Console()
 manager = SubscriptionManager()
 
 EXIT = "Exit"
 CANCEL = "Cancel"
+DONE = "Done"
+CYCLES = ("monthly", "yearly")
 
 
 def add_subscription():
@@ -22,7 +20,7 @@ def add_subscription():
     name = ask_text("Name: ")
     price = ask_price("Price (SAR): ")
 
-    cycle = ask_choice("Cycle:", ("monthly", "yearly"))
+    cycle = ask_choice("Cycle:", CYCLES)
     if cycle is None:
         return
 
@@ -32,11 +30,7 @@ def add_subscription():
 
     start_date = ask_start_date("Start date (YYYY-MM-DD): ")
 
-    if cycle == "monthly":
-        subscription = MonthlySubscription(name, price, category, start_date)
-    else:
-        subscription = YearlySubscription(name, price, category, start_date)
-
+    subscription = create_subscription(cycle, name, price, category, start_date)
     manager.add(subscription)
     console.print(f"[green]Added {subscription}[/green]")
     console.print(f"Next renewal: [bold]{subscription.renewal_date()}[/bold] "
@@ -58,24 +52,47 @@ def spending_report():
     show_spending_report(manager.subscriptions)
 
 
-def mark_as_used():
+def edit_subscription():
     if not manager.subscriptions:
-        console.print("[yellow]You don't have any subscriptions yet.[/yellow]")
+        console.print("[yellow]You don't have any subscriptions to edit.[/yellow]")
         return
 
-    # Subscriptions already used today start ticked
-    choices = [
-        Choice(sub.name, value=sub, checked=sub.last_used == date.today())
-        for sub in manager.subscriptions
-    ]
-    used = ask_checkbox("Which subscriptions did you use today?", choices)
-    if not used:
-        console.print("Nothing was marked.")
+    choices = [Choice(str(sub), value=sub) for sub in manager.subscriptions]
+    sub = ask_choice("Which subscription do you want to edit?", choices + [CANCEL])
+    if sub is None or sub == CANCEL:
         return
 
-    manager.mark_used_today(used)
-    names = ", ".join(sub.name for sub in used)
-    console.print(f"[green]Marked as used today: {names}[/green]")
+    # Keep editing until the user picks "Done"
+    while True:
+        fields = [
+            Choice(f"Name ({sub.name})", value="name"),
+            Choice(f"Price ({sub.price:g} SAR)", value="price"),
+            Choice(f"Cycle ({sub.cycle})", value="cycle"),
+            Choice(f"Category ({sub.category})", value="category"),
+            Choice(f"Start date ({sub.start_date})", value="start_date"),
+        ]
+        field = ask_choice(f"What do you want to change in {sub.name}?", fields + [DONE])
+        if field is None or field == DONE:
+            break
+
+        if field == "name":
+            sub.name = ask_text("New name: ")
+        elif field == "price":
+            sub.price = ask_price("New price (SAR): ")
+        elif field == "category":
+            sub.category = ask_choice("New category:", CATEGORIES) or sub.category
+        elif field == "start_date":
+            sub.start_date = ask_start_date("New start date (YYYY-MM-DD): ")
+        elif field == "cycle":
+            new_cycle = ask_choice("New cycle:", CYCLES)
+            if new_cycle and new_cycle != sub.cycle:
+                # Monthly and yearly are different classes, so make a new object
+                new_sub = create_subscription(new_cycle, sub.name, sub.price, sub.category, sub.start_date)
+                manager.replace(sub, new_sub)
+                sub = new_sub
+
+        manager.save()
+        console.print(f"[green]Saved: {sub}[/green]\n")
 
 
 def delete_subscription():
@@ -105,7 +122,7 @@ MENU_OPTIONS = {
     "Add subscription": add_subscription,
     "View all subscriptions": view_subscriptions,
     "Spending report": spending_report,
-    "Mark as used today": mark_as_used,
+    "Edit subscription": edit_subscription,
     "Suggestions: what to cancel?": coming_soon,
     "Delete subscription": delete_subscription,
 }

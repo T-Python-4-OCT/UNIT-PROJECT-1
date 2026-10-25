@@ -1,5 +1,3 @@
-from datetime import date
-
 from rich.console import Console
 from rich.table import Table
 
@@ -35,10 +33,10 @@ class SubscriptionManager:
         self.subscriptions.remove(subscription)
         self.save()
 
-    def mark_used_today(self, used: list[Subscription]):
-        """Set today as the last used date for every subscription in the list."""
-        for subscription in used:
-            subscription.last_used = date.today()
+    def replace(self, old: Subscription, new: Subscription):
+        """Put a new subscription in the same place as an old one (used when the cycle changes)."""
+        index = self.subscriptions.index(old)
+        self.subscriptions[index] = new
         self.save()
 
     def view_all(self, sort_by: str = "Days left (soonest first)"):
