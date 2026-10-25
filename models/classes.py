@@ -1,4 +1,5 @@
 from datetime import datetime, date
+import hashlib
 
 # --- Class 1: Course / Subject Model ---
 class Subject:
@@ -376,12 +377,21 @@ class User:
         self.username = str(username).strip()
         self.full_name = str(full_name).strip()
         self.major = str(major).strip()
-        # Private password attribute for security
-        self.__password = str(password).strip()
+        
+        pw_str = str(password).strip()
+        # Keep password if already a 64-char SHA-256 hash (from JSON), otherwise encrypt it
+        if len(pw_str) == 64 and all(c in "0123456789abcdef" for c in pw_str.lower()):
+            self.__password = pw_str
+        else:
+            self.__password = self._encrypt_password(pw_str)
 
-    # Verify user password during login
+    # Encrypt plain password using SHA-256 hashing
+    def _encrypt_password(self, raw_password):
+        return hashlib.sha256(str(raw_password).strip().encode("utf-8")).hexdigest()
+
+    # Verify user password by comparing SHA-256 hashes
     def check_password(self, input_password):
-        return self.__password == str(input_password).strip()
+        return self.__password == self._encrypt_password(input_password)
 
     def get_password(self):
         return self.__password

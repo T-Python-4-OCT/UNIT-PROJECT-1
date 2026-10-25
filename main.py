@@ -7,6 +7,7 @@ from services.task_service import manage_tasks_menu
 from services.project_service import manage_projects_menu
 from services.exam_service import manage_exams_menu
 from services.note_service import manage_notes_menu
+from services.pomodoro_service import manage_pomodoro_menu
 from models.classes import User, Subject, Task, Project, Exam, StudyNote
 
 def hydrate_data(raw_data):
@@ -31,13 +32,11 @@ def main():
     data = hydrate_data(raw_data)
 
     while True:
-        # شاشة تسجيل الدخول
         current_user = auth_menu(data)
         if not current_user:
             console.print("\n[bold cyan]Goodbye![/bold cyan]\n")
             break
 
-        # القائمة الرئيسية بعد تسجيل الدخول بنجاح
         while True:
             print_header(
                 "StudyMate — Smart University Academic Assistant",
@@ -51,18 +50,19 @@ def main():
                 "4. Manage Academic Projects",
                 "5. Manage Exams",
                 "6. Manage Study Notes",
-                "7. Logout (Switch Account)",
-                "8. Save and Exit"
+                "7. Study Timer",
+                "8. Logout (Switch Account)",
+                "9. Save and Exit"
             ]
 
             choice = prompt_select("Main Menu:", choices)
 
-            if choice is None or "8." in choice:
+            if choice is None or "9." in choice:
                 show_spinner("Saving your academic records...")
                 save_data(data)
                 console.print(f"\n[bold cyan]All data saved. Goodbye, {current_user.full_name}![/bold cyan]\n")
                 return
-            elif "7." in choice:
+            elif "8." in choice:
                 show_spinner("Logging out...")
                 save_data(data)
                 break
@@ -78,6 +78,8 @@ def main():
                 manage_exams_menu(data)
             elif "6." in choice:
                 manage_notes_menu(data)
+            elif "7." in choice:
+                manage_pomodoro_menu(data)
 
 if __name__ == "__main__":
     main()
