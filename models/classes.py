@@ -1,5 +1,6 @@
 from datetime import datetime, date
 
+# --- Class 1: Course / Subject Model ---
 class Subject:
     def __init__(self, subject_id, name, code, instructor, credit_hours):
         self.subject_id = str(subject_id).strip()
@@ -7,11 +8,13 @@ class Subject:
         self.code = str(code).strip().upper()
         self.instructor = str(instructor).strip()
         
+        # Validate credit hours as integer (default to 3 on error)
         try:
             self.credit_hours = int(credit_hours)
         except ValueError:
             self.credit_hours = 3
 
+    # Convert object to dictionary for JSON serialization
     def to_dict(self):
         return {
             "subject_id": self.subject_id,
@@ -22,6 +25,7 @@ class Subject:
         }
 
 
+# --- Class 2: Task / Assignment Model ---
 class Task:
     def __init__(self, task_id, title, description, subject_id, due_date, priority="Medium", status="Not Started", earned_score=None, max_score=None, created_at=None):
         self.task_id = str(task_id).strip()
@@ -32,6 +36,7 @@ class Task:
         self.priority = priority
         self.status = status
         
+        # Private attributes for encapsulation
         self.__earned_score = None
         self.__max_score = None
         
@@ -42,6 +47,7 @@ class Task:
             
         self.created_at = str(created_at).strip() if created_at else date.today().strftime("%Y-%m-%d")
 
+    # Getters and Setters for private score attributes
     def get_earned_score(self):
         return self.__earned_score
 
@@ -82,20 +88,24 @@ class Task:
     def max_score(self, value):
         self.set_max_score(value)
 
+    # Parse string due_date into a date object
     def get_due_date_object(self):
         try:
             return datetime.strptime(self.due_date, "%Y-%m-%d").date()
         except ValueError:
             return date.today()
 
+    # Check if task is past due date and not completed
     def is_overdue(self):
         if self.status == "Completed":
             return False
         return self.get_due_date_object() < date.today()
 
+    # Calculate remaining days until due date
     def days_until_due(self):
         return (self.get_due_date_object() - date.today()).days
 
+    # Mark task as completed and update scores
     def mark_completed(self, earned=None, max_s=None):
         self.status = "Completed"
         if earned is not None:
@@ -118,6 +128,7 @@ class Task:
         }
 
 
+# --- Class 3: Academic Project Model ---
 class Project:
     def __init__(self, project_id, title, subject_id, deadline, steps=None, phase=None, progress=0, earned_score=None, max_score=100.0, **kwargs):
         self.project_id = str(project_id).strip()
@@ -125,12 +136,14 @@ class Project:
         self.subject_id = str(subject_id).strip()
         self.deadline = str(deadline).strip()
         
+        # Private attributes for progress and grading
         self.__progress = 0
         self.__earned_score = None
         self.__max_score = 100.0
         self.phase = "Not Started"
         self.steps = []
 
+        # Load custom milestone steps and calculate initial status
         if steps and isinstance(steps, list):
             for s in steps:
                 self.steps.append({
@@ -174,6 +187,7 @@ class Project:
         else:
             self.phase = pending_steps[0]["name"]
 
+    # Mark a project step as completed and record earned points
     def complete_step(self, step_index, earned_points=None):
         if 0 <= step_index < len(self.steps):
             step = self.steps[step_index]
@@ -188,12 +202,14 @@ class Project:
                 step["earned_points"] = float(step["max_points"])
             self.recalculate_status()
 
+    # Revert a completed step back to incomplete
     def uncomplete_step(self, step_index):
         if 0 <= step_index < len(self.steps):
             self.steps[step_index]["completed"] = False
             self.steps[step_index]["earned_points"] = None
             self.recalculate_status()
 
+    # Getters and Setters for Project private attributes
     def get_progress(self):
         return self.__progress
 
@@ -255,6 +271,7 @@ class Project:
         }
 
 
+# --- Class 4: Exam Model ---
 class Exam:
     def __init__(self, exam_id, title, subject_id, exam_date, exam_time="09:00", exam_type="Midterm", earned_score=None, max_score=100.0):
         self.exam_id = str(exam_id).strip()
@@ -310,12 +327,14 @@ class Exam:
     def max_score(self, value):
         self.set_max_score(value)
 
+    # Convert exam_date string to date object
     def get_exam_date_object(self):
         try:
             return datetime.strptime(self.exam_date, "%Y-%m-%d").date()
         except ValueError:
             return date.today()
 
+    # Calculate remaining days until the exam
     def days_until_exam(self):
         return (self.get_exam_date_object() - date.today()).days
 
@@ -332,6 +351,7 @@ class Exam:
         }
 
 
+# --- Class 5: Study Note Model ---
 class StudyNote:
     def __init__(self, note_id, title, content, subject_id=None, created_at=None):
         self.note_id = str(note_id).strip()
@@ -350,13 +370,16 @@ class StudyNote:
         }
 
 
+# --- Class 6: User Authentication Model ---
 class User:
     def __init__(self, username, full_name, major, password):
         self.username = str(username).strip()
         self.full_name = str(full_name).strip()
         self.major = str(major).strip()
+        # Private password attribute for security
         self.__password = str(password).strip()
 
+    # Verify user password during login
     def check_password(self, input_password):
         return self.__password == str(input_password).strip()
 
