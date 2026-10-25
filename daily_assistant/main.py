@@ -36,15 +36,24 @@ NEWS_ACTIONS = {
 }
 
 
+
+
 def print_menu():
-    table = Table.grid(padding=(0, 2))
+    table = Table(
+    show_header=False,
+    show_edge=False,
+    show_lines=True,
+    padding=(0, 2),
+    expand=True,
+    border_style="dim cyan",
+)
     table.add_column(style="bold cyan", justify="right")
     table.add_column()
     table.add_column()
-
+    
     for key, icon, label in MENU:
         table.add_row(key, icon, label)
-
+        
     console.print(
         Panel(
             table,
@@ -119,7 +128,6 @@ def main():
 
         console.clear()
         banner()
-
 
 if __name__ == "__main__":
     main()
