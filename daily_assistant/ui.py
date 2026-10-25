@@ -1,39 +1,27 @@
+from rich.align import Align
 from rich.console import Console
 from rich.panel import Panel
-from rich.align import Align
-from rich.text import Text
 from rich.table import Table
-
+from rich.text import Text
 
 console = Console()
 
 
-
 def banner():
-    title = Text()
-    title.append("DAILY ", style="bold white")
-    title.append("NEWS", style="bold bright_cyan")
-    title.append(" & ", style="bold white")
-    title.append("WEATHER", style="bold bright_blue")
-
-    subtitle = Text(
-        "Your Daily Information Dashboard",
-        style="dim white",
+    title = Text.assemble(
+        ("DAILY ", "bold white"),
+        ("NEWS", "bold bright_cyan"),
+        (" & ", "bold white"),
+        ("WEATHER", "bold bright_blue"),
     )
+    subtitle = Text("Your Daily Information Dashboard", style="dim white")
 
     content = Table.grid(expand=True)
     content.add_column(justify="center", ratio=1)
-
     content.add_row(Align.center(title))
     content.add_row(Align.center(subtitle))
 
-    console.print(
-        Panel(
-            content,
-            border_style="bright_blue",
-            padding=(1, 3),
-        )
-    )
+    console.print(Panel(content, border_style="bright_blue", padding=(1, 3)))
 
 
 def section(title, color="cyan"):
