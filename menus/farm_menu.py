@@ -1,11 +1,12 @@
 from models.farm import Farm
 from utils import display, validators
 from utils.file_handler import save_farm
+from utils.menu import Menu
 from utils.ui_helpers import (
     choose_farm_crop,
     choose_irrigation_type,
     get_crop_name,
-    print_menu,
+    select_from_list,
     show_database_crops,
     show_farm_crops,
 )
@@ -34,10 +35,9 @@ def create_or_edit_farm(farm):
 
 
 def manage_farm(farm):
-    options = [("1", "View farm details"), ("2", "Create or edit farm"), ("0", "Back")]
+    options = [("1", "View farm details"), ("2", "Create or edit farm"), ("3", "Back")]
     while True:
-        print_menu("Manage Farm", options)
-        choice = validators.get_menu_choice("Enter your choice: ", ["1", "2", "0"])
+        choice = Menu("Manage Farm", options).choose()
         if choice == "1":
             if farm is None:
                 display.print_warning("No farm yet. Create one first.")
@@ -55,8 +55,10 @@ def add_crop(farm, crops):
         display.print_warning("All available crops are already on your farm.")
         return
     show_database_crops(available)
-    index = validators.get_number_in_range("Enter the number of the crop to add: ", 1, len(available))
-    crop = available[index - 1]
+    index = select_from_list("Select the crop to add", [crop.name for crop in available])
+    if index is None:
+        return
+    crop = available[index]
     area_m2 = validators.get_positive_number("Area in m2: ")
     irrigation_type = choose_irrigation_type()
     try:
@@ -125,11 +127,10 @@ def manage_crops(farm, crops):
         ("3", "Edit crop"),
         ("4", "Delete crop"),
         ("5", "Search crop database"),
-        ("0", "Back"),
+        ("6", "Back"),
     ]
     while True:
-        print_menu("Manage Crops", options)
-        choice = validators.get_menu_choice("Enter your choice: ", ["1", "2", "3", "4", "5", "0"])
+        choice = Menu("Manage Crops", options).choose()
         if choice == "1":
             if farm.crops:
                 show_farm_crops(farm, crops)

@@ -1,12 +1,7 @@
 from models.farm import IRRIGATION_TYPES
 from services.weather import WeatherError, get_weather
-from utils import display, validators
-
-
-def print_menu(title, options):
-    display.print_title(title)
-    for number, label in options:
-        print(f"{number}. {label}")
+from utils import display
+from utils.menu import Menu
 
 
 def get_crop_name(crops, crop_id):
@@ -31,11 +26,23 @@ def show_farm_crops(farm, crops):
     display.print_table(rows, ["#", "Crop", "Area (m2)", "Irrigation"])
 
 
+def select_from_list(title, labels, allow_back=True):
+    """Let the user pick one item with the arrow keys.
+
+    Return its index (starting at 0), or None if the user chose Back.
+    """
+    options = [(str(number), label) for number, label in enumerate(labels, start=1)]
+    back_key = str(len(labels) + 1)  # Back is the last number in the list
+    if allow_back:
+        options.append((back_key, "Back"))
+    key = Menu(title, options).choose()
+    return None if key == back_key else int(key) - 1
+
+
 def choose_irrigation_type():
-    for number, irrigation_type in enumerate(IRRIGATION_TYPES, start=1):
-        print(f"{number}. {irrigation_type.capitalize()}")
-    index = validators.get_number_in_range("Choose irrigation type: ", 1, len(IRRIGATION_TYPES))
-    return IRRIGATION_TYPES[index - 1]
+    labels = [irrigation_type.capitalize() for irrigation_type in IRRIGATION_TYPES]
+    index = select_from_list("Choose irrigation type", labels, allow_back=False)
+    return IRRIGATION_TYPES[index]
 
 
 def choose_farm_crop(farm, crops, action):
@@ -44,8 +51,11 @@ def choose_farm_crop(farm, crops, action):
         display.print_warning("Your farm has no crops yet.")
         return None
     show_farm_crops(farm, crops)
-    index = validators.get_number_in_range(f"Enter the number of the crop to {action}: ", 1, len(farm.crops))
-    return farm.crops[index - 1]["crop_id"]
+    names = [get_crop_name(crops, item["crop_id"]) for item in farm.crops]
+    index = select_from_list(f"Select the crop to {action}", names)
+    if index is None:
+        return None
+    return farm.crops[index]["crop_id"]
 
 
 def fetch_weather_for_farm(farm):

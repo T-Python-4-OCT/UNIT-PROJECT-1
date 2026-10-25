@@ -2,22 +2,24 @@ from models.crop import Crop, make_crop_id
 from services.reports import get_logged_usage, get_planted_ranking
 from utils import display, validators
 from utils.file_handler import load_settings, save_crops, save_settings
-from utils.ui_helpers import print_menu, show_database_crops
+from utils.menu import Menu
+from utils.ui_helpers import select_from_list, show_database_crops
 
 
 def choose_database_crop(crops, action):
-    """Let the Manager pick any crop type from the database. Return it or None."""
+    """Let the Manager pick any crop type from the database.
+
+    Return the crop, or None if the database is empty or the Manager chose 0 (back).
+    """
     if not crops:
         display.print_warning("The crop database is empty.")
         return None
     crop_list = list(crops.values())
     show_database_crops(crop_list)
-    index = validators.get_number_in_range(
-        f"Enter the number of the crop to {action} (0 to go back): ", 0, len(crop_list)
-    )
-    if index == 0:
+    index = select_from_list(f"Select the crop to {action}", [crop.name for crop in crop_list])
+    if index is None:
         return None
-    return crop_list[index - 1]
+    return crop_list[index]
 
 
 def add_crop_type(crops):
@@ -122,11 +124,10 @@ def manager_panel(farm, crops):
         ("4", "Delete crop type"),
         ("5", "View statistics"),
         ("6", "Change water price"),
-        ("0", "Back"),
+        ("7", "Back"),
     ]
     while True:
-        print_menu("Manager Panel", options)
-        choice = validators.get_menu_choice("Enter your choice: ", ["1", "2", "3", "4", "5", "6", "0"])
+        choice = Menu("Manager Panel", options).choose()
         if choice == "1":
             if crops:
                 show_database_crops(list(crops.values()))
