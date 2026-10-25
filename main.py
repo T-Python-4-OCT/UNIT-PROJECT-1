@@ -25,7 +25,7 @@ class SmartIrrigationApp:
         self._farm = new_farm
 
     def _build_menu(self):
-        """Collect the actions of every user and number them."""
+        # Collect the actions of every user and number them.
         options = []
         handlers = {}
         for user in self._users:  

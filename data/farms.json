@@ -18,10 +18,15 @@
       "crop_id": "wheat",
       "date": "2026-10-24",
       "volume_m3": 90
+    },
+    {
+      "crop_id": "wheat",
+      "date": "2026-10-25",
+      "volume_m3": 1
     }
   ],
   "last_savings": {
-    "date": "2026-10-24",
+    "date": "2026-10-25",
     "saved_m3": 0.0,
     "saved_percent": 0
   }

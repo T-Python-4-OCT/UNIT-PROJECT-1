@@ -9,6 +9,7 @@ CROPS_FILE = DATA_DIR / "crops.json"
 FARM_FILE = DATA_DIR / "farms.json"
 WEATHER_CACHE_FILE = DATA_DIR / "weather_cache.json"
 SETTINGS_FILE = DATA_DIR / "settings.json"
+MANAGER_AUTH_FILE = DATA_DIR / "manager_auth.json"
 DEFAULT_SETTINGS = {"water_price_per_m3": 1.0}
 
 
@@ -75,3 +76,13 @@ def load_settings():
 
 def save_settings(settings):
     save_json(SETTINGS_FILE, settings)
+
+
+def load_manager_auth():
+    """Return the saved manager password data ({"salt": ..., "hash": ...}), or {} if none."""
+    data = load_json(MANAGER_AUTH_FILE, {})
+    return data if isinstance(data, dict) else {}
+
+
+def save_manager_auth(data):
+    save_json(MANAGER_AUTH_FILE, data)

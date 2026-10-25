@@ -1,4 +1,5 @@
 import math
+from getpass import getpass
 from datetime import date, datetime
 
 from utils import display
@@ -94,3 +95,8 @@ def get_number(prompt, low, high, allow_blank=False):
             display.print_error(f"The number must be between {low} and {high}.")
             continue
         return int(number) if number.is_integer() else number
+
+
+def get_password(prompt):
+    """Ask for a password without showing what the user types."""
+    return getpass(prompt)

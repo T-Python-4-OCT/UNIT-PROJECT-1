@@ -1,4 +1,5 @@
 from models.crop import Crop, make_crop_id
+from services import auth
 from services.reports import get_logged_usage, get_planted_ranking
 from utils import display, validators
 from utils.file_handler import load_settings, save_crops, save_settings
@@ -116,6 +117,46 @@ def change_water_price():
     display.print_success(f"Water price updated to {settings['water_price_per_m3']} SAR per m3.")
 
 
+MAX_LOGIN_ATTEMPTS = 3
+
+
+def create_manager_password():
+    """Ask for a new password twice. Return True if it was saved, False if cancelled."""
+    while True:
+        password = validators.get_password(
+            f"New password (at least {auth.MIN_PASSWORD_LENGTH} characters, Enter to cancel): "
+        )
+        if password == "":
+            display.print_info("Cancelled.")
+            return False
+        if len(password) < auth.MIN_PASSWORD_LENGTH:
+            display.print_error(f"The password must be at least {auth.MIN_PASSWORD_LENGTH} characters.")
+            continue
+        if validators.get_password("Repeat the password: ") != password:
+            display.print_error("The passwords do not match. Try again.")
+            continue
+        auth.set_manager_password(password)
+        display.print_success("Manager password saved.")
+        return True
+
+
+def login_manager():
+    """Ask for the manager password. Return True if the Manager may enter the panel."""
+    if not auth.has_manager_password():
+        display.print_info("No manager password yet. Create one to protect the Manager Panel.")
+        return create_manager_password()
+
+    for attempt in range(1, MAX_LOGIN_ATTEMPTS + 1):
+        if auth.check_manager_password(validators.get_password("Manager password: ")):
+            display.print_success("Access granted.")
+            return True
+        remaining = MAX_LOGIN_ATTEMPTS - attempt
+        if remaining:
+            display.print_error(f"Wrong password. {remaining} attempt(s) left.")
+    display.print_error("Too many wrong attempts. Returning to the main menu.")
+    return False
+
+
 def manager_panel(farm, crops):
     options = [
         ("1", "View crop database"),
@@ -124,7 +165,8 @@ def manager_panel(farm, crops):
         ("4", "Delete crop type"),
         ("5", "View statistics"),
         ("6", "Change water price"),
-        ("7", "Back"),
+        ("7", "Change manager password"),
+        ("8", "Back"),
     ]
     while True:
         choice = Menu("Manager Panel", options).choose()
@@ -143,5 +185,7 @@ def manager_panel(farm, crops):
             show_statistics(farm, crops)
         elif choice == "6":
             change_water_price()
+        elif choice == "7":
+            create_manager_password()
         else:
             return

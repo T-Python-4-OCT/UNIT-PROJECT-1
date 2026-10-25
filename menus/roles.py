@@ -62,4 +62,5 @@ class Manager(User):
         return [("Manager Panel", self.open_panel)]
 
     def open_panel(self):
-        manager_menu.manager_panel(self._app.farm, self._app.crops)
+        if manager_menu.login_manager():  # the panel is protected by a password
+            manager_menu.manager_panel(self._app.farm, self._app.crops)
