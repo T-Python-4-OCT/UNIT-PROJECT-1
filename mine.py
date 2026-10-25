@@ -146,10 +146,16 @@ def main():
                         logged_in_user = None
 
                 elif user.role == "trainer":
-                    trainer_page(user)
+                    result = trainer_page(user)
+
+                    if result == "logout":
+                        logged_in_user = None
 
                 elif user.role == "trainee":
-                    trainee_page(user)
+                    result = trainee_page(user)
+
+                    if result == "logout":
+                        logged_in_user = None
 
                 else:
                     print("\nUnsupported user role.")
@@ -166,11 +172,21 @@ def main():
 
         elif choice == "Trainer Dashboard":
             if logged_in_user is not None and logged_in_user.role == "trainer":
-                trainer_page(logged_in_user)
+                result = trainer_page(logged_in_user)
+
+                if result == "logout":
+                    print(f"\nGoodbye, {logged_in_user.full_name}!")
+                    logged_in_user = None
+                    print("You have logged out successfully.")
 
         elif choice == "My Trainee Dashboard":
             if logged_in_user is not None and logged_in_user.role == "trainee":
-                trainee_page(logged_in_user)
+                result = trainee_page(logged_in_user)
+
+                if result == "logout":
+                    print(f"\nGoodbye, {logged_in_user.full_name}!")
+                    logged_in_user = None
+                    print("You have logged out successfully.")
 
         elif choice == "Create Trainee Account":
             create_account_page()

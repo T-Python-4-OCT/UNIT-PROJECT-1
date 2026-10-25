@@ -4,5 +4,17 @@
         "trainee_id": 2,
         "date": "2026-10-23",
         "status": "Present"
+    },
+    {
+        "course_id": 1,
+        "trainee_id": 2,
+        "date": "2026-10-24",
+        "status": "Present"
+    },
+    {
+        "course_id": 2,
+        "trainee_id": 2,
+        "date": "2026-10-24",
+        "status": "Present"
     }
 ]

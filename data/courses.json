@@ -21,8 +21,8 @@
         "id": 3,
         "title": "Data Analysis with Python",
         "description": "Learn data analysis using Python.",
-        "trainer": "Ahmed Ali",
-        "trainer_id": 3,
+        "trainer": "omar",
+        "trainer_id": 8,
         "duration": "5 weeks",
         "price": 350
     }

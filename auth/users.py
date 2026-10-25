@@ -103,7 +103,6 @@ def create_account_page():
 
 def login_page():
     print("\n" + "=" * 40)
-    print("          MOTQEN ACADEMY")
     print("              LOG IN")
     print("=" * 40)
 

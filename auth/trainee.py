@@ -4,11 +4,12 @@ from prompt_toolkit.layout.containers import HSplit, Window
 from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
+
 from courses.course_manager import browse_courses
 from courses.course_search import search_course
 from courses.enrollment import enroll_in_course
 from courses.my_courses import view_my_courses
-from courses.enrollment import enroll_in_course
+from training.attendance import view_my_attendance
 
 
 choices = [
@@ -26,33 +27,23 @@ choices = [
 selected = 0
 
 
-
 def get_menu():
-    lines = [
-        ("", "What would you like to do?\n")
-    ]
+    lines = [("", "What would you like to do?\n")]
 
     for index, choice in enumerate(choices):
         if index == selected:
             lines.append(("", "❯ "))
 
             if choice == "Log Out":
-                lines.append((
-                    "fg:#ffffff bg:#ff0000",
-                    choice
-                ))
+                lines.append(("fg:#ffffff bg:#ff0000", choice))
             else:
-                lines.append((
-                    "fg:#000000 bg:#ffffff",
-                    choice
-                ))
+                lines.append(("fg:#000000 bg:#ffffff", choice))
         else:
             lines.append(("", "  " + choice))
 
         lines.append(("", "\n"))
 
     return lines
-
 
 
 bindings = KeyBindings()
@@ -62,12 +53,14 @@ bindings = KeyBindings()
 def move_up(event):
     global selected
     selected = (selected - 1) % len(choices)
+    event.app.invalidate()
 
 
 @bindings.add("down")
 def move_down(event):
     global selected
     selected = (selected + 1) % len(choices)
+    event.app.invalidate()
 
 
 @bindings.add("enter")
@@ -130,16 +123,16 @@ def trainee_page(user):
             view_my_courses(user)
 
         elif choice == "View My Attendance":
-            print("\nYour attendance records will appear here.")
+            view_my_attendance(user)
 
         elif choice == "View My Progress":
             print("\nYour training progress will appear here.")
-            
+
         elif choice == "Back to Main Menu":
-            return
+            return "back"
 
         elif choice == "Log Out" or choice is None:
             print("\nYou have logged out successfully.")
-            return
+            return "logout"
 
         input("\nPress Enter to continue...")
