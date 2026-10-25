@@ -28,9 +28,6 @@ The application estimates driving duration using simulated traffic conditions an
 - Python modules and functions
 - Object-Oriented Programming (OOP)
 
-## Project Structure
-
-```text
 Riyadh-Smart-Trip/
 ├── main.py
 ├── models.py
@@ -42,10 +39,11 @@ Riyadh-Smart-Trip/
 ├── metro_data.py
 ├── routes.json
 ├── locations.json
+├── transport_options.json
+├── traffic_stats.json
 ├── trips.json
-├── requirements.txt
+├── .gitignore
 └── README.md
-```
 
 The application is organized into separate modules to improve readability, maintainability, and separation of responsibilities.
 
