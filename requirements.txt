@@ -1,0 +1,10 @@
+markdown-it-py==4.2.0
+mdurl==0.1.2
+prompt_toolkit==3.0.53
+pyfiglet==1.0.4
+Pygments==2.21.0
+python-dateutil==2.9.0.post0
+questionary==2.1.1
+rich==15.0.0
+six==1.17.0
+wcwidth==0.9.3

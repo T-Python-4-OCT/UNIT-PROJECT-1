@@ -2,10 +2,11 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 
-from guardian.utils import money
+from guardian.display import money
 
 # Fixed categories (tuple because they never change)
 CATEGORIES = ("video", "music", "sport", "gaming", "apps", "other")
+CYCLES = ("monthly", "yearly")
 
 
 class Subscription:

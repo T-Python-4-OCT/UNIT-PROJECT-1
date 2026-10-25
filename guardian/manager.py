@@ -1,9 +1,9 @@
 from rich.console import Console
 from rich.table import Table
 
+from guardian.display import money
 from guardian.storage import Storage
 from guardian.subscription import Subscription
-from guardian.utils import money
 
 console = Console()
 

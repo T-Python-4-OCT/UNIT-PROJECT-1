@@ -3,8 +3,9 @@ from rich.console import Console
 
 from guardian.manager import SORT_OPTIONS, SubscriptionManager
 from guardian.reports import show_spending_report
-from guardian.subscription import CATEGORIES, create_subscription
-from guardian.utils import ask_choice, ask_confirm, ask_price, ask_start_date, ask_text, show_banner
+from guardian.display import show_banner
+from guardian.subscription import CATEGORIES, CYCLES, create_subscription
+from guardian.validation import ask_choice, ask_confirm, ask_name, ask_price, ask_start_date
 
 console = Console()
 manager = SubscriptionManager()
@@ -12,12 +13,16 @@ manager = SubscriptionManager()
 EXIT = "Exit"
 CANCEL = "Cancel"
 DONE = "Done"
-CYCLES = ("monthly", "yearly")
+
+
+def other_names(subscription=None) -> list[str]:
+    """Names of all subscriptions except the given one (so a name can't be used twice)."""
+    return [sub.name for sub in manager.subscriptions if sub is not subscription]
 
 
 def add_subscription():
     console.print("\n[bold]Add a new subscription[/bold]")
-    name = ask_text("Name: ")
+    name = ask_name("Name: ", other_names())
     price = ask_price("Price (SAR): ")
 
     cycle = ask_choice("Cycle:", CYCLES)
@@ -76,7 +81,7 @@ def edit_subscription():
             break
 
         if field == "name":
-            sub.name = ask_text("New name: ")
+            sub.name = ask_name("New name: ", other_names(sub))
         elif field == "price":
             sub.price = ask_price("New price (SAR): ")
         elif field == "category":
