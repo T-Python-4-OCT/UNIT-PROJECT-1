@@ -108,7 +108,3 @@ In Development
 
 Muath Mohammad Sufani
 ```
-
-```
-
-بهذا ترفع **تعديل الـ README فقط**، وتترك تعديلات `main.py` و`storage.py` وملفات الرحلات الأخرى محليًا إلى أن نتأكد منها ونقرر رفعها.
