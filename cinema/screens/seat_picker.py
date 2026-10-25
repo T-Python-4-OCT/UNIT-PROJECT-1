@@ -20,7 +20,9 @@ def ask_free_seat(hall: Hall, taken: set[str], selected: list[str]) -> str:
         seat = ask_seat()
         if seat == "Q":
             return seat
-        if not hall.is_valid_seat(seat):
+        if not seat:
+            print_error("Please enter a seat number (example: B5), or Q to stop.")
+        elif not hall.is_valid_seat(seat):
             print_error(f"'{seat}' is not a seat in this hall. Look at the map and try again.")
         elif seat in taken:
             print_error(f"Seat {seat} is already booked (red). Please choose a green seat.")

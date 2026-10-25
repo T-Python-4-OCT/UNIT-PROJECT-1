@@ -13,13 +13,22 @@ ACTIONS = ["View ticket", "Change seats", "Cancel a booking", "Save ticket as te
 
 
 def search_bookings(bookings: list[Booking]) -> list[Booking]:
-    query = input("Enter your full name or invoice number: ").strip()
-    if query.isdigit():
-        booking = find_by_invoice(bookings, int(query))
-        if booking is None:
-            return []
-        return [booking]
-    return find_by_name(bookings, query)
+    while True:
+        query = " ".join(input("Enter your full name or invoice number: ").split())
+        if not query:
+            print_error("Please enter your full name or invoice number.")
+            continue
+        if query.isdigit():
+            booking = find_by_invoice(bookings, int(query))
+            return [booking] if booking is not None else []
+        if not all(part.isalpha() for part in query.split()):
+            print_error("Use letters for a name, or numbers for an invoice.")
+            continue
+        if len(query.replace(" ", "")) < 3:
+            print_error("Please enter at least 3 letters for a name.")
+            continue
+        return find_by_name(bookings, query)
+
 
 
 def print_bookings_table(found: list[Booking]) -> None:
@@ -69,10 +78,14 @@ def change_seats(booking: Booking, bookings: list[Booking]) -> None:
     print_price_difference(booking.total, new_total)
 
     if ask_yes_no("Save the new seats?"):
+        old_seats, old_total = booking.seats, booking.total
         booking.seats = new_seats
         booking.total = new_total
-        save_bookings(bookings)
-        print_success("Seats updated.")
+        if save_bookings(bookings):
+            print_success("Seats updated.")
+        else:
+            booking.seats, booking.total = old_seats, old_total
+            print_error("Could not save changes. Your old seats are unchanged.")
     else:
         print_info("No changes were made.")
 
@@ -81,10 +94,13 @@ def cancel_booking(booking: Booking, bookings: list[Booking], found: list[Bookin
     if not ask_yes_no(f"Are you sure you want to cancel booking {booking.invoice}?"):
         print_info("The booking was not cancelled.")
         return
-    bookings.remove(booking)
-    found.remove(booking)
-    save_bookings(bookings)
-    print_success(f"Booking cancelled. {booking.total:.0f} SAR will be refunded.")
+    remaining = [item for item in bookings if item is not booking]
+    if save_bookings(remaining):
+        bookings.remove(booking)
+        found.remove(booking)
+        print_success(f"Booking cancelled. Refund amount: {booking.total:.0f} SAR (simulation only).")
+    else:
+        print_error("Could not save cancellation. Your booking is unchanged.")
 
 
 def my_bookings_menu() -> None:

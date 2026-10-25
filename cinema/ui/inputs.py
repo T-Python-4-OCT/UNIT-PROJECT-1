@@ -38,18 +38,28 @@ def ask_name() -> str:
             return name.title()
 
 
-def ask_yes_no(question: str) -> bool:
-    """Recursive: if the answer is not yes/no, the function calls itself again."""
+def ask_yes_no(question: str, attempts: int = 0) -> bool:
+    """Validate yes/no. Demonstrates recursion, with a safe iterative fallback."""
     answer = input(f"{question} (yes/no): ").strip().lower()
     if answer in ("yes", "y"):
         return True
     if answer in ("no", "n"):
         return False
     print_error("Please type yes or no.")
-    return ask_yes_no(question)
+    if attempts < 10:
+        return ask_yes_no(question, attempts + 1)
+    # Avoid exceeding the recursion limit after too many invalid entries.
+    while True:
+        answer = input(f"{question} (yes/no): ").strip().lower()
+        if answer in ("yes", "y"):
+            return True
+        if answer in ("no", "n"):
+            return False
+        print_error("Please type yes or no.")
+
 
 
 def ask_seat() -> str:
     """Turn inputs like 'b5', 'B-5' or 'b 5' into 'B5'."""
     text = input("\nEnter a seat (example: B5) or Q to stop: ")
-    return text.upper().replace("-", "").replace(" ", "")
+    return text.strip().upper().replace("-", "").replace(" ", "")
