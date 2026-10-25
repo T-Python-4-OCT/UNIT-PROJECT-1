@@ -1,15 +1,9 @@
 
-from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
+from rich.panel import Panel
 
-from news import (
-    show_top_news,
-    show_saudi_news,
-    show_sports_news,
-    show_technology_news,
-    search_news,
-)
+from news import NewsManager
 from weather import show_weather
 from pdf_report import PDFReport
 from ui import banner, console
@@ -26,34 +20,23 @@ MENU = [
     ("8", "🚪", "Exit"),
 ]
 
-
-NEWS_ACTIONS = {
-    "1": ("World News", show_top_news),
-    "2": ("Saudi Arabia News", show_saudi_news),
-    "3": ("Sports News", show_sports_news),
-    "4": ("Technology News", show_technology_news),
-    "5": ("Keyword Search", search_news),
-}
-
-
-
-
 def print_menu():
     table = Table(
-    show_header=False,
-    show_edge=False,
-    show_lines=True,
-    padding=(0, 2),
-    expand=True,
-    border_style="dim cyan",
-)
+        show_header=False,
+        show_edge=False,
+        show_lines=True,
+        padding=(0, 2),
+        expand=True,
+        border_style="dim cyan",
+    )
+
     table.add_column(style="bold cyan", justify="right")
     table.add_column()
     table.add_column()
-    
+
     for key, icon, label in MENU:
         table.add_row(key, icon, label)
-        
+
     console.print(
         Panel(
             table,
@@ -66,9 +49,18 @@ def print_menu():
 
 
 def main():
+    news_manager = NewsManager()
     news_sections = {}
     weather_data = None
     pdf_report = PDFReport()
+
+    NEWS_ACTIONS = {
+        "1": ("World News", news_manager.show_top_news),
+        "2": ("Saudi Arabia News", news_manager.show_saudi_news),
+        "3": ("Sports News", news_manager.show_sports_news),
+        "4": ("Technology News", news_manager.show_technology_news),
+        "5": ("Keyword Search", news_manager.search_news),
+    }
 
     console.clear()
     banner()
@@ -89,7 +81,7 @@ def main():
             )
             break
 
-        elif choice in NEWS_ACTIONS:
+        if choice in NEWS_ACTIONS:
             category, action = NEWS_ACTIONS[choice]
             articles = action()
 
@@ -120,6 +112,7 @@ def main():
                     )
 
         console.print()
+
         Prompt.ask(
             "[dim]Press Enter to return to the menu[/]",
             default="",
@@ -128,6 +121,7 @@ def main():
 
         console.clear()
         banner()
+
 
 if __name__ == "__main__":
     main()
