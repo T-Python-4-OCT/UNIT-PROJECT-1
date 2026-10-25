@@ -7,6 +7,26 @@ FUEL_PRICE_SAR = 2.18
 FUEL_CONSUMPTION_PER_100_KM = 6
 
 
+def choose_trip_priority():
+    print("\n--- Choose Your Trip Priority ---")
+    print("1. Fastest Trip")
+    print("2. Lowest Cost")
+    print("3. Best Balance (Time + Cost)")
+
+    while True:
+        choice = input("Choose your priority (1-3): ").strip()
+
+        if choice == "1":
+            return "fastest"
+        elif choice == "2":
+            return "cheapest"
+        elif choice == "3":
+            return "balanced"
+        else:
+            print("Invalid choice. Please enter 1, 2, or 3.")
+
+
+
 def load_routes():
     with open("routes.json", "r", encoding="utf-8") as file:
         data = json.load(file)
@@ -50,7 +70,9 @@ def compare_transport_options(origin, destination, departure_time):
     )
 
     car_cost = calculate_car_fuel_cost(distance_km)
-
+    
+    priority = choose_trip_priority()
+    
     # Sample metro information
     metro_duration = 40
     metro_cost = 4
@@ -76,26 +98,56 @@ def compare_transport_options(origin, destination, departure_time):
     print("\n  Transport : Metro")
     print(f"  Duration  : {metro_duration} minutes")
     print(f"  Cost      : {metro_cost:.2f} SAR")
-
+    
+    
     print("\n" + "-" * 42)
     print("          RECOMMENDATIONS")
     print("-" * 42)
 
-    if car_duration < metro_duration:
-        print("  Fastest option : Car")
-    elif metro_duration < car_duration:
-        print("  Fastest option : Metro")
-    else:
-        print("  Fastest option : Both options have equal duration")
+    if priority == "fastest":
+        if car_duration <= metro_duration:
+            print("Recommended option: Car")
+            print(f"Duration: {car_duration} minutes")
+        else:
+            print("Recommended option: Metro")
+            print(f"Duration: {metro_duration} minutes")
 
-    if car_cost is not None and car_cost < metro_cost:
-        print("  Cheapest option: Car (fuel estimate only)")
-    else:
-        print("  Cheapest option: Metro (based on listed fares)")
+    elif priority == "cheapest":
+            if car_cost is None:
+                print("Cannot compare costs: car distance is unavailable.")
+            elif car_cost <= metro_cost:
+                print("Recommended option: Car")
+                print(f"Estimated fuel cost: {car_cost:.2f} SAR")
+            else:
+                print("Recommended option: Metro")
+                print(f"Ticket cost: {metro_cost:.2f} SAR")
+
+    elif priority == "balanced":
+        if car_cost is None:
+            print("Cannot calculate a balanced recommendation.")
+            print("Car cost is unavailable.")
+        else:
+            car_score = (car_duration / max(car_duration, metro_duration)) + (
+                car_cost / max(car_cost, metro_cost)
+            )
+            metro_score = (metro_duration / max(car_duration, metro_duration)) + (
+                metro_cost / max(car_cost, metro_cost)
+            )
+
+            if car_score <= metro_score:
+                print("Recommended option: Car")
+            else:
+                print("Recommended option: Metro")
 
     print("=" * 42)
 
+
     return {
+        "origin": origin,
+        "destination": destination,
+        "departure_time": departure_time,
+        "base_minutes": base_minutes,
+        "estimated_minutes": car_duration,
         "distance_km": distance_km,
         "car_duration": car_duration,
         "car_cost": car_cost,

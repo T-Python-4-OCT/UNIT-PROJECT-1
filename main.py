@@ -1,5 +1,5 @@
 from trips import plan_trip
-from storage import load_trips, update_trip, delete_trip
+from storage import load_trips, save_trip, update_trip, delete_trip
 from traffic_data import estimate_trip_duration , suggest_departure_time
 from datetime import datetime
 from transport_advisor import compare_transport_options
@@ -54,7 +54,9 @@ def main():
 
             print("=" * 46)
 
-        
+
+
+            
         elif choice == "3":
             trips = load_trips()
 
@@ -80,17 +82,35 @@ def main():
                     trips, key=lambda trip: trip["estimated_minutes"]
                 )
 
-                print("\n  FASTEST TRIP")
+                print("\n  FASTEST CAR TRIP")
                 print(f"  {fastest['origin']} -> {fastest['destination']}")
                 print(f"  {fastest['estimated_minutes']} minutes")
 
-                print("\n  LONGEST TRIP")
-                print(f"  {longest['origin']} -> {longest['destination']}")
-                print(f"  {longest['estimated_minutes']} minutes")
+                metro_trips = [
+                    trip for trip in trips
+                    if isinstance(trip.get("metro_duration"), (int, float))
+                    and trip["metro_duration"] > 0
+                ]
+
+                print("\n  FASTEST METRO TRIP")
+
+                if metro_trips:
+                    fastest_metro = min(
+                        metro_trips,
+                        key=lambda trip: trip["metro_duration"]
+                    )
+
+                    print(
+                        f"  {fastest_metro['origin']} -> "
+                        f"{fastest_metro['destination']}"
+                    )
+                    print(f"  {fastest_metro['metro_duration']} minutes")
+                else:
+                    print("  No saved metro trip data available yet.")
 
             print("=" * 46)
             display_traffic_report()
-            
+
         elif choice == "4":
             trips = load_trips()
 
@@ -164,9 +184,13 @@ def main():
 
             try:
                 datetime.strptime(departure_time, "%H:%M")
-                compare_transport_options(
+                result = compare_transport_options(
                     origin, destination, departure_time
                 )
+
+                if result is not None:
+                    save_trip(result)
+                    print("Trip comparison saved successfully.")
             except ValueError:
                 print("\nInvalid time. Please use HH:MM, for example 08:30.")
 
