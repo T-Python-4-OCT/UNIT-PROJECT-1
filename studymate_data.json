@@ -48,6 +48,13 @@
             "code": "HPI978",
             "instructor": "Dr. Mark Cannon",
             "credit_hours": 2
+        },
+        {
+            "subject_id": "SUB-006",
+            "name": "hci",
+            "code": "HC1S",
+            "instructor": "ahmad",
+            "credit_hours": 2
         }
     ],
     "tasks": [
@@ -94,9 +101,9 @@
             "subject_id": "SUB-002",
             "due_date": "2026-10-26",
             "priority": "Low",
-            "status": "Not Started",
-            "earned_score": null,
-            "max_score": null,
+            "status": "Completed",
+            "earned_score": 95.0,
+            "max_score": 100.0,
             "created_at": "2026-10-24"
         },
         {
@@ -417,7 +424,7 @@
             "exam_date": "2026-10-25",
             "exam_time": "17:51",
             "exam_type": "Final",
-            "earned_score": 97.0,
+            "earned_score": 90.0,
             "max_score": 100.0
         },
         {
@@ -495,6 +502,13 @@
             "title": "HPI978 - Harness Next-Generation Metrics",
             "content": "Difficult stuff sell in debate. Agreement off question no value agree.",
             "subject_id": "SUB-005",
+            "created_at": "2026-10-24"
+        },
+        {
+            "note_id": "NTE-006",
+            "title": "a",
+            "content": "a",
+            "subject_id": "SUB-002",
             "created_at": "2026-10-24"
         }
     ]
