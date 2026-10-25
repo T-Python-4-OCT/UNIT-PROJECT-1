@@ -1,10 +1,14 @@
+from datetime import date
+
 from questionary import Choice
 from rich.console import Console
 
 from guardian.manager import SORT_OPTIONS, SubscriptionManager
 from guardian.reports import show_spending_report
 from guardian.subscription import CATEGORIES, MonthlySubscription, YearlySubscription
-from guardian.utils import ask_choice, ask_confirm, ask_price, ask_start_date, ask_text, show_banner
+from guardian.utils import (
+    ask_checkbox, ask_choice, ask_confirm, ask_price, ask_start_date, ask_text, show_banner,
+)
 
 console = Console()
 manager = SubscriptionManager()
@@ -54,6 +58,26 @@ def spending_report():
     show_spending_report(manager.subscriptions)
 
 
+def mark_as_used():
+    if not manager.subscriptions:
+        console.print("[yellow]You don't have any subscriptions yet.[/yellow]")
+        return
+
+    # Subscriptions already used today start ticked
+    choices = [
+        Choice(sub.name, value=sub, checked=sub.last_used == date.today())
+        for sub in manager.subscriptions
+    ]
+    used = ask_checkbox("Which subscriptions did you use today?", choices)
+    if not used:
+        console.print("Nothing was marked.")
+        return
+
+    manager.mark_used_today(used)
+    names = ", ".join(sub.name for sub in used)
+    console.print(f"[green]Marked as used today: {names}[/green]")
+
+
 def delete_subscription():
     if not manager.subscriptions:
         console.print("[yellow]You don't have any subscriptions to delete.[/yellow]")
@@ -81,7 +105,7 @@ MENU_OPTIONS = {
     "Add subscription": add_subscription,
     "View all subscriptions": view_subscriptions,
     "Spending report": spending_report,
-    "Mark as used today": coming_soon,
+    "Mark as used today": mark_as_used,
     "Suggestions: what to cancel?": coming_soon,
     "Delete subscription": delete_subscription,
 }
