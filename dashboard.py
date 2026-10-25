@@ -77,7 +77,6 @@ def show_admin_dashboard():
 
     counts = get_task_counts(tasks)
 
-    # Calculate overall completion rate.
     completion_rate = (
         counts["completed"] / counts["total"] * 100
         if counts["total"] > 0
@@ -191,3 +190,6 @@ def show_admin_dashboard():
                 padding=(0, 1),
             )
         )
+# Test the dashboard display
+if __name__ == "__main__":
+    show_admin_dashboard()

@@ -1,1 +1,22 @@
-[]
+[
+    {
+        "id": 1,
+        "name": "IT Support",
+        "description": "Technical support team",
+        "created_by": "ahmed",
+        "members": [
+            "sara",
+            "saad"
+        ]
+    },
+    {
+        "id": 2,
+        "name": "IT Office",
+        "description": "IT fro Office",
+        "created_by": "ahmed",
+        "members": [
+            "mamdouh",
+            "ali"
+        ]
+    }
+]
