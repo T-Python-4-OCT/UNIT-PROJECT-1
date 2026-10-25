@@ -11,5 +11,19 @@
     "email": "amer@gmail.com",
     "password": "123",
     "role": "dispatcher"
+  },
+  {
+    "user_name": "amer",
+    "email": "amer@gmail.com",
+    "password": "12345678",
+    "role": "field_supervisor",
+    "crisis_zone": "riadh"
+  },
+  {
+    "user_name": "mohammed",
+    "email": "mohammed@gmail.com",
+    "password": "12345678",
+    "role": "fleet_officer",
+    "specialty": "drones"
   }
 ]

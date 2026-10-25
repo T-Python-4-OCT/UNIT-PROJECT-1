@@ -1,125 +1,146 @@
-from src.utils.json_handler import load_json, save_json
-from src.models.supply import SupplyItem
-from src.models.shipment import Shipment
+import json
+import os
+from src.utils.display import display_supplies_table
+from rich.console import Console
+
+console = Console()
 
 SUPPLIES_FILE = "data/supplies.json"
 SHIPMENTS_FILE = "data/shipments.json"
 
+def load_supplies():
+    if not os.path.exists(SUPPLIES_FILE):
+        return []
+    try:
+        with open(SUPPLIES_FILE, "r") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return []
+
+def save_supplies(supplies):
+    os.makedirs(os.path.dirname(SUPPLIES_FILE), exist_ok=True)
+    with open(SUPPLIES_FILE, "w") as f:
+        json.dump(supplies, f, indent=2)
+
+def load_shipments():
+    if not os.path.exists(SHIPMENTS_FILE):
+        return []
+    try:
+        with open(SHIPMENTS_FILE, "r") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return []
+
+def save_shipments(shipments):
+    os.makedirs(os.path.dirname(SHIPMENTS_FILE), exist_ok=True)
+    with open(SHIPMENTS_FILE, "w") as f:
+        json.dump(shipments, f, indent=2)
+
 def view_supplies():
-    supplies_list = load_json(SUPPLIES_FILE)
-    if not supplies_list:
-        print("\nNo supplies available in the inventory.")
-        return supplies_list
-
-    print("\n--- Current Emergency Supplies Inventory ---")
-    for item in supplies_list:
-        print(f"ID: {item.get('item_id')} | Name: {item.get('name')} | Category: {item.get('category')} | Qty: {item.get('quantity')} | Weight/Unit: {item.get('unit_weight_kg')}kg")
-    
-    return supplies_list
-
+    return load_supplies()
 
 def add_supply_item():
-    print("\n--- Add New Supply Item (Manager Only) ---")
-    name = input("Enter supply item name: ").strip()
+    console.print("\n[bold yellow]--- Add New Supply Item ---[/bold yellow]")
+    supplies = load_supplies()
+    
+    item_id = f"SUPP-{len(supplies) + 1:03d}"
+    name = input("Enter item name: ").strip()
     category = input("Enter category (Medical, Food, Shelter): ").strip()
     
-    while True:
-        try:
-            quantity = int(input("Enter quantity: ").strip())
-            unit_weight_kg = float(input("Enter unit weight in kg: ").strip())
-            if quantity > 0 and unit_weight_kg > 0:
-                break
-            print("Quantity and weight must be greater than zero.")
-        except ValueError:
-            print("Invalid input. Please enter valid numbers.")
-
-    supplies_list = load_json(SUPPLIES_FILE)
-    item_id = f"SUPP-{len(supplies_list) + 1:03d}"
-
-    new_item = SupplyItem(item_id, name, category, quantity, unit_weight_kg)
-    supplies_list.append(new_item.to_dict())
-    save_json(SUPPLIES_FILE, supplies_list)
-
-    print(f"Supply item '{name}' added successfully with ID ({item_id})!")
-
+    try:
+        quantity = int(input("Enter quantity: ").strip())
+        unit_weight = float(input("Enter unit weight (kg): ").strip())
+    except ValueError:
+        console.print("[bold red]❌ Invalid number format. Item creation cancelled.[/bold red]")
+        return
+        
+    new_item = {
+        "id": item_id,
+        "name": name,
+        "category": category,
+        "quantity": quantity,
+        "unit_weight": unit_weight
+    }
+    
+    supplies.append(new_item)
+    save_supplies(supplies)
+    console.print(f"[bold green]✅ Success: Item '{name}' ({item_id}) added to inventory![/bold green]")
 
 def create_shipment():
-    print("\n--- Create & Dispatch Shipment (Dispatcher) ---")
-    destination = input("Enter destination crisis zone: ").strip()
+    console.print("\n[bold yellow]--- Create Shipment Request (Dispatcher) ---[/bold yellow]")
+    supplies = load_supplies()
     
-    print("\nSelect Transport Type:")
-    print("1. Drone")
-    print("2. Truck")
-    print("3. Cargo Plane")
-    
-    while True:
-        choice = input("Enter option (1-3): ").strip()
-        if choice == "1":
-            transport_type = "Drone"
-            break
-        elif choice == "2":
-            transport_type = "Truck"
-            break
-        elif choice == "3":
-            transport_type = "Cargo Plane"
-            break
-        print("Invalid transport choice. Try again.")
-
-    shipments_list = load_json(SHIPMENTS_FILE)
-    shipment_id = f"SHIP-{len(shipments_list) + 1:03d}"
-
-    new_shipment = Shipment(shipment_id, destination, transport_type)
-
-    supplies_list = load_json(SUPPLIES_FILE)
-    if not supplies_list:
-        print("Cannot add items because inventory is empty.")
-        return
-
-    while True:
-        view_supplies()
-        item_id_input = input("Enter Supply ID to add to shipment (or type 'done' to finish): ").strip()
+    if not supplies:
+        console.print("[bold red]❌ No supplies available in inventory to ship.[/bold red]")
+        return None
         
-        if item_id_input.lower() == 'done':
+    display_supplies_table(supplies)
+    
+    item_id = input("Enter Supply ID to dispatch (e.g., SUPP-001 or 004): ").strip()
+    
+    # بحث ذكي ومطور يتجاوز أي مشاكل في المسافات أو المطابقة
+    target_item = None
+    for item in supplies:
+        db_id = str(item.get("id", "")).strip().lower()
+        clean_input = item_id.strip().lower()
+        
+        if db_id == clean_input or db_id.endswith(clean_input) or clean_input.endswith(db_id) or clean_input in db_id:
+            target_item = item
             break
+            
+    if not target_item:
+        console.print("[bold red]❌ Supply ID not found.[/bold red]")
+        return None
+        
+    try:
+        qty_to_ship = int(input(f"Enter quantity to ship (Available: {target_item['quantity']}): ").strip())
+    except ValueError:
+        console.print("[bold red]❌ Invalid quantity entered.[/bold red]")
+        return None
+        
+    if qty_to_ship <= 0 or qty_to_ship > target_item['quantity']:
+        console.print("[bold red]❌ Invalid quantity amount or exceeds available stock.[/bold red]")
+        return None
+        
+    destination = input("Enter destination zone (Riyadh, Tabuk, Jeddah, Dammam): ").strip() or "General Zone"
+    
+    # خصم الكمية من المخزون فوراً
+    target_item['quantity'] -= qty_to_ship
+    save_supplies(supplies)
+    
+    # تسجيل الشحنة بحالة معلقة بانتظار الأسطول
+    shipments = load_shipments()
+    shipment_id = f"SHP-{len(shipments) + 101}"
+    
+    new_shipment = {
+        "shipment_id": shipment_id,
+        "item_name": target_item['name'],
+        "quantity": qty_to_ship,
+        "destination": destination,
+        "status": "Pending Fleet Assignment",
+        "vehicle": None
+    }
+    
+    shipments.append(new_shipment)
+    save_shipments(shipments)
+    
+    console.print(f"[bold green]✅ Shipment {shipment_id} created and sent to Fleet Officer for review & transport selection![/bold green]")
+    return shipment_id
 
-        found_item = None
-        for item in supplies_list:
-            if item.get("item_id") == item_id_input:
-                found_item = item
-                break
+def get_pending_shipments():
+    shipments = load_shipments()
+    return [s for s in shipments if s.get("status") == "Pending Fleet Assignment"]
 
-        if not found_item:
-            print("Supply ID not found. Try again.")
-            continue
-
-        try:
-            qty_to_add = int(input(f"Enter quantity to add (Available: {found_item.get('quantity')}): ").strip())
-            if qty_to_add <= 0 or qty_to_add > found_item.get("quantity"):
-                print("Invalid quantity amount.")
-                continue
-        except ValueError:
-            print("Please enter a valid integer.")
-            continue
-
-        new_shipment.add_item(
-            item_id=found_item.get("item_id"),
-            item_name=found_item.get("name"),
-            quantity=qty_to_add,
-            unit_weight_kg=found_item.get("unit_weight_kg")
-        )
-
-        found_item["quantity"] -= qty_to_add
-        save_json(SUPPLIES_FILE, supplies_list)
-        print(f"Added {qty_to_add} of {found_item.get('name')} to shipment.")
-
-        cont = input("Add another item? (y/n): ").strip().lower()
-        if cont != 'y':
+def assign_vehicle_to_shipment(shipment_id, vehicle_name):
+    shipments = load_shipments()
+    updated = False
+    for s in shipments:
+        if s.get("shipment_id") == shipment_id:
+            s["vehicle"] = vehicle_name
+            s["status"] = "In Transit"
+            updated = True
             break
-
-    if not new_shipment.items:
-        print("Shipment creation cancelled because no items were added.")
-        return
-
-    shipments_list.append(new_shipment.to_dict())
-    save_json(SHIPMENTS_FILE, shipments_list)
-    print(f"Shipment '{shipment_id}' created successfully and saved!")
+    if updated:
+        save_shipments(shipments)
+        return True
+    return False
