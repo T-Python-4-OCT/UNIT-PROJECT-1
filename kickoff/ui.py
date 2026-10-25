@@ -45,6 +45,15 @@ def ask_text(prompt: str, min_len: int = 1, allow_empty: bool = False) -> str:
         error(f"Please type at least {min_len} characters.")
 
 
+def ask_name(prompt: str = "Your full name") -> str:
+    
+    while True:
+        value = " ".join(input(f"{prompt}: ").split())
+        if len(value) >= 3 and " " in value and all(ch.isalpha() or ch == " " for ch in value):
+            return value
+        error("Please type your full name (first and last name, letters only).")
+
+
 def ask_int(prompt: str, low: int, high: int) -> int:
     """Recursion: if the answer is not valid, the function calls itself again."""
     value = input(f"{prompt}: ").strip()

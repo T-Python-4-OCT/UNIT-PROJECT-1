@@ -154,6 +154,8 @@ def team_profile(session):
                   f"Upcoming matches of {team.name_en}")
     if ui.confirm("Open the team logo in your browser?"):
         webbrowser.open(team.logo)
+        
+@safe_action      
 def my_bookings(session):
     phone = session.phone or ui.ask_phone("Your phone (05XXXXXXXX)")
     session.phone = phone
@@ -170,7 +172,7 @@ def my_bookings(session):
         table.add_row(b.id, session.match_title(match), f"{match.date} {match.time}", ", ".join(b.seats),
                       f"{b.total:.2f}", ticket, match.status.capitalize())
     ui.console.print(table)
-    choice = ui.menu("My bookings", {1: "Cancel a booking", 2: "Read an e-ticket file", 3: "All saved e-ticket files", 0: "Back"})
+    choice = ui.menu("My bookings", {1: "Cancel a booking", 2: "Read an e-ticket file", 3: "My saved e-ticket files", 0: "Back"})
     if choice == 1:
         booking_id = ui.ask_text("Booking ID (like KT-0003)")
         if ui.confirm("Cancel this booking and free the seats?"):
@@ -183,9 +185,9 @@ def my_bookings(session):
             raise KickoffError("This booking ID is not in your list.")
         ui.console.print(Panel(storage.read_ticket_file(booking_id), title=f"E-ticket {booking_id}"))
     elif choice == 3:
-        files = storage.list_ticket_files()
-        ui.info("Saved files: " + (", ".join(files) if files else "none yet"))
-
+        own = {b.id + ".txt" for b in mine}                      # only the tickets of this phone number
+        files = [name for name in storage.list_ticket_files() if name in own]
+        ui.info("Your saved files: " + (", ".join(files) if files else "none yet"))
 
 def print_cart(session):
     lines = booking.cart_lines(session)
@@ -254,7 +256,7 @@ def checkout(session):
         ui.warn(f"Your hold on {seat} expired, the seat was released.")
     if not print_cart(session):
         return False
-    name = ui.ask_text("Your full name", min_len=3)
+    name = ui.ask_name("Your full name")
     phone = ui.ask_phone()
     percent = 0
     code = ui.ask_text("Coupon code (press Enter to skip)", allow_empty=True)
