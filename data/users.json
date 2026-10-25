@@ -2,28 +2,23 @@
   {
     "user_name": "hail",
     "email": "asawaq135@gmail.com",
-    "password": "Hail1422",
     "role": "manager",
-    "department": "Operations"
+    "salt": "53881c55d137aaccffa1c8156b6022e7a107bda812dfc185ca6570d2fc0d3a94",
+    "password_hash": "04e97ffadf88c34d50a6675f6cbfd3dd5fa3543108e1cd61c40b9417efe7772c"
   },
   {
     "user_name": "fayz",
-    "email": "amer@gmail.com",
-    "password": "123",
-    "role": "dispatcher"
+    "email": "fayz@gmail.com",
+    "role": "dispatcher",
+    "salt": "1b9d44a3bfd5cb409b5fa3bb34ff1d49c5ee3c8c1f904cb2644142d6ce3bca97",
+    "password_hash": "23bbcf9853ed77e05659eb0ccf6726c6ab62addd2aaaef9116ef5c3ae92e5505"
   },
   {
     "user_name": "amer",
     "email": "amer@gmail.com",
-    "password": "12345678",
     "role": "field_supervisor",
+    "salt": "4e228c00a8561b6f320af9d1b2fe2490ddac76e4aa5bfa2b6f6a3f01901b42dd",
+    "password_hash": "154d71fb4f159f2852b0b09e2881eb1dbcb407450c1decc1fff9b57f57cffe7a",
     "crisis_zone": "riadh"
-  },
-  {
-    "user_name": "mohammed",
-    "email": "mohammed@gmail.com",
-    "password": "12345678",
-    "role": "fleet_officer",
-    "specialty": "drones"
   }
 ]

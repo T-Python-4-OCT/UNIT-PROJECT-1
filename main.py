@@ -12,8 +12,9 @@ from rich.console import Console
 console = Console()
 
 def manager_menu(user):
+    username = user.get("user_name") if isinstance(user, dict) else getattr(user, "user_name", "Manager")
     while True:
-        console.print(f"\n[bold cyan]--- Manager Dashboard ({user.user_name}) ---[/bold cyan]")
+        console.print(f"\n[bold cyan]--- Manager Dashboard ({username}) ---[/bold cyan]")
         console.print("1. View Supplies Inventory")
         console.print("2. Add New Supply Item")
         console.print("3. View Active Shipments & Tracking")
@@ -46,9 +47,9 @@ def manager_menu(user):
             if users:
                 for idx, u in enumerate(users, 1):
                     role_str = u.get('role', 'general')
-                    username = u.get('user_name', 'Unknown')
+                    uname = u.get('user_name', 'Unknown')
                     email = u.get('email', 'N/A')
-                    console.print(f"{idx}. User: [cyan]{username}[/cyan] | Role: [green]{role_str}[/green] | Email: {email}")
+                    console.print(f"{idx}. User: [cyan]{uname}[/cyan] | Role: [green]{role_str}[/green] | Email: {email}")
             else:
                 console.print("[yellow]No registered users found in database yet.[/yellow]")
                 
@@ -60,8 +61,9 @@ def manager_menu(user):
 
 
 def dispatcher_menu(user):
+    username = user.get("user_name") if isinstance(user, dict) else getattr(user, "user_name", "Dispatcher")
     while True:
-        console.print(f"\n[bold cyan]--- Dispatcher Dashboard ({user.user_name}) ---[/bold cyan]")
+        console.print(f"\n[bold cyan]--- Dispatcher Dashboard ({username}) ---[/bold cyan]")
         console.print("1. View Supplies Inventory")
         console.print("2. View Field Supervisor Requests & Status")
         console.print("3. Check Crisis Weather (Live API)")
@@ -123,9 +125,10 @@ def dispatcher_menu(user):
 
 
 def field_supervisor_menu(user):
+    username = user.get("user_name") if isinstance(user, dict) else getattr(user, "user_name", "Supervisor")
     while True:
-        zone = getattr(user, "crisis_zone", "General Zone")
-        console.print(f"\n[bold cyan]--- Field Supervisor Dashboard ({user.user_name} | Zone: {zone}) ---[/bold cyan]")
+        zone = user.get("crisis_zone") if isinstance(user, dict) else getattr(user, "crisis_zone", "General Zone")
+        console.print(f"\n[bold cyan]--- Field Supervisor Dashboard ({username} | Zone: {zone}) ---[/bold cyan]")
         console.print("1. View Supplies Inventory")
         console.print("2. Report Urgent Field Request (Send to Dispatcher)")
         console.print("3. Logout / Switch User")
@@ -145,9 +148,10 @@ def field_supervisor_menu(user):
 
 
 def fleet_officer_menu(user):
+    username = user.get("user_name") if isinstance(user, dict) else getattr(user, "user_name", "Officer")
     while True:
-        specialty = getattr(user, "specialty", "Logistics")
-        console.print(f"\n[bold cyan]--- Fleet Officer Dashboard ({user.user_name} | Specialty: {specialty}) ---[/bold cyan]")
+        specialty = user.get("specialty") if isinstance(user, dict) else getattr(user, "specialty", "Logistics")
+        console.print(f"\n[bold cyan]--- Fleet Officer Dashboard ({username} | Specialty: {specialty}) ---[/bold cyan]")
         console.print("1. View Supplies Inventory")
         console.print("2. Check Fleet Vehicle Capacities")
         console.print("3. Review Pending Shipments, Check Weather & Assign Vehicle")
@@ -223,8 +227,9 @@ def fleet_officer_menu(user):
 
 
 def general_user_menu(user):
+    username = user.get("user_name") if isinstance(user, dict) else getattr(user, "user_name", "User")
     while True:
-        console.print(f"\n[bold cyan]--- General Dashboard ({user.user_name}) ---[/bold cyan]")
+        console.print(f"\n[bold cyan]--- General Dashboard ({username}) ---[/bold cyan]")
         console.print("1. View Supplies Inventory")
         console.print("2. Logout / Switch User")
         choice = input("Choose an option (1-2): ").strip()

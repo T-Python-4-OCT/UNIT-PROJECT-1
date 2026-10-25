@@ -1,11 +1,24 @@
 import json
 import os
-from dotenv import load_dotenv
-from src.models.user import Manager, Dispatcher, FieldSupervisor, FleetOfficer, User
+import hashlib
+from rich.console import Console
 
-load_dotenv()
-
+console = Console()
 USERS_FILE = "data/users.json"
+
+def hash_password(password, salt=None):
+    """ عشوائيsalt توليد هاش آمن لكلمة المرور باستخدام   """
+    if not salt:
+        salt = os.urandom(32)  
+    else:
+        salt = bytes.fromhex(salt)
+    
+    pwd_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+    return salt.hex(), pwd_hash.hex()
+
+def verify_password(stored_salt, stored_hash, provided_password):
+    _, new_hash = hash_password(provided_password, stored_salt)
+    return new_hash == stored_hash
 
 def load_users():
     if not os.path.exists(USERS_FILE):
@@ -22,26 +35,29 @@ def save_users(users):
         json.dump(users, f, indent=2)
 
 def register_user():
-    print("\n--- Register New User ---")
-    user_name = input("Enter username: ").strip()
+    console.print("\n[bold yellow]--- Register New User ---[/bold yellow]")
+    username = input("Enter username: ").strip()
     
     users = load_users()
-    if any(u.get("user_name") == user_name for u in users):
-        print("❌ Username already exists! Try logging in or use another username.")
-        return None
-
-    email = input("Enter email: ").strip()
+    if any(u.get("user_name").lower() == username.lower() for u in users):
+        console.print("[bold red]❌ Username already exists. Choose another one.[/bold red]")
+        return False
+        
     password = input("Enter password: ").strip()
+    if not password:
+        console.print("[bold red]❌ Password cannot be empty.[/bold red]")
+        return False
+        
+    email = input("Enter email: ").strip()
     
-    print("\nSelect Role:")
-    print("1. Manager")
-    print("2. Dispatcher")
-    print("3. Field Supervisor")
-    print("4. Fleet Officer")
-    print("5. General User")
+    console.print("\nSelect Role:")
+    console.print("1. Manager")
+    console.print("2. Dispatcher")
+    console.print("3. Field Supervisor")
+    console.print("4. Fleet Officer")
+    console.print("5. General User")
     
     role_choice = input("Choose role (1-5): ").strip()
-    
     role_map = {
         "1": "manager",
         "2": "dispatcher",
@@ -49,60 +65,51 @@ def register_user():
         "4": "fleet_officer",
         "5": "general"
     }
-    
     role = role_map.get(role_choice, "general")
     
+    salt, password_hash = hash_password(password)
+    
     extra_field = {}
-    if role == "manager":
-        extra_field["department"] = input("Enter department (e.g., Operations): ").strip() or "Operations"
-    elif role == "field_supervisor":
-        extra_field["crisis_zone"] = input("Enter assigned crisis zone: ").strip() or "General Zone"
+    if role == "field_supervisor":
+        zone = input("Enter assigned crisis zone (Riyadh, Tabuk, Jeddah, Dammam): ").strip() or "General Zone"
+        extra_field["crisis_zone"] = zone
     elif role == "fleet_officer":
-        extra_field["specialty"] = input("Enter fleet specialty (e.g., Drones, Heavy Vehicles): ").strip() or "General Fleet"
+        specialty = input("Enter fleet specialty (Ground, Air, Heavy): ").strip() or "Logistics"
+        extra_field["specialty"] = specialty
 
-    user_data = {
-        "user_name": user_name,
+    new_user = {
+        "user_name": username,
         "email": email,
-        "password": password,
         "role": role,
+        "salt": salt,
+        "password_hash": password_hash,
         **extra_field
     }
-
-    users.append(user_data)
+    
+    users.append(new_user)
     save_users(users)
-    print(f"✅ User '{user_name}' registered successfully as {role}!")
-    return user_data
+    console.print(f"[bold green]✅ User '{username}' registered successfully with secure hashed password![/bold green]")
+    return True
 
 def login_user():
-    print("\n--- User Login ---")
-    user_name = input("Enter username: ").strip()
+    console.print("\n[bold yellow]--- System Login ---[/bold yellow]")
+    username = input("Enter username: ").strip()
     password = input("Enter password: ").strip()
-
-    # 1. التحقق أولاً من حساب المدير من ملف .env
-    admin_env_user = os.getenv("ADMIN_USERNAME")
-    admin_env_pass = os.getenv("ADMIN_PASSWORD")
-
-    if user_name == admin_env_user and password == admin_env_pass:
-        print(f"✨ Welcome back, System Admin '{user_name}'! Login successful.")
-        return Manager(user_name, "admin@system.com", "Executive Operations")
-
-    # 2. التحقق من بقية المستخدمين المسجلين في ملف users.json
+    
     users = load_users()
-    for user_data in users:
-        if user_data.get("user_name") == user_name and user_data.get("password") == password:
-            print(f"✨ Welcome back, {user_name}! Login successful.")
-            role = user_data.get("role")
+    for user in users:
+        if user.get("user_name", "").lower() == username.lower():
+            stored_salt = user.get("salt")
+            stored_hash = user.get("password_hash")
             
-            if role == "manager":
-                return Manager(user_name, user_data.get("email"), user_data.get("department", "Operations"))
-            elif role == "dispatcher":
-                return Dispatcher(user_name, user_data.get("email"))
-            elif role == "field_supervisor":
-                return FieldSupervisor(user_name, user_data.get("email"), user_data.get("crisis_zone", "General Zone"))
-            elif role == "fleet_officer":
-                return FleetOfficer(user_name, user_data.get("email"), user_data.get("specialty", "General Fleet"))
-            else:
-                return User(user_name, user_data.get("email"), role="general")
-
-    print("❌ Invalid username or password.")
+            if not stored_salt or not stored_hash:
+                if user.get("password") == password:
+                    console.print(f"[bold green]✅ Welcome back, {username}! (Legacy login)[/bold green]")
+                    return user
+            
+            if stored_salt and stored_hash and verify_password(stored_salt, stored_hash, password):
+                console.print(f"[bold green]✅ Welcome back, {username}! Login successful.[/bold green]")
+                return user
+                
+    console.print("[bold red]❌ Invalid username or password.[/bold red]")
     return None
