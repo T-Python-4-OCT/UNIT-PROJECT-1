@@ -5,7 +5,6 @@ import storage
 from models import Reservation
 
 
-# ---------- validation ----------
 def parse_slot(date_str, time_str):
     try:
         return datetime.strptime(f"{date_str} {time_str}", config.DATETIME_FORMAT)
@@ -43,7 +42,6 @@ def validate_guests(guests):
     return guests
 
 
-# ---------- availability ----------
 def _overlaps(start_a, start_b):
     length = timedelta(minutes=config.BOOKING_DURATION_MINUTES)
     return start_a < start_b + length and start_b < start_a + length
@@ -68,7 +66,6 @@ def occupied_now(now=None):
             if r.status == "confirmed" and r.start_dt <= now < r.end_dt}
 
 
-# ---------- actions ----------
 def create_reservation(name, phone, guests, dt, table_id=None):
     guests = validate_guests(guests)
     validate_slot(dt)
@@ -113,7 +110,6 @@ def cancel_reservation(res_id, phone=None):
     return target
 
 
-# ---------- queries ----------
 def get_reservation(res_id, phone=None):
     """Return one reservation. If `phone` is given, it must match the owner."""
     found = next((r for r in storage.load_reservations() if r.id == res_id), None)
@@ -158,7 +154,6 @@ def stats():
     }
 
 
-# ---------- choosing a date / time ----------
 def next_days(count=None):
     """Today and the following days, as date objects."""
     count = count or config.BOOKING_WINDOW_DAYS
@@ -178,9 +173,7 @@ def time_slots(day):
     return slots
 
 
-# ---------- time left ----------
 def _format_delta(delta):
-    """Turn a timedelta into text like '2d 3h 15m'."""
     total_minutes = int(delta.total_seconds() // 60)
     days, rest = divmod(total_minutes, 24 * 60)
     hours, minutes = divmod(rest, 60)
