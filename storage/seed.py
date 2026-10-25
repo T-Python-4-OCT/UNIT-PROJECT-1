@@ -16,8 +16,7 @@ def seed_if_empty():
         return
 
     json_store.save("receptionists",
-                    [Receptionist(1, "reception", hash_password("1234"), "Reem Hassan").to_dict()])
-
+                    [Receptionist(1, "sultan", hash_password("1234"), "Sultan").to_dict()])
     clinics = [
         Clinic(1, "Cardiology", "Dr. Ahmed Ali", 200, default_hours()),
         Clinic(2, "Dermatology", "Dr. Noura Saad", 150, default_hours()),

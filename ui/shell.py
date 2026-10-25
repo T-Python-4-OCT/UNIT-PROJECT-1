@@ -1,7 +1,7 @@
 import shlex
 
 from utils.errors import ClinicError, UsageError
-from utils.formatters import table
+from utils.formatters import paint, table
 
 
 def print_help(commands):
@@ -16,7 +16,7 @@ def run_shell(user, commands):
     print("Type 'help' to see the available commands.\n")
     while True:
         try:
-            line = input(f"{user.username}@clinic > ").strip()
+            line = input(paint(f"{user.username}@clinic", "bold green") + " > ").strip()
         except (EOFError, KeyboardInterrupt):
             print()
             return "exit"
@@ -25,7 +25,7 @@ def run_shell(user, commands):
         try:
             parts = shlex.split(line)
         except ValueError:
-            print("❌ Unbalanced quotes in command.")
+            print(paint("❌ Unbalanced quotes in command.", "red"))
             continue
 
         cmd, args = parts[0].lower(), parts[1:]
@@ -41,8 +41,8 @@ def run_shell(user, commands):
             try:
                 handler(user, args)
             except UsageError:
-                print(f"Usage: {usage}")
+                print(paint(f"Usage: {usage}", "yellow"))
             except ClinicError as e:
-                print(f"❌ {e}")
+                print(paint(f"❌ {e}", "red"))
         else:
-            print(f"❌ Unknown command '{cmd}'. Type 'help'.")
+            print(paint(f"❌ Unknown command '{cmd}'. Type 'help'.", "red"))

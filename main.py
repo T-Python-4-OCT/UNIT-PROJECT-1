@@ -3,7 +3,7 @@ from getpass import getpass
 from services import auth_service
 from storage.seed import seed_if_empty
 from ui import reception_menu
-from utils.formatters import banner
+from utils.formatters import banner, paint
 
 
 def login_flow():
@@ -11,7 +11,7 @@ def login_flow():
     password = getpass("Password: ")
     user = auth_service.login(username, password)
     if user is None:
-        print("❌ Invalid username or password.\n")
+        print(paint("❌ Invalid username or password.\n", "red"))
     return user
 
 
@@ -24,7 +24,7 @@ def main():
         if choice == "1":
             user = login_flow()
             if user:
-                print(f"✅ Welcome back, {user.full_name}! (Receptionist)")
+                print(paint(f"✅ Welcome back, {user.full_name}! (Receptionist)", "bold green"))
                 if reception_menu.run(user) == "exit":
                     break
         elif choice == "2":
