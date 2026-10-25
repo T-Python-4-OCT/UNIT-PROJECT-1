@@ -2,6 +2,7 @@ from questionary import Choice
 from rich.console import Console
 
 from guardian.manager import SORT_OPTIONS, SubscriptionManager
+from guardian.reports import show_spending_report
 from guardian.subscription import CATEGORIES, MonthlySubscription, YearlySubscription
 from guardian.utils import ask_choice, ask_confirm, ask_price, ask_start_date, ask_text, show_banner
 
@@ -49,6 +50,10 @@ def view_subscriptions():
     manager.view_all(sort_by)
 
 
+def spending_report():
+    show_spending_report(manager.subscriptions)
+
+
 def delete_subscription():
     if not manager.subscriptions:
         console.print("[yellow]You don't have any subscriptions to delete.[/yellow]")
@@ -75,7 +80,7 @@ def coming_soon():
 MENU_OPTIONS = {
     "Add subscription": add_subscription,
     "View all subscriptions": view_subscriptions,
-    "Spending report": coming_soon,
+    "Spending report": spending_report,
     "Mark as used today": coming_soon,
     "Suggestions: what to cancel?": coming_soon,
     "Delete subscription": delete_subscription,
