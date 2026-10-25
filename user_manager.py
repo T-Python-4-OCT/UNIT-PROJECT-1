@@ -15,6 +15,12 @@ def create_user(username, password, role="member"):
     if not username:
         return False, "Username cannot be empty."
 
+    if not username[0].isascii() or not username[0].isalpha():
+        return False, "Username must start with an English letter."
+
+    if len(username) < 3:
+        return False, "Username must be at least 3 characters long."
+
     if len(password) < 8:
         return False, "Password must be at least 8 characters."
 

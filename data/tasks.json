@@ -11,5 +11,31 @@
         "status": "Completed",
         "created_by": "ahmad",
         "progress": 100
+    },
+    {
+        "id": 5,
+        "title": "IT Task Execution",
+        "description": "Complete the assigned IT task and reoprt the results.",
+        "assigned_to": "sara",
+        "group_id": 1,
+        "group_name": "IT Support",
+        "priority": "Medium",
+        "due_date": "2026-10-25",
+        "status": "To Do",
+        "created_by": "ahmed",
+        "progress": 0
+    },
+    {
+        "id": 6,
+        "title": "System Maintenance",
+        "description": "Check system performance and resolve any technical issues.",
+        "assigned_to": "saad",
+        "group_id": 1,
+        "group_name": "IT Support",
+        "priority": "High",
+        "due_date": "2026-11-25",
+        "status": "To Do",
+        "created_by": "ahmed",
+        "progress": 0
     }
 ]

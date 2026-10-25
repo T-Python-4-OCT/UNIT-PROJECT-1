@@ -14,6 +14,9 @@ def create_group(name, description, created_by):
     if not name:
         return False, "Group name cannot be empty."
 
+    if not name[0].isascii() or not name[0].isalpha():
+        return False, "Group name must start with an English letter."
+
     groups = load_data(GROUPS_FILE)
 
     for group in groups:

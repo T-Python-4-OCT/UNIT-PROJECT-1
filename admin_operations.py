@@ -88,6 +88,10 @@ class AdminOperations:
         if password is None:
             return
 
+        if not any(char.isupper() and char.isascii() for char in password):
+            console.print("[red]Password must contain at least one uppercase English letter.[/red]")
+            return
+
         role = questionary.select(
             "Select user role:",
             choices=["member", "admin"],

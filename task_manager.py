@@ -28,6 +28,9 @@ def create_task(
     if not title:
         return False, "Task title cannot be empty."
 
+    if not title[0].isascii() or not title[0].isalpha():
+        return False, "Task title must start with an English letter."
+
     if priority not in ["Low", "Medium", "High"]:
         return False, "Invalid priority."
 
@@ -142,6 +145,9 @@ def update_task(
 
         if not title:
             return False, "Task title cannot be empty."
+
+    if not title[0].isascii() or not title[0].isalpha():
+        return False, "Task title must start with an English letter."
 
     if description is not None:
         description = description.strip()
