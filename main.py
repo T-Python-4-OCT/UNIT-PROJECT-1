@@ -111,6 +111,7 @@ def main():
             print("=" * 46)
             display_traffic_report()
 
+        
         elif choice == "4":
             trips = load_trips()
 
@@ -137,17 +138,27 @@ def main():
                     trip["base_minutes"], new_time
                 )
 
-                update_trip(
-                    number - 1,
-                    {
-                        "departure_time": new_time,
-                        "traffic_period": period,
-                        "estimated_minutes": duration
-                    }
+                updated_trip = {
+                    "departure_time": new_time,
+                    "traffic_period": period,
+                    "estimated_minutes": duration,
+                    "car_duration": duration
+                }
+
+                result = compare_transport_options(
+                    trip["origin"],
+                    trip["destination"],
+                    new_time
                 )
+
+                if result is not None:
+                    updated_trip.update(result)
+
+                update_trip(number - 1, updated_trip)
 
             except ValueError:
                 print("Invalid time!")
+
 
         elif choice == "5":
             trips = load_trips()
@@ -193,25 +204,52 @@ def main():
                     print("Trip comparison saved successfully.")
             except ValueError:
                 print("\nInvalid time. Please use HH:MM, for example 08:30.")
+                
+                
+            
+        elif choice == "7":
+            trips = load_trips()
 
-    
-        elif choice =="7":
+            if not trips:
+                print("\nNo saved trips found!")
+                continue
+
+            print("\nSAVED TRIPS")
+            print("-" * 42)
+
+            for index, trip in enumerate(trips, start=1):
+                print(
+                    f"{index}. {trip['origin']} -> "
+                    f"{trip['destination']}"
+                )
+
             try:
-                base_minutes=int(input("Enter base trip duration in  minutes:"))
-                arrival_time=input("Enter desired arrival time (HH:MM):").strip()
-                
-                datetime.strptime(arrival_time,"%H:%M")
-                
-                if base_minutes <=0:
-                    print("Trip duration must be greater than zero.")
+                number = int(input("Choose a trip number: "))
+
+                if not 1 <= number <= len(trips):
+                    print("Invalid trip number!")
                     continue
-                
-                suggest_departure_time(base_minutes, arrival_time)
-                
+
+                arrival_time = input(
+                    "Enter desired arrival time (HH:MM): "
+                ).strip()
+
+                datetime.strptime(arrival_time, "%H:%M")
+
+                trip = trips[number - 1]
+                base_minutes = trip.get("base_minutes")
+
+                if base_minutes is None:
+                    print("Base trip duration is unavailable.")
+                    continue
+
+                suggest_departure_time(
+                    base_minutes, arrival_time
+                )
+
             except ValueError:
-                print("Please enter a valid duration and time .")
-                    
-                
+                print("Please enter a valid trip number and time.")
+
                 
                 
         elif choice == "8":

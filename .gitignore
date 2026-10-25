@@ -34,3 +34,7 @@ htmlcov/
 
 # Temporary files
 tempCodeRunnerFile.py
+
+
+# Local trip backup
+trips_backup.json

@@ -71,15 +71,10 @@ def plan_trip():
 })
     
 
-    
     print("\n" + "=" * 40)
     print("           TRIP SUMMARY")
     print("=" * 40)
-    print(f"  From              : {trip.origin}")
-    print(f"  To                : {trip.destination}")
-    print(f"  Departure Time    : {trip.departure_time}")
-    print(f"  Traffic Condition : {trip.traffic_period}")
-    print(f"  Estimated Duration: {trip.estimated_minutes} minutes")
+    trip.display_trip()
     print("=" * 40)
     print("  Trip saved successfully!")
     
