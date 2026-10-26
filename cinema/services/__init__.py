@@ -1,1 +1,1 @@
-"""Smart features: weather API, recommendations and statistics."""
+"""Smart features: recommendations and statistics."""

@@ -12,7 +12,3 @@ DATA_DIR = "data"
 BOOKINGS_FILE = "data/bookings.json"
 TICKETS_DIR = "tickets"
 
-# City used for the weather forecast (Open-Meteo API)
-CITY_NAME = "Riyadh"
-CITY_LATITUDE = 24.71
-CITY_LONGITUDE = 46.68

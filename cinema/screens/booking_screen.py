@@ -4,7 +4,7 @@ from cinema.models.booking import Booking, make_show_key
 from cinema.models.hall import Hall
 from cinema.screens.choosers import choose_branch, choose_hall, choose_movie, choose_show_time, format_date
 from cinema.screens.seat_picker import calculate_total, select_seats
-from cinema.services.weather import print_weather
+from cinema.screens.snacks_screen import choose_extras, extras_total, print_extras
 from cinema.storage.bookings_file import load_bookings, save_bookings
 from cinema.storage.search import booked_seats, new_invoice_number
 from cinema.storage.tickets import export_ticket
@@ -16,7 +16,7 @@ TOTAL_STEPS = 7
 
 
 def print_summary(customer: str, branch: str, movie: dict, hall: Hall,
-                  show_date: str, show_time: str, seats: list[str]) -> None:
+                  show_date: str, show_time: str, seats: list[str], extras: list[dict]) -> None:
     print(f"Customer      : {customer}")
     print(f"Cinema        : {branch}")
     print(f"Movie         : {movie['title']} ({movie['year']})")
@@ -26,17 +26,22 @@ def print_summary(customer: str, branch: str, movie: dict, hall: Hall,
     for seat in seats:
         print(f"  Seat {seat:<4} {hall.seat_type(seat):<9} {hall.seat_price(seat):>6.0f} SAR")
     print("-" * 40)
-    print(f"  TOTAL ({len(seats)} seats)      {calculate_total(hall, seats):>6.0f} SAR")
+    tickets_price = calculate_total(hall, seats)
+    print(f"  Tickets ({len(seats)} seats)    {tickets_price:>6.0f} SAR")
+    if extras:
+        print("  Food & drinks:")
+        print_extras(extras)
+        print(f"  Extras total             {extras_total(extras):>6.0f} SAR")
+    print("-" * 40)
+    print(f"  GRAND TOTAL              {tickets_price + extras_total(extras):>6.0f} SAR")
 
 
 def finish_booking(booking: Booking) -> None:
-    """Show the ticket, the weather, and offer to save the ticket file."""
+    """Show the ticket and offer to save the ticket file."""
     print()
     print_success(f"Booking confirmed! Keep your invoice number: {booking.invoice}")
     print()
     booking.print_ticket()
-    print()
-    print_weather(booking.show_date)
     print()
     if ask_yes_no("Save the ticket as a text file?"):
         path = export_ticket(booking)
@@ -77,15 +82,17 @@ def new_booking() -> None:
         print_info("No seats were chosen. Booking cancelled.")
         return
 
-    print_step(7, TOTAL_STEPS, "Booking summary")
-    print_summary(customer, branch, movie, hall, show_date, show_time, seats)
+    print_step(7, TOTAL_STEPS, "Food, drinks and booking summary")
+    extras = choose_extras(len(seats))
+    print("\nYour booking summary:")
+    print_summary(customer, branch, movie, hall, show_date, show_time, seats, extras)
     print()
     if not ask_yes_no("Confirm this booking?"):
         print_info("Booking cancelled. Nothing was saved.")
         return
 
     booking = Booking(new_invoice_number(bookings), customer, branch, movie["title"], movie["genre"],
-                      hall.name, show_date, show_time, seats, calculate_total(hall, seats))
+                      hall.name, show_date, show_time, seats, calculate_total(hall, seats) + extras_total(extras), extras)
     bookings.append(booking)
     if not save_bookings(bookings):
         print_error("Could not save the booking. Please try again.")

@@ -5,6 +5,7 @@ from datetime import datetime
 from cinema.models.booking import Booking
 from cinema.models.hall_types import get_hall_by_name
 from cinema.screens.seat_picker import calculate_total, select_seats
+from cinema.screens.snacks_screen import extras_total
 from cinema.storage.bookings_file import load_bookings, save_bookings
 from cinema.storage.search import booked_seats, find_by_invoice, find_by_name
 from cinema.storage.tickets import export_ticket
@@ -40,7 +41,7 @@ def print_bookings_table(found: list[Booking]) -> None:
         print(f"    Cinema        : {booking.branch}")
         print(f"    Experience    : {booking.hall}")
         print(f"    Your showtime : {booking.show_date_text()} at {booking.show_time}")
-        print(f"    Seats         : {booking.seats_text()}   |   Total: {booking.total:.0f} SAR")
+        print(f"    Seats         : {booking.seats_text()}   |   Total (with extras): {booking.total:.0f} SAR")
         print("-" * 60)
 
 
@@ -79,13 +80,13 @@ def change_seats(booking: Booking, bookings: list[Booking]) -> None:
 
     # Your old seats are free again, so they show green on the map
     taken = hall.taken_by_others(booking.show_key()) | booked_seats(bookings, booking.show_key(), booking.invoice)
-    print_info(f"Your current seats: {booking.seats_text()} ({booking.total:.0f} SAR). Choose your new seats:")
+    print_info(f"Your current seats: {booking.seats_text()} (ticket price {booking.total - extras_total(booking.extras):.0f} SAR). Choose your new seats:")
     new_seats = select_seats(hall, taken)
     if not new_seats:
         print_info("No seats were chosen. Your booking stays the same.")
         return
 
-    new_total = calculate_total(hall, new_seats)
+    new_total = calculate_total(hall, new_seats) + extras_total(booking.extras)
     print()
     print(f"Old seats: {booking.seats_text():<20} {booking.total:.0f} SAR")
     print(f"New seats: {', '.join(new_seats):<20} {new_total:.0f} SAR")

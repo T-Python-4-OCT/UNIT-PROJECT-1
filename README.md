@@ -31,7 +31,7 @@ decorators, OOP, and virtual environments with pip.
 - 🔎 **My bookings**: search by name or invoice number, view, **change seats**, **cancel**, export.
 - 🤖 **Recommendations** based on your booking history (your favourite genre).
 - 📊 **Statistics**: tickets, revenue, most popular movie, charts per movie / experience / cinema.
-- 🌤️ **Real weather forecast** for the show day (Open-Meteo API) with a smart tip.
+- 🌤️ **Real food and drinks forecast** for the show day (optional popcorn, drinks and snacks) with a smart tip.
 - 🛡️ **Input validation everywhere**: wrong numbers, wrong names, booked seats, invalid seats.
 - 💾 Data is saved in `data/bookings.json` and loaded again on the next run.
 
@@ -48,7 +48,7 @@ As a **customer** I should be able to:
 - See a summary with the price of every seat and the total before confirming.
 - Get an invoice number and a ticket after confirming.
 - Save my ticket as a text file.
-- See the weather on the show day.
+- See the food and drinks on the show day.
 - Find my bookings later by my name or invoice number.
 - Change the seats of my booking and see how much more I pay or get back.
 - Cancel my booking.
@@ -236,7 +236,7 @@ Do you want to book another seat (for a friend)? (yes/no): no
 
 ```text
 ============================================================
-              Step 7/7 - Booking summary
+              Step 7/7 - Food, drinks and booking summary
 ============================================================
 Customer      : Ahmed Ali
 Cinema        : VOX Riyadh Park
@@ -252,7 +252,7 @@ Confirm this booking? (yes/no): yes
 ✔ Booking confirmed! Keep your invoice number: [generated number]
 ```
 
-After confirmation, the program prints the **ticket** and the **weather forecast (if available)**, then asks whether to save the ticket as a `.txt` file. Booking and invoice data are saved in JSON so they can be found later from **My bookings**.
+After confirmation, the program prints the **ticket** and the **food and drinks forecast (if available)**, then asks whether to save the ticket as a `.txt` file. Booking and invoice data are saved in JSON so they can be found later from **My bookings**.
 
 ## Project Structure
 ```
@@ -262,7 +262,7 @@ vox-cinema-booking/
 │   ├── __init__.py
 │   ├── config/                    # Static data
 │   │   ├── __init__.py
-│   │   ├── settings.py            # App name, booking rules, file paths, city
+│   │   ├── settings.py            # App name, booking rules, file paths
 │   │   ├── movies.py              # 15 real movies (2026 + classics)
 │   │   └── branches.py            # The 5 cinemas and their 10 movies
 │   ├── models/                    # Classes (OOP)
@@ -277,7 +277,6 @@ vox-cinema-booking/
 │   │   └── tickets.py             # Export a ticket as a .txt file
 │   ├── services/                  # Smart features
 │   │   ├── __init__.py
-│   │   ├── weather.py             # Weather API (requests)
 │   │   ├── recommendations.py     # Movies from your favourite genre
 │   │   └── statistics.py          # Tickets, revenue, most popular movie
 │   ├── ui/                        # Terminal helpers
@@ -290,6 +289,7 @@ vox-cinema-booking/
 │       ├── __init__.py
 │       ├── choosers.py            # Choose cinema, movie, experience, showtime
 │       ├── seat_picker.py         # Choose seats from the map
+│       ├── snacks_screen.py       # Optional food and drinks
 │       ├── booking_screen.py      # "Book a ticket" (7 steps)
 │       ├── my_bookings_screen.py  # View / change seats / cancel / export
 │       ├── insights_screen.py     # Recommendations and statistics
@@ -304,6 +304,45 @@ vox-cinema-booking/
 ## Built With
 - Python 3.10+
 - [colorama](https://pypi.org/project/colorama/) – colors in the terminal
-- [requests](https://pypi.org/project/requests/) – weather from the [Open-Meteo API](https://open-meteo.com/)
 
 
+
+
+## Optional Food & Drinks (Step 7/7)
+
+Before confirming the booking, you may add one item from each category:
+
+- **Popcorn:** Small 10 SAR, Medium 15 SAR, Large 20 SAR
+- **Drinks:** Small 8 SAR, Medium 12 SAR, Large 16 SAR
+- **Snacks:** Chocolate 7 SAR, Hot dog 18 SAR, Nachos 16 SAR, Candy 6 SAR, Nuts 9 SAR
+
+Choose a quantity from 1 up to your booked seats. Press **Enter** to use one item per seat. You can skip all extras. The booking summary and saved ticket show ticket costs, food/drinks, and the grand total. Existing bookings without food/drinks still load correctly.
+
+```text
+Step 7/7 - Food, drinks and booking summary
+Add popcorn, a drink or a snack to your booking? (yes/no): yes
+  1. Popcorn
+  2. Drink
+  3. Snack
+  4. Done adding items
+Choose a number: 1
+  1. Small - 10 SAR
+  2. Medium - 15 SAR
+  3. Large - 20 SAR
+Choose a number: 2
+Quantity (1-3, Enter = 3 seats): 2
+Added: 2 x Popcorn Medium = 30 SAR
+Add something from another category? (yes/no): no
+
+Your booking summary:
+  Tickets (3 seats)      120 SAR
+  Food & drinks:
+  Popcorn Medium         2 x 15 = 30 SAR
+  Extras total            30 SAR
+  GRAND TOTAL            150 SAR
+Confirm this booking? (yes/no): yes
+```
+
+### Dependencies
+
+Only `colorama` is required from pip. In your virtual environment, uninstall the unused `requests` package if needed, then run `python -m pip freeze > requirements.txt`.

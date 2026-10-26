@@ -10,7 +10,7 @@ def make_show_key(branch: str, movie: str, hall: str, show_date: str, show_time:
 
 class Booking:
     def __init__(self, invoice: int, customer: str, branch: str, movie: str, genre: str,
-                 hall: str, show_date: str, show_time: str, seats: list[str], total: float):
+                 hall: str, show_date: str, show_time: str, seats: list[str], total: float, extras: list[dict] | None = None):
         self.invoice = invoice
         self.customer = customer
         self.branch = branch
@@ -21,6 +21,7 @@ class Booking:
         self.show_time = show_time
         self.seats = seats
         self.total = total
+        self.extras = extras if extras is not None else []
 
     def show_key(self) -> str:
         return make_show_key(self.branch, self.movie, self.hall, self.show_date, self.show_time)
@@ -45,6 +46,7 @@ class Booking:
             "show_time": self.show_time,
             "seats": self.seats,
             "total": self.total,
+            "extras": self.extras,
         }
 
     def ticket_text(self) -> str:
@@ -61,11 +63,22 @@ class Booking:
             f"Your showtime : {self.show_date_text()} at {self.show_time}",
             f"Seats ({len(self.seats)})     : {self.seats_text()}",
             "-" * 44,
+            f"Tickets       : {self.total - self.extras_total():.2f} SAR",
+        ]
+        if self.extras:
+            lines.append("Food & Drinks:")
+            for item in self.extras:
+                lines.append(f"  {item['category']} {item['name']} x{item['quantity']} : {item['price'] * item['quantity']} SAR")
+            lines.append(f"Extras        : {self.extras_total():.2f} SAR")
+        lines.extend([
             f"TOTAL         : {self.total:.2f} SAR",
             "=" * 44,
             "  Please arrive 15 minutes before the show",
-        ]
+        ])
         return "\n".join(lines)
+
+    def extras_total(self) -> float:
+        return sum(item["price"] * item["quantity"] for item in self.extras)
 
     def print_ticket(self) -> None:
         print(self.ticket_text())
@@ -84,4 +97,5 @@ def booking_from_dict(data: dict) -> Booking:
         show_time=data["show_time"],
         seats=data["seats"],
         total=data["total"],
+        extras=data.get("extras", []),
     )

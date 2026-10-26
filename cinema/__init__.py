@@ -4,7 +4,7 @@ Sub-packages:
     config   -> static data (settings, movies, branches)
     models   -> classes (halls, booking)
     storage  -> saving, loading and searching bookings
-    services -> smart features (weather, recommendations, statistics)
+    services -> smart features (recommendations and statistics)
     ui       -> printing, inputs, seat map, decorators
     screens  -> the screens the user sees
 """
