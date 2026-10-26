@@ -1,108 +1,125 @@
-# Riyadh Smart Trip 🚗
+# Riyadh Smart Trip 🚗🚇
+
+An interactive Python command-line app that helps you plan trips in Riyadh and compare the **car** with the **metro**.
+
+> **Note:** Routes, traffic conditions, metro fares and fuel costs are **estimates** based on sample data. The app does not use live traffic or navigation.
 
 ## Overview
 
-Riyadh Smart Trip is an interactive Python command-line application that helps users plan trips within Riyadh, Saudi Arabia.
+Enter a start, a destination and a departure time. The app estimates the car trip using simulated traffic for that time of day, finds a matching metro route using real station data, and recommends the best option for your priority: fastest, cheapest, or a balance of both. Trips can be saved, viewed, updated and deleted.
 
-The application estimates car travel duration using simulated traffic conditions, compares car and metro travel options, suggests departure times, and provides trip reports. It also allows users to save, view, update, and delete planned trips.
+## User Stories
 
-**Important:** This project uses sample route data and simulated traffic conditions. Travel durations, metro fares, and fuel costs are estimates. The application does not provide real-time traffic data or live navigation.
+As a traveler, I can:
+
+- plan a trip and see the traffic period and estimated car duration.
+- compare car and metro duration and cost for the same trip.
+- choose a priority (fastest, lowest cost, best balance) and get a recommendation.
+- see a chart comparing car and metro duration.
+- save, view, update and delete my trips.
+- see a report with the average duration and the fastest car and metro trips.
+- enter my arrival time and get a suggested departure time.
+- get clear messages when my input is invalid or a route is not available.
 
 ## Features
 
-### Trip Planning
-- Enter a starting location, destination, and departure time.
-- Calculate estimated travel duration based on the selected route and simulated traffic conditions.
-- Display a trip summary and save planned trips.
+| Feature | Description |
+|---|---|
+| Plan a trip | Enter locations and time, get a summary and comparison, and save it |
+| Transport comparison | Car (duration, fuel cost) vs. metro (line, stations, duration, fare) |
+| Recommendation | Based on the priority you choose |
+| Chart | Matplotlib bar chart of car vs. metro duration |
+| Trip management | Save, view, update and delete trips (JSON file) |
+| Reports | Trip statistics and a Riyadh traffic report |
+| Departure suggestion | Latest departure time that arrives on time |
+| Input validation | Time format, empty locations, trip numbers, missing data files |
 
-### Traffic Estimation
-- Identify the expected traffic period based on departure time.
-- Estimate travel duration using predefined traffic factors.
-- Suggest a departure time based on a desired arrival time.
-
-### Trip Management (CRUD)
-- **Create:** Save planned trips.
-- **Read:** View saved trips and trip reports.
-- **Update:** Modify saved trip information.
-- **Delete:** Remove saved trips.
-
-### Transport Comparison
-- Compare estimated car and metro travel durations and costs.
-- Choose a trip priority: fastest trip, lowest cost, or best balance between time and cost.
-- Display a Smart Trip Summary with estimated differences and a recommendation.
-
-### Reports
-- View the total number of saved trips.
-- Calculate the average estimated trip duration.
-- Review available car and metro trip estimates.
-- View traffic statistics based on the project's sample data.
-
-### Input Validation
-- Validate departure and arrival time formats.
-- Check that required locations are provided.
-- Display error messages for invalid input or unavailable sample routes.
-
-## Technologies Used
-
-- Python
-- JSON for data storage
-- Python modules and functions
-- Object-Oriented Programming (OOP)
-- Git and GitHub
-
-## Project Structure
-
-```text
-Riyadh-Smart-Trip/
-├── main.py
-├── models.py
-├── trips.py
-├── storage.py
-├── traffic_data.py
-├── traffic_stats.py
-├── transport_advisor.py
-├── metro_data.py
-├── routes.json
-├── locations.json
-├── transport_options.json
-├── traffic_stats.json
-├── trips.json
-├── .gitignore
-└── README.md
-```
-
-## Installation and Usage
-
-1. Clone or download the repository.
-2. Open a terminal in the project directory.
-3. Run the application:
+## Installation
 
 ```bash
+git clone https://github.com/muathhhh/UNIT-PROJECT-1
+cd UNIT-PROJECT-1
+python -m venv venv
+source venv/bin/activate        # Windows (Git Bash): source venv/Scripts/activate
+pip install -r requirements.txt
 python main.py
 ```
 
-4. Follow the interactive menu to select an action.
+On Windows PowerShell or CMD, activate with `venv\Scripts\activate`.
 
-The application menu includes trip planning, viewing saved trips, trip reports, updating and deleting trips, comparing transport options, and suggesting departure times.
+## Usage
+
+Type the option number from the menu and press Enter.
+
+| Option | What it does |
+|---|---|
+| 1 | Plan a trip, compare transport, and save |
+| 2 | View saved trips |
+| 3 | View the trip report and traffic report |
+| 4 | Update the departure time of a saved trip |
+| 5 | Delete a saved trip |
+| 6 | Compare car and metro for any available route |
+| 7 | Suggest a departure time for a desired arrival time |
+| 8 | Exit |
+
+**Example** (option 6):
+
+```
+Enter starting location: KAFD
+Enter destination: National Museum
+Enter departure time (HH:MM): 08:00
+```
+
+Then choose a priority. The app shows the car and metro estimates, a recommendation, and a chart. Close the chart window to return to the menu.
+
+Other routes with a metro comparison: `Al Wurud` → `KAFD`, `King Saud University` → `King Fahad Sport City`.
+
+**Tips:**
+- Locations are not case-sensitive.
+- The route must exist in the sample data (`routes.json`).
+- Neighborhoods like `Al Narjis` are car routes only, so the metro shows "Route unavailable".
+
+## Project Structure
+
+```
+├── main.py                 # Menu and user interaction
+├── trips.py                # Trip planning
+├── transport_advisor.py    # Car vs. metro comparison and recommendation
+├── metro_data.py           # Metro stations and route estimation
+├── traffic_data.py         # Traffic periods and duration estimation
+├── traffic_stats.py        # Traffic report
+├── storage.py              # Save, load, update, delete trips
+├── models.py               # Trip class
+├── trip_charts.py          # Matplotlib chart
+├── routes.json             # Sample car routes
+├── locations.json          # Metro stations (RCRC Open Data)
+├── traffic_stats.json      # Traffic statistics sample
+├── tests/                  # Unit tests
+└── requirements.txt
+```
+
+Saved trips are stored in `trips.json`, which is created when you save your first trip and is not tracked by Git.
+
+## Running the Tests
+
+```bash
+python -m unittest
+```
 
 ## Limitations
 
-- Traffic conditions are simulated and are not retrieved from a live traffic service.
-- Route information is based on the project's sample data.
-- Metro travel durations and fares are sample estimates.
-- Car costs estimate fuel expenses only and do not include parking, tolls, or other expenses.
-- The application does not provide live maps or turn-by-turn navigation.
+- Traffic is simulated, not live.
+- Routes come from sample data.
+- Metro duration and fares are estimates.
+- Metro routes work on **one line only** (no transfers).
+- Car cost covers fuel only.
 
 ## Future Improvements
 
-- Integrate a real-time traffic or mapping API.
-- Improve route-specific metro duration and fare estimates.
-- Expand the sample route database.
-- Add automated tests and further input validation.
-
-## Project Status
-
-In Development
+- Use a real-time traffic or maps API.
+- Support metro transfers.
+- Link neighborhoods to their nearest metro station.
+- Add more routes and more accurate fares.
 
 ## Author
 
