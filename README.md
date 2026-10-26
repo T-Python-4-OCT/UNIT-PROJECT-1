@@ -1,109 +1,177 @@
-# 🌙 Taysir — تيسير
+# 🕌 Taysir — تيسير
 
-**A Python-based Quran companion with verse navigation, Tafsir, recitation playback, and an optional Arabic smart assistant.**
+### 📖 Your Intelligent Quran Companion
 
-Taysir is a command-line application designed to make it easier to read and navigate the Holy Quran, search its text, consult Tafsir Al-Muyassar, and listen to recitation. It also includes an optional AI assistant for text-based or voice-based interaction.
+Taysir is an Arabic Quran application built with Python, combining Quran reading, navigation, search, Tafsir Al-Muyassar, audio recitation, and AI-powered interaction through Arabic commands.
 
-> **Project status:** A learning and development project. Features that depend on external AI services, local speech models, or audio assets may require additional setup.
+---
 
 ## ✨ Features
 
-- Read Quranic verses and navigate between verses and surahs.
-- Jump to a specific surah and verse.
-- Search the Quran text.
-- View Tafsir Al-Muyassar.
-- Play a selected verse or the current surah.
-- Repeat the current verse for a user-selected number of times.
-- Use a hybrid smart assistant for natural-language commands and conversation.
-- Optional Arabic speech input and Saudi Arabic speech output, depending on local model setup.
+- 📖 Read Quranic verses in Arabic.
+- 🧭 Navigate between surahs and ayahs.
+- 🎯 Jump directly to a specific ayah.
+- 🔎 Search Quranic text.
+- 📚 Access Tafsir Al-Muyassar.
+- 🎧 Listen to Quran recitation.
+- 🔁 Repeat verses and play complete surahs.
+- ⏹️ Stop audio playback.
+- 🤖 Interact with the Smart Agent using Arabic commands.
+- 🎙️ Use voice-related features where supported.
+- 🖥️ Navigate through an interactive CLI built with Rich.
+
+---
+
+## 🤖 AI Agents
+
+### 🧠 1. Taysir AI Agent
+
+The `TaysirAIAgent` component provides AI-assisted interaction with the application.
+
+- 🏠 Runs language-model inference locally through Ollama.
+- 🧩 Uses **Qwen3:14B** as the configured language model.
+- 🔗 Connects to Ollama through its local HTTP endpoint.
+- 🗂️ Uses structured responses to support intent interpretation and command handling.
+- 📖 Connects natural-language requests with available Quran features.
+
+**Model configuration**
+
+| Component | Technology |
+|---|---|
+| 🧠 Language model | Qwen3:14B |
+| ⚙️ Runtime | Ollama |
+| 🌐 Local endpoint | `http://127.0.0.1:11434` |
+
+### 💬 2. Smart Agent & Intent Parser
+
+The Smart Agent connects Arabic commands with supported application actions.
+
+- 🗣️ Understands supported Arabic command patterns.
+- 📖 Handles Quran reading and navigation requests.
+- 📚 Routes tafsir requests to the relevant functions.
+- 🔎 Supports Quran-related search commands.
+- 🔀 Works alongside the direct CLI menu.
+
+The `IntentParser` interprets supported command patterns, while `command_handler.py` coordinates their execution.
+
+### 🎙️ 3. Voice Agent
+
+The voice components provide voice interaction where dependencies and local configuration are available.
+
+- 🎤 Supports voice-related interaction.
+- 🔗 Integrates with the application's command workflow.
+- 💬 Complements typed Arabic commands.
+
+Voice functionality depends on the installed packages and local environment.
+
+---
 
 ## 🛠️ Technology Stack
 
-| Area | Technologies |
-| --- | --- |
-| Core application | Python |
-| Terminal interface | Rich |
-| Quran and Tafsir data | Local JSON data files |
-| Audio playback | Project audio player and macOS audio playback support |
-| Speech recognition | `faster-whisper`, `sounddevice` |
-| Saudi Arabic speech output | Nabra-Saudi-82M, PyTorch (separate TTS environment) |
-| AI assistant integration | Google Gen AI SDK and/or Ollama, depending on configuration |
-| Arabic text rendering | `arabic-reshaper`, `python-bidi` |
+- �� Python
+- 🧠 Qwen3:14B
+- ⚙️ Ollama
+- 🖥️ Rich
+- �� `arabic-reshaper`
+- ↔️ `python-bidi`
+- 🔊 Audio playback components
+- 📄 JSON-based Quran and tafsir data
 
-## 📁 Project Structure
-
-```text
-Taysir/
-├── commands/       # Menu, command handling, and intent parsing
-├── data/           # Quran and Tafsir data files
-├── interface/      # Arabic CLI display and text formatting
-├── player/         # Quran recitation playback
-├── quran/          # Quran data access and search
-├── scripts/        # Data preparation and utility scripts
-├── tafsir/         # Tafsir data access
-├── voice/          # Voice input and Saudi Arabic TTS integration
-├── tests/          # Project tests
-├── main.py         # CLI entry point
-├── gui.py          # GUI entry point / experimental interface
-└── requirements.txt
-```
+---
 
 ## 📋 Requirements
 
-- macOS is the primary development environment.
-- Python 3.12 was used during development.
-- Git.
-- Audio output; a microphone is needed for voice input.
-- Optional: internet access and credentials for a configured AI provider.
-- Optional: the separate `.venv-najdi-tts` environment for local Nabra-based Saudi Arabic speech output.
+- 🐍 Python 3.10 or newer
+- 📦 pip
+- 🧠 Ollama for local AI inference
+- 📚 Quran and tafsir data files
+- 🎙️ Additional voice dependencies when voice features are enabled
 
-## 🚀 Setup
+---
 
-Clone the repository and enter the project folder:
+## 🚀 Installation
+
+### 1️⃣ Clone the repository
 
 ```bash
 git clone https://github.com/iimustafa/UNIT-PROJECT-1.git
 cd UNIT-PROJECT-1
 ```
 
-Create and activate a virtual environment:
+### 2️⃣ Create a virtual environment
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+```
+
+### 3️⃣ Install dependencies
+
+```bash
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Run the command-line application:
+### 4️⃣ Prepare the local AI model
+
+Install Ollama, then download the configured model:
+
+```bash
+ollama pull qwen3:14b
+```
+
+If Ollama is not already running as a service, start it with:
+
+```bash
+ollama serve
+```
+
+---
+
+## ▶️ Run Taysir
+
+Start the application:
 
 ```bash
 python main.py
 ```
 
-If your local copy is named `Taysir`, run the commands from that folder instead.
+Use the Arabic CLI menu to read the Quran, navigate verses, search, access tafsir, control recitation, and interact with the Smart Agent.
 
-## Optional voice setup
+---
 
-Voice features may require additional packages and local model downloads. The Saudi Arabic TTS implementation uses **Nabra-Saudi-82M** in a separate Python environment so that its PyTorch dependencies do not interfere with the main application environment.
+## 📁 Project Structure
 
-The voice components are optional; the core Quran-reading and search features should be treated separately from model-dependent voice features. Follow the project’s current environment setup and model requirements before enabling voice features on a new machine.
+```text
+Taysir/
+├── commands/       # 🧭 CLI commands and intent parsing
+├── data/           # 📚 Quran and tafsir data
+├── interface/      # 🖥️ Arabic CLI interface
+├── player/         # 🎧 Quran audio playback
+├── quran/          # 📖 Quran reading and navigation
+├── tafsir/         # 📚 Tafsir access
+├── voice/          # 🎙️ Voice components
+├── ai_agent.py     # 🤖 AI agent
+├── main.py         # 🚀 Application entry point
+├── requirements.txt
+└── README.md
+```
 
-## Data and content
+---
 
-The application reads Quran and Tafsir content from local JSON files under `data/`. The development copy contains 6,236 Quranic ayah records and 6,236 Tafsir records. Preserve the integrity of Quranic text and verify data-source terms and attribution when redistributing source data.
+## 📝 Development Notes
 
-## 📝 Notes
+- 🔧 Taysir is an ongoing project.
+- 🌐 Arabic right-to-left rendering can vary between terminal emulators.
+- 📜 Preserve the attribution and licensing information for Quranic text, tafsir, and third-party components.
+- 🛡️ Use reliable sources for Quranic text and tafsir.
 
-- AI responses and voice functionality depend on local configuration and may not be available immediately after a fresh installation.
-- Do not commit API keys or secrets. Keep them in a local `.env` file and ensure that file is excluded from Git.
-- Large audio/model files and virtual environments should not be committed to the repository.
-- This README describes the current intended functionality; setup details may vary with the exact project version.
+---
 
-## 👨‍💻 Author
+## 📄 License
 
-Developed by **Mustafa Al-Ali**.
+Add the appropriate project license and retain the licenses of third-party code and data sources.
 
-## Repository
+---
 
-[GitHub — UNIT-PROJECT-1](https://github.com/iimustafa/UNIT-PROJECT-1)
+### 🌙 Built with care to make Quran reading and reflection easier.
