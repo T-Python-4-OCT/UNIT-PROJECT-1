@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Trip Budget Tracker",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/TripBudgetTracker/main.py",
+            "python": "${workspaceFolder}/TripBudgetTracker/.venv/Scripts/python.exe",
+            "cwd": "${workspaceFolder}/TripBudgetTracker",
+            "console": "integratedTerminal"
+        }
+    ]
+}
