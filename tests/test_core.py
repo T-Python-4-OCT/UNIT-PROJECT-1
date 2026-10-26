@@ -271,5 +271,25 @@ class AICoachTests(unittest.TestCase):
         self.assertTrue(shell.running)
 
 
+class OnboardingGuidanceTests(unittest.TestCase):
+    def test_profile_setup_prints_first_steps_and_recreates_named_profile(self):
+        profile = make_profile(name="Recreated")
+        shell = Shell()
+        with tempfile.TemporaryDirectory() as directory:
+            with (
+                patch.object(storage, "SAVE_DIR", Path(directory)),
+                patch("fitforge.cli.shell.interview", return_value=profile),
+                patch("fitforge.cli.shell.views.show_stats"),
+                patch("fitforge.cli.shell.views.show_plan"),
+                contextlib.redirect_stdout(io.StringIO()) as output,
+            ):
+                shell._create_profile("Recreated")
+                self.assertTrue(storage.path_for("Recreated").exists())
+                self.assertIn("ابدأ من هنا", output.getvalue())
+                self.assertIn("today", output.getvalue())
+                self.assertIn("start", output.getvalue())
+                self.assertIn("help", output.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

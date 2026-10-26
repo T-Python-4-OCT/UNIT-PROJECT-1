@@ -119,13 +119,24 @@ class Shell:
                     ui.error("That name is taken. Pick another one.")
                 else:
                     break
-            profile = interview(name)
-            self.account = storage.Account(profile)
-            self.account.plan = planner.build_plan(profile)
-            self.account.save()
-            ui.success("Profile saved. Here's what I built for you:")
-            views.show_stats(self.account)
-            views.show_plan(self.account)
+        profile = interview(name)
+        self.account = storage.Account(profile)
+        self.account.plan = planner.build_plan(profile)
+        self.account.save()
+        ui.success("Profile saved. Here's what I built for you:")
+        views.show_stats(self.account)
+        views.show_plan(self.account)
+        self.show_next_steps()
+
+    @staticmethod
+    def show_next_steps():
+        """Explain the first useful commands after profile setup."""
+        ui.section("تم إعداد ملفك! ابدأ من هنا")
+        print("  today   — اعرض تمرين اليوم")
+        print("  start   — ابدأ التمرين مع إرشادات خطوة بخطوة")
+        print("  stats   — اعرض السعرات والماكروز ومؤشرات جسمك")
+        print("  help    — اعرض جميع الأوامر")
+        print("  exit    — احفظ تقدمك واخرج")
 
     def greet(self):
         today = session.pick_today(self.account.plan)
