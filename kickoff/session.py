@@ -13,6 +13,7 @@ class Session:
         storage.ensure_data()
         self.cart = Cart()
         self.phone: str | None = None
+        self.name: str | None = None
         self.token = uuid.uuid4().hex          # tells my holds apart from other fans' holds
         self.reload()
 

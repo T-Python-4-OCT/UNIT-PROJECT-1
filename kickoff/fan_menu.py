@@ -256,8 +256,13 @@ def checkout(session):
         ui.warn(f"Your hold on {seat} expired, the seat was released.")
     if not print_cart(session):
         return False
-    name = ui.ask_name("Your full name")
-    phone = ui.ask_phone()
+    if session.name and session.phone:
+        ui.info(f"Booking as {session.name} ({session.phone})")
+        if not ui.confirm("Keep these details?"):
+            session.name = None
+            session.phone = None
+    name = session.name or ui.ask_name("Your full name")
+    phone = session.phone or ui.ask_phone()
     percent = 0
     code = ui.ask_text("Coupon code (press Enter to skip)", allow_empty=True)
     if code:
@@ -274,4 +279,5 @@ def checkout(session):
         return False
     for b in booking.checkout(session, name, phone, payment, percent):
         ui.console.print(Panel(booking.receipt_text(session, b), title=f"Receipt {b.id}", style="green"))
+    session.name = name
     ui.ok("Payment done. Your seats are now red for everyone. E-tickets were saved in the 'tickets' folder.")
