@@ -218,3 +218,25 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+venv/
+__pycache__/
+*.pyc
+*.tmp
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Personal data created when you use the app
+saves/
+exports/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

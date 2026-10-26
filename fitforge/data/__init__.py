@@ -1,0 +1,1 @@
+"""Bundled exercise and training reference data."""
