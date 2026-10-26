@@ -1,0 +1,102 @@
+[
+  {
+    "shipment_id": "SHIP-001",
+    "item_name": "Advanced First Aid Kit",
+    "quantity": 5,
+    "destination": "Riadh",
+    "total_weight_kg": 15.0,
+    "request_id": null,
+    "status": "Completed",
+    "vehicle": "Cargo Drone Beta"
+  },
+  {
+    "shipment_id": "SHIP-002",
+    "item_name": "Advanced First Aid Kit",
+    "quantity": 10,
+    "destination": "Tabuk",
+    "total_weight_kg": 30.0,
+    "request_id": null,
+    "status": "Completed",
+    "vehicle": "Truck Alpha"
+  },
+  {
+    "shipment_id": "SHP-103",
+    "item_name": "Advanced First Aid Kit",
+    "quantity": 10,
+    "destination": "Riadh",
+    "total_weight_kg": 30.0,
+    "request_id": null,
+    "status": "Completed",
+    "vehicle": "Truck Alpha"
+  },
+  {
+    "shipment_id": "SHP-104",
+    "item_name": "Advanced First Aid Kit",
+    "quantity": 20,
+    "destination": "Riadh",
+    "total_weight_kg": 60.0,
+    "request_id": null,
+    "status": "Completed",
+    "vehicle": "Truck Alpha"
+  },
+  {
+    "shipment_id": "SHP-105",
+    "item_name": "Advanced First Aid Kit",
+    "quantity": 10,
+    "destination": "Riadh",
+    "total_weight_kg": 30.0,
+    "request_id": null,
+    "status": "Completed",
+    "vehicle": "Cargo Drone Beta"
+  },
+  {
+    "shipment_id": "SHP-106",
+    "item_name": "fefadol",
+    "quantity": 10,
+    "destination": "Riadh",
+    "total_weight_kg": 1.0,
+    "request_id": null,
+    "status": "Completed",
+    "vehicle": "Cargo Drone Beta"
+  },
+  {
+    "shipment_id": "SHP-107",
+    "item_name": "Advanced First Aid Kit",
+    "quantity": 12,
+    "destination": "Riadh",
+    "total_weight_kg": 36.0,
+    "request_id": null,
+    "status": "Completed",
+    "vehicle": "Cargo Drone Beta"
+  },
+  {
+    "shipment_id": "SHP-108",
+    "item_name": "Drinking Water Bottles (Pack)",
+    "quantity": 10,
+    "destination": "Riadh",
+    "total_weight_kg": 120.0,
+    "request_id": null,
+    "status": "Completed",
+    "vehicle": "Cargo Drone Beta"
+  },
+  {
+    "shipment_id": "SHP-109",
+    "item_name": "Thermal Emergency Blankets",
+    "quantity": 15,
+    "destination": "Riyadh",
+    "total_weight_kg": 60.0,
+    "request_id": "REQ-106",
+    "status": "Completed",
+    "vehicle": "Truck Alpha"
+  },
+  {
+    "shipment_id": "SHP-110",
+    "item_name": "Thermal Emergency Blankets",
+    "quantity": 10,
+    "destination": "Riyadh",
+    "total_weight_kg": 40.0,
+    "request_id": "REQ-107",
+    "status": "Completed",
+    "vehicle": "Truck Alpha"
+  }
+]

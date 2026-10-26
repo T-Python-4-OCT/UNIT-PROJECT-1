@@ -1,0 +1,49 @@
+[
+  {
+    "user_name": "hail",
+    "email": "asawaq135@gmail.com",
+    "password": "scrypt$16384$8$1$467306da1b902db37c7fdd015b3f6c04$bf69229e2d5d185d01cbfbfb10ec0dcb7f550600a176c7ee8acd7d551e4c218c668073bad9273320a7d6fb3ce59232a60b93a11f04d4b8a75ea5453fd0f99000",
+    "role": "manager",
+    "department": "Operations"
+  },
+  {
+    "user_name": "fayz",
+    "email": "fayz@gmail.com",
+    "password": "scrypt$16384$8$1$66eb1bcd722604c5ab90b3aaf5e220b3$bc466256c0e240e642974d9e182f14b45d9ec5fd6372071d70b9df93c6adc67a19904a2d49148434f9bdb77fa7887c648c5ae76d79f0d9f83bb65bf4692783a3",
+    "role": "dispatcher"
+  },
+  {
+    "user_name": "amer",
+    "email": "amer@gmail.com",
+    "password": "scrypt$16384$8$1$984fe2948bf4b28bbd247b3e9ec4e2e7$080305a5385aca5ca0d09a72c4bed50c9896fad493202d056c755404f5579e6436e1440826f18262ee9643518916f6fcdda61ac84dbb1e1a20b2ad642b7fb3c1",
+    "role": "field_supervisor",
+    "crisis_zone": "riadh"
+  },
+  {
+    "user_name": "mohammed",
+    "email": "mohammed@gmail.com",
+    "password": "scrypt$16384$8$1$d571851582c748e644a31f9ff929cd0c$720b0ffe1f0f4187e8b9188517239c114b0cf10b23386798463b8f8c3170f4c5c5536e233e0b847a5d0925bf0e99928a024d56b9150bc9d801a43d9407f5124f",
+    "role": "fleet_officer",
+    "specialty": "Drones"
+  },
+  {
+    "user_name": "fwaz",
+    "email": "fwaz@gmail.com",
+    "password": "scrypt$16384$8$1$75873617b5a130a45258c62724228eae$7674f46a1fe3be060b385b067a0ebc6b79e7397161d376b757b70e6ce7ea67d481b03126496c6e0bd861e6ba763f673579627bcca65cdeaefdc5d58f250c8412",
+    "role": "general"
+  },
+  {
+    "user_name": "asim",
+    "email": "asim@gmail.com",
+    "password": "scrypt$16384$8$1$069242a5e5f4df42b40aace56cd5c4da$f59b281ca890ad366e03abd2788b88937fcc35d54a96bd1f248a2f6282e97345467e645e4082009da2adbfe1887ddca09a5f87b66cdb6ef0ac41c02ef303d3da",
+    "role": "manager",
+    "department": "Operations"
+  },
+  {
+    "user_name": "ahmed",
+    "email": "ahmed@gmail.com",
+    "password": "scrypt$16384$8$1$0a4ef620c88ee0ee531fe82bfb762484$d1293e6cf9107f655629983078b5568a91cdd35872540af190362aa897bb8653f8994410d652c8df4ec8b3f1f6619a76b0926cbf06c6008042ba12d49d96b026",
+    "role": "field_supervisor",
+    "crisis_zone": "dammam"
+  }
+]
