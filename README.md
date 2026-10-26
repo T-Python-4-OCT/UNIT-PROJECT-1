@@ -80,11 +80,6 @@ If PowerShell refuses to activate the environment, run this once:
 
 To turn the colors off, set the environment variable `NO_COLOR=1`.
 
-## Running the Tests
-```bash
-python -m unittest discover -s tests -v
-```
-The tests use a temporary folder, so they never touch your real bookings or password.
 
 ## Usage
 Everything is chosen by typing the **number** of an option and pressing Enter. Type `0` to go back.
