@@ -1,16 +1,16 @@
 {
-  "farm_name": "Muath",
-  "city": "Abha",
+  "farm_name": "My farm",
+  "city": "Riyadh",
   "crops": [
     {
       "crop_id": "wheat",
-      "area_m2": 20,
-      "irrigation_type": "drip"
+      "area_m2": 1200,
+      "irrigation_type": "sprinkler"
     },
     {
       "crop_id": "apple",
-      "area_m2": 1000,
-      "irrigation_type": "sprinkler"
+      "area_m2": 350,
+      "irrigation_type": "drip"
     }
   ],
   "irrigation_log": [
@@ -28,11 +28,16 @@
       "crop_id": "wheat",
       "date": "2026-10-26",
       "volume_m3": 10
+    },
+    {
+      "crop_id": "wheat",
+      "date": "2026-10-26",
+      "volume_m3": 500
     }
   ],
   "last_savings": {
     "date": "2026-10-26",
-    "saved_m3": 3.3,
-    "saved_percent": 9
+    "saved_m3": 0.0,
+    "saved_percent": 0
   }
 }
