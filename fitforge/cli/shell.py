@@ -3,6 +3,7 @@ import shlex
 from . import ui, views, session
 from .onboarding import interview
 from .. import __version__, storage
+from ..ai.coach import AICoach, CoachError
 from ..core import planner
 from ..export import export_plan
 
@@ -44,6 +45,11 @@ HELP = [
         ("forecast", "forecast", "When will you reach your target? + what-if table"),
         ("badges", "badges", "Your achievements"),
     ]),
+    ("AI Coach", [
+        ("coach", "coach", "Chat with the AI coach; type back to return"),
+        ("ask", "ask <question>", "Ask one quick training or nutrition question"),
+        ("review", "review", "Get three tips based on your plan and progress"),
+    ]),
     ("App", [
         ("switch", "switch", "Change user"),
         ("help", "help", "Show this list"),
@@ -63,6 +69,7 @@ def print_help():
 class Shell:
     def __init__(self):
         self.account = None
+        self.coach = None
         self.running = True
 
     # ------------------------------------------------------------ login
@@ -286,8 +293,42 @@ class Shell:
     def cmd_badges(self, _):
         views.show_achievements(self.account)
 
+    def _coach_answer(self, question):
+        if self.coach is None:
+            self.coach = AICoach()
+        try:
+            answer = self.coach.ask(question, self.account)
+        except (CoachError, ValueError) as exc:
+            ui.warn(str(exc))
+            return
+        ui.section("AI Coach")
+        print(answer)
+
+    def cmd_coach(self, _):
+        ui.header("AI Coach", "Type `back` to return to the FitForge shell.")
+        while self.running:
+            question = ui.ask("You")
+            if question.casefold() == "back":
+                return
+            if not question:
+                ui.warn("Enter a question, or type `back` to return.")
+                continue
+            self._coach_answer(question)
+
+    def cmd_ask(self, question):
+        if not question:
+            ui.error("Usage: ask <question>")
+            return
+        self._coach_answer(question)
+
+    def cmd_review(self, _):
+        self._coach_answer(
+            "Review my weekly plan and recent progress. Give exactly 3 practical tips for this week."
+        )
+
     def cmd_switch(self, _):
         self.account.save()
+        self.coach = None
         self.login()
 
     def cmd_exit(self, _):

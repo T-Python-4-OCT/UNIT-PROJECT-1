@@ -1,18 +1,23 @@
 import contextlib
 import io
 import json
+import os
 import tempfile
 import unittest
 from dataclasses import replace
+from datetime import date, timedelta
 from pathlib import Path
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
+import anthropic
 from fitforge.core import calculator, planner
 from fitforge.core.profile import Profile
 from fitforge.data import exercises as db
 from fitforge import storage
 from fitforge.cli.session import _parse_reps
 from fitforge.cli import views
+from fitforge.ai.coach import AICoach, CoachError, build_context
 
 
 def make_profile(**changes):
@@ -174,6 +179,75 @@ class CliViewTests(unittest.TestCase):
         for show in (views.show_progress, views.show_forecast, views.show_achievements):
             with self.subTest(view=show.__name__), contextlib.redirect_stdout(io.StringIO()):
                 show(account)
+
+
+class AICoachTests(unittest.TestCase):
+    def make_account(self):
+        profile = make_profile()
+        account = storage.Account(profile, planner.build_plan(profile))
+        account.workouts = [
+            {"date": (date.today() - timedelta(days=offset)).isoformat(),
+             "type": "Full Body", "minutes": 45, "kcal": 300, "sets": 20, "volume": 1200}
+            for offset in range(7)
+        ]
+        return account
+
+    def test_context_has_profile_nutrition_plan_and_five_recent_workouts(self):
+        context = build_context(self.make_account())
+        self.assertEqual(context["profile"]["age"], 25)
+        self.assertIn("calories_kcal", context["today"])
+        self.assertIn("protein", context["today"]["macros_g"])
+        self.assertEqual(len(context["weekly_plan"]), 7)
+        self.assertEqual(len(context["last_5_workouts"]), 5)
+        self.assertGreaterEqual(
+            context["last_5_workouts"][0]["date"],
+            context["last_5_workouts"][-1]["date"],
+        )
+
+    def test_messages_api_keeps_chat_history_and_refreshes_context(self):
+        client = Mock()
+        client.messages.create.side_effect = [
+            SimpleNamespace(content=[SimpleNamespace(type="text", text="First answer")]),
+            SimpleNamespace(content=[SimpleNamespace(type="text", text="Second answer")]),
+        ]
+        coach = AICoach(client=client, model="test-model")
+        account = self.make_account()
+
+        self.assertEqual(coach.ask("What should I eat?", account), "First answer")
+        self.assertEqual(coach.ask("And after training?", account), "Second answer")
+
+        first_messages = client.messages.create.call_args_list[0].kwargs["messages"]
+        second_messages = client.messages.create.call_args_list[1].kwargs["messages"]
+        self.assertEqual(len(first_messages), 1)
+        self.assertEqual(len(second_messages), 3)
+        self.assertIn("Trainee context for this turn", second_messages[-1]["content"])
+        self.assertEqual(client.messages.create.call_args.kwargs["model"], "test-model")
+        self.assertIn("same language", client.messages.create.call_args.kwargs["system"])
+
+    def test_missing_key_is_friendly_and_does_not_make_a_request(self):
+        with patch("fitforge.ai.coach.load_dotenv"), patch.dict(
+            os.environ, {"ANTHROPIC_API_KEY": ""}
+        ):
+            coach = AICoach()
+        with self.assertRaisesRegex(CoachError, "ANTHROPIC_API_KEY"):
+            coach.ask("Help me plan lunch.", self.make_account())
+
+    def test_api_failure_becomes_a_friendly_coach_error(self):
+        client = Mock()
+        client.messages.create.side_effect = anthropic.APIError(
+            "network unavailable", request=None, body=None
+        )
+        coach = AICoach(client=client)
+        with self.assertRaisesRegex(CoachError, "temporarily unavailable"):
+            coach.ask("How was my week?", self.make_account())
+        self.assertEqual(coach.history, [])
+
+    def test_blank_question_is_rejected_without_request(self):
+        client = Mock()
+        coach = AICoach(client=client)
+        with self.assertRaises(ValueError):
+            coach.ask(" ", self.make_account())
+        client.messages.create.assert_not_called()
 
 
 if __name__ == "__main__":
