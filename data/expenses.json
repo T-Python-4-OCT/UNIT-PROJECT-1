@@ -1,0 +1,13 @@
+{
+    "next_expense_id": 2,
+    "expenses": [
+        {
+            "expense_id": 1,
+            "trip_id": 1,
+            "title": "flynas",
+            "category": "Transport",
+            "amount": 500.0,
+            "date": "2026-10-25"
+        }
+    ]
+}

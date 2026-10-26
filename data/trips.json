@@ -1,0 +1,13 @@
+{
+    "next_trip_id": 2,
+    "trips": [
+        {
+            "trip_id": 1,
+            "country": "Saudi Arabia",
+            "city": "Dammam",
+            "start_date": "2026-10-27",
+            "end_date": "2026-10-30",
+            "budget": 3000.0
+        }
+    ]
+}
