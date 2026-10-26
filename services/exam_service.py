@@ -20,6 +20,24 @@ from utils import (
 )
 
 
+def format_exam_score(exam):
+    # Color the exam score based on its percentage
+    pct = exam.get_percentage()
+    if pct is None:
+        return "[dim]⏳ Pending[/dim]"
+
+    if pct >= 85:
+        color = "bold green"
+    elif pct >= 70:
+        color = "cyan"
+    elif pct >= 60:
+        color = "yellow"
+    else:
+        color = "bold red"
+
+    return f"[{color}]{exam.earned_score:g}/{exam.max_score:g} ({pct:.0f}%)[/{color}]"
+
+
 class ExamService(BaseService):
     section_title = "🎓 Manage Exams"
     section_subtitle = "Schedule exams, record scores, or remove exams"
@@ -48,12 +66,19 @@ class ExamService(BaseService):
         table.add_column("Type", width=12)
         table.add_column("Date", width=12)
         table.add_column("Time", width=8)
-        table.add_column("Score", width=12)
+        table.add_column("Score", width=18)
 
         for e in exams:
             course_code = sub_map.get(e.subject_id, "N/A")
-            score_str = f"{e.earned_score:g}/{e.max_score:g}" if e.earned_score is not None else "⏳ Pending"
-            table.add_row(e.exam_id, e.title, course_code, e.exam_type, e.exam_date, e.exam_time, score_str)
+            table.add_row(
+                e.exam_id,
+                e.title,
+                f"[bold]{course_code}[/bold]",
+                e.exam_type,
+                e.exam_date,
+                e.exam_time,
+                format_exam_score(e)
+            )
 
         console.print()
         console.print(table)
