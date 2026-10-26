@@ -1,7 +1,7 @@
 # UNIT-PROJECT-1
-# Majlis Table - Restaurant Reservation System
+# 🍽️ Majlis Table - Restaurant Reservation System
 
-## Overview
+## 🌟 Overview
 Majlis Table is a command-line application that manages table reservations for a restaurant. It has two types of users: the **customer**, who books tables, and the **manager**, who controls the tables and all bookings.
 
 **Goal of the project:** booking by phone or on paper leads to double bookings, forgotten reservations and no clear picture of which tables are free. This program solves that: it never books the same table twice at the same time, respects the opening hours, and keeps all data saved between runs.
@@ -13,7 +13,7 @@ Rules of the restaurant (editable in `config.py`):
 * Every booking holds a table for 90 minutes.
 * Bookings can be made up to 7 days ahead, in 30-minute steps.
 
-## Main Features
+## ✨ Main Features
 * Numbered, colored and boxed menus built with the `rich` library (green = available, red = not available, yellow = in progress).
 * Guided booking: number of guests, then day, time and table. Taken times and tables are shown in red and cannot be chosen.
 * No double booking: two bookings can never overlap on the same table.
@@ -27,9 +27,9 @@ Rules of the restaurant (editable in `config.py`):
 * All data is saved in JSON files, so nothing is lost when the program closes.
 * Unit tests for the booking rules and the password.
 
-## User Stories
+## 👥 User Stories
 
-### As a customer I should be able to do the following:
+### 🙋 As a customer I should be able to do the following:
 * Browse the tables of the restaurant (seats, location and current status).
 * Search for tables by location or by minimum number of seats.
 * Book a table by choosing the number of guests, the day, the time and the table.
@@ -39,7 +39,7 @@ Rules of the restaurant (editable in `config.py`):
 * Cancel one of my bookings.
 * Get clear messages if I enter something wrong.
 
-### As a manager I should be able to do the following:
+### 🧑‍💼 As a manager I should be able to do the following:
 * Create my own password the first time I enter, then log in with it.
 * Browse all the tables.
 * Add a new table (seats and location).
@@ -49,12 +49,12 @@ Rules of the restaurant (editable in `config.py`):
 * Cancel any booking.
 * View statistics (total, confirmed, cancelled and upcoming bookings, busiest table).
 
-## What You Need
+## 🛠️ What You Need
 * Python 3.8 or newer.
 * The `rich` package (installed from PyPI, see below).
 * An internet connection to install the package.
 
-## Installation and Running
+## 🚀 Installation and Running
 ```bash
 # 1) Go to the project folder
 cd majlis_table
@@ -81,15 +81,15 @@ If PowerShell refuses to activate the environment, run this once:
 To turn the colors off, set the environment variable `NO_COLOR=1`.
 
 
-## Usage
+## 📖 Usage
 Everything is chosen by typing the **number** of an option and pressing Enter. Type `0` to go back.
 
-### Main menu
+### 🏠 Main Menu
 * type in `1` to enter as a customer.
 * type in `2` to enter as a manager.
 * type in `0` to exit.
 
-### As a customer
+### 🍴 As a Customer
 You are asked for your name and phone number first. Your phone number identifies your bookings, so you can only see and cancel your own.
 
 * type in `1` to browse all the tables.
@@ -100,7 +100,7 @@ You are asked for your name and phone number first. Your phone number identifies
 * type in `6` to cancel a booking (you will be asked to confirm).
 * type in `0` to go back to the main menu.
 
-### As a manager
+### 🔐 As a Manager
 The first time you enter, the program asks you to create a password (at least 6 characters, typed twice). It is saved **hashed** in `data/admin.json`, so nobody can read it. After that you log in with it (3 attempts).
 
 If you forget the password, delete `data/admin.json` and create a new one. Tables and bookings are not affected.
@@ -114,7 +114,7 @@ If you forget the password, delete `data/admin.json` and create a new one. Table
 * type in `7` to view the statistics.
 * type in `0` to log out.
 
-## Example Session
+## 🎬 Example Session
 
 > The screens below are plain-text copies. In the real program the menus are colored.
 
