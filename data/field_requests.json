@@ -45,6 +45,14 @@
     "quantity": 15,
     "zone": "riadh",
     "priority": "Low",
-    "status": "Approved"
+    "status": "Completed"
+  },
+  {
+    "request_id": "REQ-107",
+    "item_name": "blanket",
+    "quantity": 10,
+    "zone": "riadh",
+    "priority": "High",
+    "status": "Completed"
   }
 ]

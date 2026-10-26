@@ -6,7 +6,7 @@
     "destination": "Riadh",
     "total_weight_kg": 15.0,
     "request_id": null,
-    "status": "In Transit",
+    "status": "Completed",
     "vehicle": "Cargo Drone Beta"
   },
   {
@@ -16,8 +16,8 @@
     "destination": "Tabuk",
     "total_weight_kg": 30.0,
     "request_id": null,
-    "status": "Pending Fleet Assignment",
-    "vehicle": null
+    "status": "Completed",
+    "vehicle": "Truck Alpha"
   },
   {
     "shipment_id": "SHP-103",
@@ -26,7 +26,7 @@
     "destination": "Riadh",
     "total_weight_kg": 30.0,
     "request_id": null,
-    "status": "In Transit",
+    "status": "Completed",
     "vehicle": "Truck Alpha"
   },
   {
@@ -36,7 +36,7 @@
     "destination": "Riadh",
     "total_weight_kg": 60.0,
     "request_id": null,
-    "status": "In Transit",
+    "status": "Completed",
     "vehicle": "Truck Alpha"
   },
   {
@@ -46,7 +46,7 @@
     "destination": "Riadh",
     "total_weight_kg": 30.0,
     "request_id": null,
-    "status": "In Transit",
+    "status": "Completed",
     "vehicle": "Cargo Drone Beta"
   },
   {
@@ -56,7 +56,7 @@
     "destination": "Riadh",
     "total_weight_kg": 1.0,
     "request_id": null,
-    "status": "In Transit",
+    "status": "Completed",
     "vehicle": "Cargo Drone Beta"
   },
   {
@@ -66,7 +66,7 @@
     "destination": "Riadh",
     "total_weight_kg": 36.0,
     "request_id": null,
-    "status": "In Transit",
+    "status": "Completed",
     "vehicle": "Cargo Drone Beta"
   },
   {
@@ -76,7 +76,7 @@
     "destination": "Riadh",
     "total_weight_kg": 120.0,
     "request_id": null,
-    "status": "In Transit",
+    "status": "Completed",
     "vehicle": "Cargo Drone Beta"
   },
   {
@@ -86,7 +86,17 @@
     "destination": "Riyadh",
     "total_weight_kg": 60.0,
     "request_id": "REQ-106",
-    "status": "Pending Fleet Assignment",
-    "vehicle": null
+    "status": "Completed",
+    "vehicle": "Truck Alpha"
+  },
+  {
+    "shipment_id": "SHP-110",
+    "item_name": "Thermal Emergency Blankets",
+    "quantity": 10,
+    "destination": "Riyadh",
+    "total_weight_kg": 40.0,
+    "request_id": "REQ-107",
+    "status": "Completed",
+    "vehicle": "Truck Alpha"
   }
 ]

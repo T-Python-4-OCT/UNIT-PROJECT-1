@@ -31,5 +31,19 @@
     "email": "fwaz@gmail.com",
     "password": "scrypt$16384$8$1$75873617b5a130a45258c62724228eae$7674f46a1fe3be060b385b067a0ebc6b79e7397161d376b757b70e6ce7ea67d481b03126496c6e0bd861e6ba763f673579627bcca65cdeaefdc5d58f250c8412",
     "role": "general"
+  },
+  {
+    "user_name": "asim",
+    "email": "asim@gmail.com",
+    "password": "scrypt$16384$8$1$069242a5e5f4df42b40aace56cd5c4da$f59b281ca890ad366e03abd2788b88937fcc35d54a96bd1f248a2f6282e97345467e645e4082009da2adbfe1887ddca09a5f87b66cdb6ef0ac41c02ef303d3da",
+    "role": "manager",
+    "department": "Operations"
+  },
+  {
+    "user_name": "ahmed",
+    "email": "ahmed@gmail.com",
+    "password": "scrypt$16384$8$1$0a4ef620c88ee0ee531fe82bfb762484$d1293e6cf9107f655629983078b5568a91cdd35872540af190362aa897bb8653f8994410d652c8df4ec8b3f1f6619a76b0926cbf06c6008042ba12d49d96b026",
+    "role": "field_supervisor",
+    "crisis_zone": "dammam"
   }
 ]
