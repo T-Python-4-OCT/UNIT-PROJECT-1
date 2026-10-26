@@ -76,14 +76,15 @@ class SubscriptionManager:
         table = Table(title=f"Your Subscriptions (sorted by {sort_by.lower()})")
         table.add_column("#", justify="right")
         table.add_column("Name", style="bold")
-        table.add_column("Price", justify="right")
-        table.add_column("/Month", justify="right")
-        table.add_column("Cycle")
+        # Numbers and dates never wrap; only the name wraps if the window is too narrow
+        table.add_column("Price", justify="right", no_wrap=True)
+        table.add_column("/Month", justify="right", no_wrap=True)
+        table.add_column("Cycle", no_wrap=True)
         table.add_column("Category")
-        table.add_column("Start")
-        table.add_column("Ends")
-        table.add_column("Days Left", justify="right")
-        table.add_column("Paid So Far", justify="right", style="bold magenta")
+        table.add_column("Start", no_wrap=True)
+        table.add_column("Ends", no_wrap=True)
+        table.add_column("Days Left", justify="right", no_wrap=True)
+        table.add_column("Paid So Far", justify="right", style="bold magenta", no_wrap=True)
 
         for number, sub in enumerate(sorted_subs, start=1):
             table.add_row(

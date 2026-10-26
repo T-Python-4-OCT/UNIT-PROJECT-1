@@ -4,7 +4,7 @@
         "price": 250.0,
         "cycle": "monthly",
         "category": "sport",
-        "start_date": "2026-03-28",
+        "start_date": "2026-03-31",
         "importance": "Not important"
     },
     {
@@ -12,16 +12,24 @@
         "price": 155.0,
         "cycle": "monthly",
         "category": "other",
-        "start_date": "2026-01-31",
+        "start_date": "2026-01-02",
         "importance": "Essential"
     },
     {
-        "name": "Shahid",
-        "price": 30.0,
+        "name": "Disney+",
+        "price": 35.0,
         "cycle": "monthly",
         "category": "video",
         "start_date": "2026-05-01",
         "importance": "Nice to have"
+    },
+    {
+        "name": "Amazon",
+        "price": 16.0,
+        "cycle": "monthly",
+        "category": "apps",
+        "start_date": "2026-08-05",
+        "importance": "Not important"
     },
     {
         "name": "Netflix",
@@ -30,6 +38,14 @@
         "category": "video",
         "start_date": "2025-03-10",
         "importance": "Nice to have"
+    },
+    {
+        "name": "YouTube Premium",
+        "price": 26.99,
+        "cycle": "monthly",
+        "category": "video",
+        "start_date": "2026-04-12",
+        "importance": "Not important"
     },
     {
         "name": "iCloud",
@@ -45,8 +61,16 @@
         "cycle": "custom",
         "category": "gaming",
         "start_date": "2026-02-20",
-        "importance": "Not important",
+        "importance": "Nice to have",
         "months": 3
+    },
+    {
+        "name": "Microsoft 365",
+        "price": 299.0,
+        "cycle": "yearly",
+        "category": "apps",
+        "start_date": "2025-12-01",
+        "importance": "Essential"
     },
     {
         "name": "Spotify",
