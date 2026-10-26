@@ -290,6 +290,9 @@ class OnboardingGuidanceTests(unittest.TestCase):
                 self.assertIn("today", output.getvalue())
                 self.assertIn("start", output.getvalue())
                 self.assertIn("help", output.getvalue())
+                self.assertIn("Commands", output.getvalue())
+                self.assertIn("ask <question>", output.getvalue())
+                self.assertIn("swap <old>", output.getvalue())
 
     def test_back_returns_to_previous_profile_question_and_keeps_answers(self):
         answers = [

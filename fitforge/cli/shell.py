@@ -138,6 +138,7 @@ class Shell:
         print("  stats   — اعرض السعرات والماكروز ومؤشرات جسمك")
         print("  help    — اعرض جميع الأوامر")
         print("  exit    — احفظ تقدمك واخرج")
+        print_help()
 
     def greet(self):
         today = session.pick_today(self.account.plan)
