@@ -141,29 +141,54 @@ class WeatherManager:
 
         console.print(table)
 
+    
     def show_weather(self):
-        city = console.input("[bold cyan]Enter city name:[/] ").strip()
-        if not city:
-            info("Please enter a city name.")
-            return None
+        while True:
+            city = console.input(
+                "[bold cyan]Enter city name (or type 'back' to return):[/] "
+            ).strip()
 
-        try:
-            with console.status("[cyan]Fetching weather and forecast...[/]", spinner="dots"):
-                location = self.get_location(city)
-                if location is None:
-                    info("City not found. Please try again.")
-                    return None
-                weather = self.get_weather(location)
+            if city.lower() == "back":
+                info("Returning to the main menu.")
+                return None
 
-            section("CURRENT WEATHER", "blue")
-            summary = self.show_current_weather(location, weather)
-            console.print()
-            self.show_forecast(weather)
-            return summary
+            if not city:
+                error("City name cannot be empty!")
+                continue
 
-        except requests.exceptions.RequestException as err:
-            error(f"Weather API error: {err}")
-        except (KeyError, IndexError, TypeError, ValueError):
-            error("Could not read the weather data. Please try again.")
+            if len(city) < 3:
+                error("Invalid city name! Please enter a valid city.")
+                continue
 
-        return None
+            try:
+                with console.status(
+                    "[cyan]Fetching weather and forecast...[/]",
+                    spinner="dots"
+                ):
+                    location = self.get_location(city)
+
+                    if location is None:
+                        error(
+                            "City not found! Enter a valid city "
+                            "or type 'back' to return to the menu."
+                        )
+                        continue
+
+                    weather = self.get_weather(location)
+
+                section("CURRENT WEATHER", "blue")
+                summary = self.show_current_weather(location, weather)
+
+                console.print()
+                self.show_forecast(weather)
+
+                return summary
+
+            except requests.exceptions.RequestException:
+                error("Weather service unavailable. Please try again.")
+                continue
+
+            except (KeyError, IndexError, TypeError, ValueError):
+                error("Could not read the weather data. Please try again.")
+                continue
+

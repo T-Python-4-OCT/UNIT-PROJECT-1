@@ -152,10 +152,30 @@ class NewsManager:
             "magenta",
         )
 
+   
+    
     def search_news(self):
-        keyword = console.input("[bold cyan]Enter a keyword to search for:[/] ").strip()
-        if not keyword:
-            info("Please enter a keyword.")
-            return []
+        while True:
+            keyword = console.input(
+                "[bold cyan]Enter a search phrase (or type 'back' to return):[/] "
+            ).strip()
 
-        return self.newsapi(keyword, f"SEARCH RESULTS: {keyword.upper()}", "cyan")
+            if keyword.lower() == "back":
+                info("Returning to the main menu.")
+                return []
+
+            if not keyword:
+                error("Input cannot be empty! Please enter a search phrase.")
+                continue
+
+            if len(keyword.split()) < 2:
+                error("Please enter at least 2 words to search for news.")
+                continue
+
+            articles = self.newsapi(
+                keyword,
+                f"SEARCH RESULTS: {keyword.upper()}",
+                "cyan"
+            )
+
+            return articles

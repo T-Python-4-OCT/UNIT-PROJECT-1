@@ -45,6 +45,28 @@ def refresh_screen():
     console.clear()
     banner()
 
+def get_menu_choice():
+    valid_choices = [key for key, _, _ in MENU]
+
+    while True:
+        choice = console.input("[bold cyan]Enter your choice:[/] ").strip()  
+        
+        if not choice:
+            console.print(
+                            "[bold red]Input cannot be empty!!!!![/]"
+                        )
+        elif not choice.lstrip("-").isdigit():
+            console.print(
+                "[bold red]Invalid input! Please enter a number only.[/]"
+            )
+        elif choice not in valid_choices:
+            console.print(
+                "[bold red]Wrong number! Please choose a number from the menu.[/]"
+            )
+      
+        else:
+            return choice
+
 
 def main():
     news = NewsManager()
@@ -67,11 +89,7 @@ def main():
     while True:
         print_menu()
 
-        choice = Prompt.ask(
-            "[bold cyan]Enter your choice[/]",
-            choices=[key for key, _, _ in MENU],
-            show_choices=False,
-        )
+        choice = get_menu_choice()
 
         if choice == "8":
             console.print("\n[bold green]Thank you for using Daily News & Weather![/]\n")
