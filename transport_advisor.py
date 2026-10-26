@@ -1,29 +1,31 @@
-
+import questionary
 import json
 from traffic_data import estimate_trip_duration
-
+from trip_charts import show_transport_chart
+from metro_data import find_metro_route, estimate_metro_route_duration
 
 FUEL_PRICE_SAR = 2.18
 FUEL_CONSUMPTION_PER_100_KM = 6
 
 
 def choose_trip_priority():
-    print("\n--- Choose Your Trip Priority ---")
-    print("1. Fastest Trip")
-    print("2. Lowest Cost")
-    print("3. Best Balance (Time + Cost)")
+    choice = questionary.select(
+        "Choose your trip priority:",
+        choices=[
+            "Fastest Trip",
+            "Lowest Cost",
+            "Best Balance (Time + Cost)"
+        ]
+    ).ask()
 
-    while True:
-        choice = input("Choose your priority (1-3): ").strip()
-
-        if choice == "1":
-            return "fastest"
-        elif choice == "2":
-            return "cheapest"
-        elif choice == "3":
-            return "balanced"
-        else:
-            print("Invalid choice. Please enter 1, 2, or 3.")
+    if choice == "Fastest Trip":
+        return "fastest"
+    elif choice == "Lowest Cost":
+        return "cheapest"
+    elif choice == "Best Balance (Time + Cost)":
+        return "balanced"
+    else:
+        return None
 
 
 def load_routes():
@@ -33,13 +35,28 @@ def load_routes():
     return data["routes"]
 
 
+
 def find_transport_options(origin, destination):
     routes = load_routes()
 
+    def normalize_location(location):
+        return (
+            location.strip()
+            .lower()
+            .replace("oo", "u")
+            .replace(" ", "")
+        )
+
+    origin = normalize_location(origin)
+    destination = normalize_location(destination)
+
     for route in routes:
+        route_origin = normalize_location(route["origin"])
+        route_destination = normalize_location(route["destination"])
+
         if (
-            route["origin"].lower() == origin.lower()
-            and route["destination"].lower() == destination.lower()
+            route_origin == origin
+            and route_destination == destination
         ):
             return route
 
@@ -101,7 +118,10 @@ def display_smart_trip_summary(
     else:
         if car_cost is None:
             recommended = None
-            reason = "The car cost is unavailable, so a balanced comparison cannot be made."
+            reason = (
+                "The car cost is unavailable, so a balanced "
+                "comparison cannot be made."
+            )
         else:
             car_score = (
                 car_duration / max(car_duration, metro_duration)
@@ -143,11 +163,18 @@ def compare_transport_options(origin, destination, departure_time):
 
     car_cost = calculate_car_fuel_cost(distance_km)
 
-    priority = choose_trip_priority()
+    # Find the metro route between the selected stations
+    metro_route = find_metro_route(origin, destination)
+    print("DEBUG origin:", repr(origin))
+    print("DEBUG metro_route:", metro_route)
 
-    # Sample metro information
-    metro_duration = 40
+    metro_duration = None
     metro_cost = 4
+
+    if metro_route is not None:
+        metro_duration = estimate_metro_route_duration(metro_route)
+
+    priority = choose_trip_priority()
 
     print("\n" + "=" * 42)
     print("          TRANSPORT COMPARISON")
@@ -168,18 +195,39 @@ def compare_transport_options(origin, destination, departure_time):
     print(f"  Traffic   : {period}")
 
     print("\n  Transport : Metro")
-    print(f"  Duration  : {metro_duration} minutes")
-    print(f"  Cost      : {metro_cost:.2f} SAR")
 
-    display_smart_trip_summary(
-        origin,
-        destination,
-        car_duration,
-        car_cost,
-        metro_duration,
-        metro_cost,
-        priority
-    )
+    if metro_route is not None and metro_duration is not None:
+        print(f"  Line      : {metro_route['metro_line']}")
+        print(f"  Stations  : {metro_route['number_of_stations']}")
+        print(f"  Duration  : About {metro_duration} minutes")
+        print(f"  Cost      : About {metro_cost:.2f} SAR")
+        print("  Note      : Estimated time, including average waiting time.")
+
+        display_smart_trip_summary(
+            origin,
+            destination,
+            car_duration,
+            car_cost,
+            metro_duration,
+            metro_cost,
+            priority
+        )
+
+        show_transport_chart(
+            car_duration,
+            metro_duration,
+            origin,
+            destination
+        )
+
+    else:
+        print("  Duration  : Route unavailable")
+        print("  Cost      : Not estimated")
+        print(
+            "  Note      : No matching metro line was found "
+            "between these stations."
+        )
+        print("\n  Recommendation unavailable for metro comparison.")
 
     return {
         "origin": origin,
@@ -191,6 +239,7 @@ def compare_transport_options(origin, destination, departure_time):
         "car_duration": car_duration,
         "car_cost": car_cost,
         "metro_duration": metro_duration,
-        "metro_cost": metro_cost,
+        "metro_cost": metro_cost if metro_duration is not None else None,
+        "metro_line": metro_route["metro_line"] if metro_route else None,
         "traffic_period": period
     }

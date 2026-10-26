@@ -4,24 +4,33 @@ from traffic_data import estimate_trip_duration , suggest_departure_time
 from datetime import datetime
 from transport_advisor import compare_transport_options
 from traffic_stats import display_traffic_report
+from rich.console import Console
+from rich.table import Table
+from trip_charts import show_transport_chart
+console = Console()
+
 
 def display_menu():
-    print("\n" + "=" * 46)
-    print("          RIYADH SMART TRIP")
-    print("   Your Smart Journey Planning Assistant")
-    print("=" * 46)
+    table = Table(
+        title="Riyadh Smart Trip",
+        header_style="bold cyan"
+    )
 
-    print("\n  MAIN MENU")
-    print("  " + "-" * 42)
-    print("  [1]  Plan a Trip")
-    print("  [2]  View Saved Trips")
-    print("  [3]  View Trip Report")
-    print("  [4]  Update a Trip")
-    print("  [5]  Delete a Trip")
-    print("  [6]  Compare Transport Options")
-    print("  [7]  Suggest Departure Time")
-    print("  [8]  Exit")
-    print("  " + "-" * 42)
+    table.add_column("Option", justify="center", style="yellow")
+    table.add_column("Feature", style="green")
+
+    table.add_row("1", "Plan a Trip")
+    table.add_row("2", "View Saved Trips")
+    table.add_row("3", "View Trip Report")
+    table.add_row("4", "Update a Trip")
+    table.add_row("5", "Delete a Trip")
+    table.add_row("6", "Compare Transport Options")
+    table.add_row("7", "Suggest Departure Time")
+    table.add_row("8", "Exit")
+
+    console.print(table)
+
+
 
 def main():
     while True:
