@@ -6,7 +6,8 @@
         "trainer": "Ahmed Ali",
         "trainer_id": 3,
         "duration": "4 weeks",
-        "price": 250
+        "price": 250,
+        "total_days": 40
     },
     {
         "id": 2,
@@ -15,7 +16,8 @@
         "trainer": "bb@.com",
         "trainer_id": 6,
         "duration": "6 weeks",
-        "price": 400
+        "price": 400,
+        "total_days": 30
     },
     {
         "id": 3,
@@ -24,6 +26,7 @@
         "trainer": "omar",
         "trainer_id": 8,
         "duration": "5 weeks",
-        "price": 350
+        "price": 350,
+        "total_days": 50
     }
 ]
