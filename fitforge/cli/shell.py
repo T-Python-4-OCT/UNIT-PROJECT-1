@@ -132,12 +132,12 @@ class Shell:
     @staticmethod
     def show_next_steps():
         """Explain the first useful commands after profile setup."""
-        ui.section("تم إعداد ملفك! ابدأ من هنا")
-        print("  today   — اعرض تمرين اليوم")
-        print("  start   — ابدأ التمرين مع إرشادات خطوة بخطوة")
-        print("  stats   — اعرض السعرات والماكروز ومؤشرات جسمك")
-        print("  help    — اعرض جميع الأوامر")
-        print("  exit    — احفظ تقدمك واخرج")
+        ui.section("Your profile is ready! Start here")
+        print("  today   — View today's workout")
+        print("  start   — Begin a guided workout")
+        print("  stats   — View your calories, macros, and body metrics")
+        print("  help    — View all commands")
+        print("  exit    — Save your progress and quit")
         print_help()
 
     def greet(self):

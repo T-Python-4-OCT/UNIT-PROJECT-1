@@ -286,7 +286,7 @@ class OnboardingGuidanceTests(unittest.TestCase):
             ):
                 shell._create_profile("Recreated")
                 self.assertTrue(storage.path_for("Recreated").exists())
-                self.assertIn("ابدأ من هنا", output.getvalue())
+                self.assertIn("Your profile is ready! Start here", output.getvalue())
                 self.assertIn("today", output.getvalue())
                 self.assertIn("start", output.getvalue())
                 self.assertIn("help", output.getvalue())
