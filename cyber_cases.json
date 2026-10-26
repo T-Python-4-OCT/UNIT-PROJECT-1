@@ -1,0 +1,144 @@
+[
+    {
+        "id": 1,
+        "title": "Phishing Attack",
+        "severity": "High"
+    },
+    {
+        "id": 5,
+        "title": "Data Breach",
+        "severity": "Medium"
+    },
+    {
+        "id": 6,
+        "title": "Ransomware Attack",
+        "severity": "High",
+        "status": "Open"
+    },
+    {
+        "id": 7,
+        "title": "Ransomware Attack2",
+        "severity": "High",
+        "status": "Open"
+    },
+    {
+        "id": 8,
+        "title": "Ransomware Attack2",
+        "severity": "High",
+        "status": "Open"
+    },
+    {
+        "id": 9,
+        "title": "Ransomware Attack4",
+        "severity": "High",
+        "status": "Open"
+    },
+    {
+        "id": 10,
+        "title": "Ransomware Attack4",
+        "severity": "High",
+        "status": "Open"
+    },
+    {
+        "id": 11,
+        "title": "q",
+        "severity": "q",
+        "status": "Open"
+    },
+    {
+        "id": 11,
+        "title": "Ransomware",
+        "severity": "Low",
+        "status": "Under Investigation"
+    },
+    {
+        "id": 12,
+        "title": "Data Breach",
+        "severity": "Medium",
+        "status": "Closed"
+    },
+    {
+        "id": 13,
+        "title": "Phishing Attack",
+        "severity": "Medium",
+        "status": "Under Investigation"
+    },
+    {
+        "id": 14,
+        "title": "Data Breach",
+        "severity": "High",
+        "status": "Closed"
+    },
+    {
+        "id": 15,
+        "title": "Data Breach",
+        "severity": "Medium",
+        "status": "Closed"
+    },
+    {
+        "id": 16,
+        "title": "SQL Injection",
+        "severity": "High",
+        "status": "Open"
+    },
+    {
+        "id": 17,
+        "title": "DDoS Attack",
+        "severity": "Low",
+        "status": "Closed"
+    },
+    {
+        "id": 18,
+        "title": "SQL Injection",
+        "severity": "Low",
+        "status": "Closed"
+    },
+    {
+        "id": 19,
+        "title": "Ransomware",
+        "severity": "High",
+        "status": "Under Investigation"
+    },
+    {
+        "id": 20,
+        "title": "Ransomware",
+        "severity": "Medium",
+        "status": "Closed"
+    },
+    {
+        "id": 20,
+        "title": "maaaain",
+        "severity": "High",
+        "status": "Open"
+    },
+    {
+        "id": 20,
+        "title": "SQL Injection",
+        "severity": "Medium",
+        "status": "Under Investigation"
+    },
+    {
+        "id": 21,
+        "title": "asssss",
+        "severity": "High",
+        "status": "Open"
+    },
+    {
+        "id": 22,
+        "title": "Data Breach",
+        "severity": "Low",
+        "status": "Open"
+    },
+    {
+        "id": 23,
+        "title": "Data Breach",
+        "severity": "Low",
+        "status": "Under Investigation"
+    },
+    {
+        "id": 25,
+        "title": "3",
+        "severity": "High",
+        "status": "Open"
+    }
+]

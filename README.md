@@ -1,44 +1,81 @@
-# UNIT-PROJECT-1
+Markdown
+# Cybercrime SOC Management Console
+
+A professional, terminal-based Security Operations Center (SOC) Console developed in Python. This interactive application empowers security analysts and administrators to manage cyber incident cases, execute analytical threat tracking, apply Role-Based Access Control (RBAC), and trigger dynamic notification responses.
+
+---
+
+## 📁 Repository & Project Directory Structure
+
+```text
+UNIT-PROJECT-1/
+│
+├── main.py                    # Application entry point & interactive CLI workflow
+├── cyber_cases.json           # Persistent JSON storage for incident cases
+├── requirements.txt           # External Python package dependencies
+├── .gitignore                 # Tracked files and directory exclusion rules
+├── README.md                  # Comprehensive project documentation
+│
+└── services/                  # Core application logic package
+    ├── __init__.py            # Package initialization marker
+    └── storage.py             # Data handling, RBAC, password hashing & alert logic
+
+🔑 Default Credentials (RBAC Testing)For evaluation and testing purposes, use the following pre-configured account credentials:
+Role                        Username          PasswordSOC
+
+SOCAdministratoradmin       admin              123
+
+  Security Analystanalyst   analyst            456
 
 
-## Based on what you’ve learned until now , create a project of your choosing (impress us with your imagination) . This project must at least satisfy the following minimum requirements :
 
-- Must be interactive on CLI.
-- Use your coding skills in Python accurately.
-- Organize Your Code into modules & (or packages)
-- Use git & Github to track changes in your code.
+🛠️ Features & User Stories
+As a Security Analyst or SOC Administrator, I can:
+Authentication & Access Control: Securely authenticate using SHA-256 hashed password verification and role enforcement (Admin vs. Analyst).
 
-## Example Project :  An online Grocery Store :
+Browse & Query Incidents: Display all stored security incidents in styled, interactive table formats and query specific cases by ID or keyword.
 
-#### Overview : An online store that sells fruits to customers. This online store has 2 main users. The customer and the manager of the store . Each one of them should be able to do the following tasks for the store to function properly . 
+Synthetic Incident Generation: Dynamically generate realistic mock cybersecurity incidents leveraging the Faker library (Admin privilege required).
 
-### Features & User Stories
-#### As a customer I should be able to do the following :
-- Browse  Products . 
-- View the product info (summary, specs, price, quantity , etc.)
-- Search for Products.
-- Get recommendations for my next purchase based on my purchase history.
-- Add Products to the shopping cart .
-- Remove a product from the shopping cart.
-- List the products in my shopping cart. 
-- Continue to checkout . 
-- Fill in my address for delivery.
-- Get receipt of my purchases.
-- Check delivery status . 
+Dashboard Threat Analytics: Access real-time analytics displaying total case counts, severity distributions (High / Medium / Low), and investigation states.
 
+Incident Lifecycle Management: Update case investigation statuses (Open, Under Investigation, Closed) with input validation.
 
+Automated Alerting System: Dispatch HTML-formatted email alerts upon detecting or escalating critical security threats.
 
-#### Usage :
- Explain to the user how to use your project . 
- for example:
- - type in search product_name to search for a product.
- - type in list_products to show all the products in the grocery.
- - type in show product_name to get information about this product.
- - type in buy product_name to buy the product . 
- - and so on...
+💡 Technologies & Dependencies Used
+Python 3.x: Primary development language.
 
+rich: Interactive terminal rendering, color styling, and dynamic tables.
 
-### For your project. Edit this README.md file to include your own project name,  overview, user stories, and usage. 
+faker: Synthetic data generation for incident titles, threat vectors, and case severities.
 
-### NOTE: before submitting the final project, please do the following command:
-`pip freeze > requirements.txt` to enable use to know & use the packages used in your project.
+hashlib (Built-in): SHA-256 cryptographic password hashing for user authentication.
+
+json (Built-in): Persistent file-based storage for case records and user state.
+
+💻 Installation & Usage Instructions
+1. Requirements Setup
+Ensure all required Python packages are installed:
+
+Bash
+pip install -r requirements.txt
+2. Launching the Application
+Execute the application entry point from the root directory:
+
+Bash
+python main.py
+3. Application Workflow & Navigation:
+Login: Authenticate using pre-configured user credentials (e.g., username admin or analyst).
+
+List Cases: View all active security cases rendered in formatted tables.
+
+Search: Search cases by entering a target Case ID or incident keyword.
+
+Generate Cases: (Admin Only) Specify the quantity of mock security incidents to auto-generate using Faker.
+
+Update Case Status: Modify the investigation phase of any case record.
+
+View Analytics: Access the dashboard panel for aggregate metrics and threat breakdowns.
+
+Exit: Safely persist all modified data to cyber_cases.json and terminate the session.
