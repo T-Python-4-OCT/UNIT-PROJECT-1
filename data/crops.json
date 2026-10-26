@@ -1,0 +1,22 @@
+{
+  "wheat": {
+    "name": "Wheat",
+    "kc": 1.15,
+    "min_temp": 4
+  },
+  "date_palm": {
+    "name": "Date Palm",
+    "kc": 0.95,
+    "min_temp": 0
+  },
+  "tomato": {
+    "name": "Tomato",
+    "kc": 1.15,
+    "min_temp": 10
+  },
+  "apple": {
+    "name": "apple",
+    "kc": 0.95,
+    "min_temp": -30
+  }
+}

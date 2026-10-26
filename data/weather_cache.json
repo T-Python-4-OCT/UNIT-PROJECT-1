@@ -1,0 +1,206 @@
+{
+  "riyadh": {
+    "current": {
+      "temperature": 29.4,
+      "wind_speed": 5.3
+    },
+    "daily": [
+      {
+        "date": "2026-10-26",
+        "temp_max": 34.5,
+        "temp_min": 24.6,
+        "rain_mm": 0.0,
+        "wind_max": 9.4,
+        "et0_mm": 5.33
+      },
+      {
+        "date": "2026-10-27",
+        "temp_max": 35.5,
+        "temp_min": 24.2,
+        "rain_mm": 0.0,
+        "wind_max": 9.1,
+        "et0_mm": 5.22
+      },
+      {
+        "date": "2026-10-28",
+        "temp_max": 36.5,
+        "temp_min": 25.5,
+        "rain_mm": 0.0,
+        "wind_max": 12.2,
+        "et0_mm": 5.44
+      },
+      {
+        "date": "2026-10-29",
+        "temp_max": 35.5,
+        "temp_min": 24.5,
+        "rain_mm": 0.0,
+        "wind_max": 8.9,
+        "et0_mm": 4.47
+      },
+      {
+        "date": "2026-10-30",
+        "temp_max": 35.7,
+        "temp_min": 23.4,
+        "rain_mm": 0.0,
+        "wind_max": 8.9,
+        "et0_mm": 4.83
+      },
+      {
+        "date": "2026-10-31",
+        "temp_max": 35.6,
+        "temp_min": 24.1,
+        "rain_mm": 0.0,
+        "wind_max": 10.6,
+        "et0_mm": 5.69
+      },
+      {
+        "date": "2026-11-01",
+        "temp_max": 34.7,
+        "temp_min": 24.7,
+        "rain_mm": 0.0,
+        "wind_max": 10.6,
+        "et0_mm": 5.9
+      }
+    ],
+    "latitude": 24.68773,
+    "longitude": 46.72185,
+    "location_name": "Riyadh, Saudi Arabia",
+    "fetched_at": "2026-10-26 22:23"
+  },
+  "hail": {
+    "current": {
+      "temperature": 30.3,
+      "wind_speed": 7.7
+    },
+    "daily": [
+      {
+        "date": "2026-10-26",
+        "temp_max": 31.7,
+        "temp_min": 27.0,
+        "rain_mm": 0.0,
+        "wind_max": 16.0,
+        "et0_mm": 3.78
+      },
+      {
+        "date": "2026-10-27",
+        "temp_max": 31.0,
+        "temp_min": 26.8,
+        "rain_mm": 0.0,
+        "wind_max": 11.9,
+        "et0_mm": 3.48
+      },
+      {
+        "date": "2026-10-28",
+        "temp_max": 30.2,
+        "temp_min": 25.5,
+        "rain_mm": 0.0,
+        "wind_max": 11.0,
+        "et0_mm": 3.41
+      },
+      {
+        "date": "2026-10-29",
+        "temp_max": 30.4,
+        "temp_min": 24.6,
+        "rain_mm": 0.0,
+        "wind_max": 9.5,
+        "et0_mm": 3.81
+      },
+      {
+        "date": "2026-10-30",
+        "temp_max": 32.0,
+        "temp_min": 25.7,
+        "rain_mm": 0.0,
+        "wind_max": 13.3,
+        "et0_mm": 4.43
+      },
+      {
+        "date": "2026-10-31",
+        "temp_max": 31.2,
+        "temp_min": 25.6,
+        "rain_mm": 0.0,
+        "wind_max": 12.6,
+        "et0_mm": 4.1
+      },
+      {
+        "date": "2026-11-01",
+        "temp_max": 31.2,
+        "temp_min": 24.9,
+        "rain_mm": 0.0,
+        "wind_max": 11.3,
+        "et0_mm": 3.83
+      }
+    ],
+    "latitude": 25.09223,
+    "longitude": 56.24418,
+    "location_name": "Ḩayl, United Arab Emirates",
+    "fetched_at": "2026-10-26 09:27"
+  },
+  "abha": {
+    "current": {
+      "temperature": 16.7,
+      "wind_speed": 4.4
+    },
+    "daily": [
+      {
+        "date": "2026-10-26",
+        "temp_max": 22.2,
+        "temp_min": 14.4,
+        "rain_mm": 1.5,
+        "wind_max": 14.5,
+        "et0_mm": 3.79
+      },
+      {
+        "date": "2026-10-27",
+        "temp_max": 22.5,
+        "temp_min": 14.5,
+        "rain_mm": 0.1,
+        "wind_max": 12.2,
+        "et0_mm": 4.08
+      },
+      {
+        "date": "2026-10-28",
+        "temp_max": 23.4,
+        "temp_min": 12.2,
+        "rain_mm": 0.0,
+        "wind_max": 12.9,
+        "et0_mm": 4.62
+      },
+      {
+        "date": "2026-10-29",
+        "temp_max": 22.8,
+        "temp_min": 13.9,
+        "rain_mm": 0.0,
+        "wind_max": 11.4,
+        "et0_mm": 4.11
+      },
+      {
+        "date": "2026-10-30",
+        "temp_max": 21.7,
+        "temp_min": 13.8,
+        "rain_mm": 0.6,
+        "wind_max": 13.5,
+        "et0_mm": 4.04
+      },
+      {
+        "date": "2026-10-31",
+        "temp_max": 22.6,
+        "temp_min": 13.5,
+        "rain_mm": 0.0,
+        "wind_max": 13.6,
+        "et0_mm": 4.12
+      },
+      {
+        "date": "2026-11-01",
+        "temp_max": 23.4,
+        "temp_min": 12.9,
+        "rain_mm": 0.0,
+        "wind_max": 9.9,
+        "et0_mm": 4.04
+      }
+    ],
+    "latitude": 18.21639,
+    "longitude": 42.50528,
+    "location_name": "Abhā, Saudi Arabia",
+    "fetched_at": "2026-10-26 22:11"
+  }
+}
