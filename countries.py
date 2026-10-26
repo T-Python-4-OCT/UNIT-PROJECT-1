@@ -1,27 +1,22 @@
 CONTINENTS = {
     "1": {
         "name": "Asia",
-        "name_ar": "آسيا",
         "emoji": "🌏"
     },
     "2": {
         "name": "Europe",
-        "name_ar": "أوروبا",
         "emoji": "🌍"
     },
     "3": {
         "name": "Africa",
-        "name_ar": "أفريقيا",
         "emoji": "🌍"
     },
     "4": {
         "name": "Americas",
-        "name_ar": "الأمريكتان",
         "emoji": "🌎"
     },
     "5": {
         "name": "Oceania",
-        "name_ar": "أوقيانوسيا",
         "emoji": "🌊"
     }
 }
