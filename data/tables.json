@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "capacity": 2,
+    "location": "indoor"
+  },
+  {
+    "id": 2,
+    "capacity": 3,
+    "location": "indoor"
+  },
+  {
+    "id": 3,
+    "capacity": 4,
+    "location": "indoor"
+  },
+  {
+    "id": 4,
+    "capacity": 4,
+    "location": "outdoor"
+  },
+  {
+    "id": 5,
+    "capacity": 6,
+    "location": "family"
+  },
+  {
+    "id": 6,
+    "capacity": 8,
+    "location": "family"
+  },
+  {
+    "id": 7,
+    "capacity": 15,
+    "location": "vip"
+  }
+]
