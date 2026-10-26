@@ -1,0 +1,50 @@
+[
+    {
+        "user_id": 2,
+        "course_id": 1,
+        "lesson_id": 3,
+        "completed": true
+    },
+    {
+        "user_id": 2,
+        "course_id": 1,
+        "lesson_id": 4,
+        "completed": true
+    },
+    {
+        "user_id": 2,
+        "course_id": 1,
+        "lesson_id": 5,
+        "completed": true
+    },
+    {
+        "user_id": 2,
+        "course_id": 3,
+        "lesson_id": 6,
+        "completed": true
+    },
+    {
+        "user_id": 2,
+        "course_id": 3,
+        "lesson_id": 7,
+        "completed": true
+    },
+    {
+        "user_id": 2,
+        "course_id": 2,
+        "lesson_id": 1,
+        "completed": true
+    },
+    {
+        "user_id": 6,
+        "course_id": 1,
+        "lesson_id": 3,
+        "completed": true
+    },
+    {
+        "user_id": 6,
+        "course_id": 1,
+        "lesson_id": 4,
+        "completed": true
+    }
+]
