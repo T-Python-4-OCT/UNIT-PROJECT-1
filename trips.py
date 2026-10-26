@@ -1,87 +1,75 @@
-from models import Trip
+"""Plan a new trip."""
+from __future__ import annotations
+
 from datetime import datetime
-from traffic_data import estimate_trip_duration
-import json
+
+from models import Trip
 from storage import save_trip
-from transport_advisor import compare_transport_options
-
-def load_routes():
-    with open("routes.json", "r", encoding="utf-8") as file:
-        data = json.load(file)
-
-    return data["routes"]
+from traffic_data import TIME_FORMAT, estimate_trip_duration
+from transport_advisor import (
+    compare_transport_options,
+    find_transport_options,
+)
 
 
-def plan_trip():
+def plan_trip() -> Trip | None:
+    """Ask for trip details, show the trip and comparison, and save it.
+
+    Returns:
+        The planned trip, or None if the input was invalid or the route
+        is not available.
+    """
     print("\n----PLAN a Trip----")
 
-    origin = input("Enter starting location:").strip()
-    destination = input("Enter destination:").strip()
+    origin = input("Enter starting location: ").strip()
+    destination = input("Enter destination: ").strip()
 
     if not origin or not destination:
-        print("Error: loactions cannot be empty!")
+        print("Error: locations cannot be empty!")
         return None
 
-    departure_time = input("Enter departure time (HH:MM):").strip()
+    departure_time = input("Enter departure time (HH:MM): ").strip()
 
     try:
-        datetime.strptime(departure_time, "%H:%M")
+        datetime.strptime(departure_time, TIME_FORMAT)
     except ValueError:
         print("Invalid time. Please use HH:MM, for example 08:30.")
         return None
 
-    routes = load_routes()
-    route = None
-
-    for item in routes:
-        if (
-            item["origin"].lower() == origin.lower()
-            and item["destination"].lower() == destination.lower()
-        ):
-            route = item
-            break
+    # Same lookup as the Compare option, so both behave the same way.
+    route = find_transport_options(origin, destination)
 
     if route is None:
-        print("Sorry,this route is not available in our sample data")
+        print("Sorry, this route is not available in our sample data.")
         return None
 
     base_minutes = route["base_duration_minutes"]
-
     period, estimated_minutes = estimate_trip_duration(
         base_minutes, departure_time
     )
 
     trip = Trip(
-        origin,
-        destination,
-        departure_time,
-        base_minutes,
-        period,
-        estimated_minutes
-)
-    
-    
-    save_trip({
-        "origin": trip.origin,
-        "destination": trip.destination,
-        "departure_time": trip.departure_time,
-        "base_minutes": trip.base_minutes,
-        "traffic_period": trip.traffic_period,
-        "estimated_minutes": trip.estimated_minutes
-})
-    
+        origin, destination, departure_time,
+        base_minutes, period, estimated_minutes,
+    )
 
     print("\n" + "=" * 40)
     print("           TRIP SUMMARY")
     print("=" * 40)
     trip.display_trip()
     print("=" * 40)
-    print("  Trip saved successfully!")
-    
-    compare_transport_options(
-        trip.origin,
-        trip.destination,
-        trip.departure_time
+
+    trip_data = trip.to_dict()
+
+    # Add car/metro comparison data to the saved trip when available.
+    result = compare_transport_options(
+        trip.origin, trip.destination, trip.departure_time
     )
+
+    if result is not None:
+        trip_data.update(result)
+
+    save_trip(trip_data)
+    print("\n  Trip saved successfully!")
 
     return trip
