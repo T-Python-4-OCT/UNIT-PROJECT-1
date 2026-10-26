@@ -2,7 +2,7 @@
     "users": [
         {
             "username": "student",
-            "full_name": "Sean Terry",
+            "full_name": "Michael Johnson",
             "major": "Software Engineering",
             "password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"
         }
@@ -10,119 +10,119 @@
     "subjects": [
         {
             "subject_id": "SUB-001",
-            "name": "Switchable Didactic Software",
-            "code": "YQC304",
-            "instructor": "Dr. Felicia Gardner",
-            "credit_hours": 4
-        },
-        {
-            "subject_id": "SUB-002",
-            "name": "Robust Composite Project",
-            "code": "IOP379",
-            "instructor": "Dr. Angela Perez",
-            "credit_hours": 4
-        },
-        {
-            "subject_id": "SUB-003",
-            "name": "Upgradable Asynchronous Architecture",
-            "code": "THM942",
-            "instructor": "Dr. Courtney Hammond DDS",
-            "credit_hours": 3
-        },
-        {
-            "subject_id": "SUB-004",
-            "name": "Fully-Configurable Demand-Driven Emulation",
-            "code": "SII010",
-            "instructor": "Dr. Heather Lowe",
+            "name": "Focused Neutral Secured Line",
+            "code": "NXD346",
+            "instructor": "Dr. Alexandra Welch",
             "credit_hours": 2
         },
         {
+            "subject_id": "SUB-002",
+            "name": "Distributed High-Level Process Improvement",
+            "code": "HGX603",
+            "instructor": "Dr. Frederick Barnett",
+            "credit_hours": 3
+        },
+        {
+            "subject_id": "SUB-003",
+            "name": "Distributed Multi-State Array",
+            "code": "BFG186",
+            "instructor": "Dr. Susan Kelly",
+            "credit_hours": 4
+        },
+        {
+            "subject_id": "SUB-004",
+            "name": "Right-Sized 24Hour Standardization",
+            "code": "URO075",
+            "instructor": "Dr. Kelly Anderson",
+            "credit_hours": 4
+        },
+        {
             "subject_id": "SUB-005",
-            "name": "Reduced Static Architecture",
-            "code": "ATB202",
-            "instructor": "Dr. Alejandro Hanna",
+            "name": "Quality-Focused Hybrid Hardware",
+            "code": "XMN440",
+            "instructor": "Dr. Deborah Michael",
             "credit_hours": 2
         }
     ],
     "tasks": [
         {
             "task_id": "TSK-001",
-            "title": "YQC304 - Syndicate Back-End Markets",
-            "description": "East old analysis.",
+            "title": "NXD346 - Maximize Revolutionary E-Business",
+            "description": "Bank small high newspaper safe side detail.",
             "subject_id": "SUB-001",
-            "due_date": "2026-10-21",
+            "due_date": "2026-10-24",
             "priority": "Medium",
             "status": "Completed",
-            "earned_score": 94.0,
+            "earned_score": 96.0,
             "max_score": 100.0,
             "created_at": "2026-10-26"
         },
         {
             "task_id": "TSK-002",
-            "title": "YQC304 - Facilitate Intuitive Niches",
-            "description": "Win ball her above at nor.",
+            "title": "NXD346 - Deploy Extensible Schemas",
+            "description": "Charge good politics north local.",
             "subject_id": "SUB-001",
             "due_date": "2026-10-25",
-            "priority": "High",
+            "priority": "Medium",
             "status": "Completed",
-            "earned_score": 98.0,
+            "earned_score": 97.0,
             "max_score": 100.0,
             "created_at": "2026-10-26"
         },
         {
             "task_id": "TSK-003",
-            "title": "IOP379 - Incentivize Ubiquitous Info-Mediaries",
-            "description": "Land central discussion around.",
+            "title": "HGX603 - Engineer One-To-One E-Business",
+            "description": "Eight rather decide language money to information.",
             "subject_id": "SUB-002",
             "due_date": "2026-10-23",
             "priority": "Low",
             "status": "Completed",
-            "earned_score": 84.0,
+            "earned_score": 85.0,
             "max_score": 100.0,
             "created_at": "2026-10-26"
         },
         {
             "task_id": "TSK-004",
-            "title": "IOP379 - Revolutionize Mission-Critical Portals",
-            "description": "Suddenly program model firm area.",
+            "title": "HGX603 - Reinvent Wireless Web Services",
+            "description": "Family officer box bag protect weight player.",
             "subject_id": "SUB-002",
-            "due_date": "2026-10-24",
-            "priority": "Medium",
+            "due_date": "2026-10-20",
+            "priority": "High",
             "status": "Completed",
-            "earned_score": 87.0,
+            "earned_score": 88.0,
             "max_score": 100.0,
             "created_at": "2026-10-26"
         },
         {
             "task_id": "TSK-005",
-            "title": "THM942 - Architect Dot-Com Supply-Chains",
-            "description": "Eat play everyone stage ok lose whom.",
+            "title": "BFG186 - Monetize B2B Functionalities",
+            "description": "Save green change discover.",
             "subject_id": "SUB-003",
-            "due_date": "2026-10-23",
+            "due_date": "2026-10-20",
             "priority": "Low",
             "status": "Completed",
-            "earned_score": 71.0,
+            "earned_score": 78.0,
             "max_score": 100.0,
             "created_at": "2026-10-26"
         },
         {
             "task_id": "TSK-006",
-            "title": "THM942 - Expedite Frictionless Experiences",
-            "description": "Black most over.",
+            "title": "BFG186 - Repurpose Mission-Critical E-Business",
+            "description": "Build side rate medical involve better.",
             "subject_id": "SUB-003",
-            "due_date": "2026-10-23",
+            "due_date": "2026-11-03",
             "priority": "Low",
-            "status": "Completed",
-            "earned_score": 77.0,
-            "max_score": 100.0,
+            "status": "Not Started",
+            "earned_score": null,
+            "max_score": null,
             "created_at": "2026-10-26"
         },
         {
             "task_id": "TSK-007",
-            "title": "SII010 - Extend Global Technologies",
-            "description": "Amount sell full require experience.",
+            "title": "URO075 - Transition Scalable Convergence",
+            "description": "Certainly else this wrong.",
             "subject_id": "SUB-004",
-            "due_date": "2026-10-22",
+            "due_date": "2026-10-21",
             "priority": "High",
             "status": "Completed",
             "earned_score": 62.0,
@@ -131,59 +131,35 @@
         },
         {
             "task_id": "TSK-008",
-            "title": "SII010 - Cultivate Clicks-And-Mortar Interfaces",
-            "description": "Bit central herself option Mrs position age.",
+            "title": "URO075 - Visualize Distributed Niches",
+            "description": "Public so ever management miss.",
             "subject_id": "SUB-004",
-            "due_date": "2026-10-25",
-            "priority": "Low",
-            "status": "Completed",
-            "earned_score": 66.0,
-            "max_score": 100.0,
-            "created_at": "2026-10-26"
-        },
-        {
-            "task_id": "TSK-009",
-            "title": "ATB202 - Facilitate Cross-Media Relationships",
-            "description": "General age employee across green opportunity.",
-            "subject_id": "SUB-005",
-            "due_date": "2026-10-23",
-            "priority": "High",
-            "status": "Completed",
-            "earned_score": 54.0,
-            "max_score": 100.0,
-            "created_at": "2026-10-26"
-        },
-        {
-            "task_id": "TSK-010",
-            "title": "ATB202 - Scale Holistic Platforms",
-            "description": "Throughout part draw personal understand hit.",
-            "subject_id": "SUB-005",
-            "due_date": "2026-10-19",
-            "priority": "Low",
-            "status": "Completed",
-            "earned_score": 50.0,
-            "max_score": 100.0,
-            "created_at": "2026-10-26"
-        },
-        {
-            "task_id": "TSK-011",
-            "title": "a",
-            "description": "aaa",
-            "subject_id": "SUB-001",
-            "due_date": "2026-10-26",
-            "priority": "High",
+            "due_date": "2026-11-05",
+            "priority": "Medium",
             "status": "Not Started",
             "earned_score": null,
             "max_score": null,
             "created_at": "2026-10-26"
         },
         {
-            "task_id": "TSK-012",
-            "title": "a",
-            "description": "a",
-            "subject_id": "SUB-004",
-            "due_date": "2026-10-26",
+            "task_id": "TSK-009",
+            "title": "XMN440 - Empower Cutting-Edge Initiatives",
+            "description": "Leader east consumer rather American hold reality husband.",
+            "subject_id": "SUB-005",
+            "due_date": "2026-10-20",
             "priority": "High",
+            "status": "Completed",
+            "earned_score": 56.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-26"
+        },
+        {
+            "task_id": "TSK-010",
+            "title": "XMN440 - Transition Magnetic Web Services",
+            "description": "If society subject street cultural determine investment.",
+            "subject_id": "SUB-005",
+            "due_date": "2026-11-02",
+            "priority": "Medium",
             "status": "Not Started",
             "earned_score": null,
             "max_score": null,
@@ -193,345 +169,333 @@
     "projects": [
         {
             "project_id": "PRJ-001",
-            "title": "YQC304: Multi-Channeled Secondary Approach",
+            "title": "NXD346: Operative Bottom-Line Capability",
             "subject_id": "SUB-001",
-            "deadline": "2026-11-23",
+            "deadline": "2026-11-05",
             "steps": [
                 {
-                    "name": "YQC304 - Expedite Real-Time E-Markets",
+                    "name": "NXD346 - Facilitate Dynamic Metrics",
                     "weight": 15,
                     "max_points": 15.0,
                     "earned_points": 14.2,
                     "completed": true
                 },
                 {
-                    "name": "YQC304 - Evolve Transparent E-Commerce",
+                    "name": "NXD346 - Repurpose Robust Bandwidth",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 19.4,
+                    "earned_points": 20.0,
                     "completed": true
                 },
                 {
-                    "name": "YQC304 - Transform Extensible Technologies",
+                    "name": "NXD346 - Aggregate Killer Networks",
                     "weight": 25,
                     "max_points": 25.0,
-                    "earned_points": 23.8,
+                    "earned_points": 23.0,
                     "completed": true
                 },
                 {
-                    "name": "YQC304 - Matrix Dynamic Systems",
+                    "name": "NXD346 - Matrix Value-Added Content",
                     "weight": 25,
                     "max_points": 25.0,
-                    "earned_points": 23.8,
+                    "earned_points": 24.0,
                     "completed": true
                 },
                 {
-                    "name": "YQC304 - Optimize Enterprise Partnerships",
+                    "name": "NXD346 - Transform Strategic Synergies",
                     "weight": 15,
                     "max_points": 15.0,
                     "earned_points": null,
                     "completed": false
                 }
             ],
-            "phase": "YQC304 - Optimize Enterprise Partnerships",
+            "phase": "NXD346 - Transform Strategic Synergies",
             "progress": 85,
             "earned_score": 81.2,
             "max_score": 100.0
         },
         {
             "project_id": "PRJ-002",
-            "title": "IOP379: Mandatory Exuding Service-Desk",
+            "title": "HGX603: Optional Optimal Groupware",
             "subject_id": "SUB-002",
-            "deadline": "2026-11-18",
+            "deadline": "2026-11-21",
             "steps": [
                 {
-                    "name": "IOP379 - Unleash Mission-Critical Content",
+                    "name": "HGX603 - Whiteboard 24/7 Action-Items",
                     "weight": 10,
                     "max_points": 10.0,
-                    "earned_points": 8.6,
+                    "earned_points": 8.1,
                     "completed": true
                 },
                 {
-                    "name": "IOP379 - Harness Bleeding-Edge Convergence",
+                    "name": "HGX603 - Seize Enterprise Supply-Chains",
                     "weight": 20,
                     "max_points": 20.0,
                     "earned_points": 17.4,
                     "completed": true
                 },
                 {
-                    "name": "IOP379 - Grow Front-End Info-Mediaries",
+                    "name": "HGX603 - Synthesize Compelling Content",
                     "weight": 30,
                     "max_points": 30.0,
-                    "earned_points": 24.6,
+                    "earned_points": 26.4,
                     "completed": true
                 },
                 {
-                    "name": "IOP379 - Disintermediate Clicks-And-Mortar Schemas",
+                    "name": "HGX603 - Generate Open-Source E-Markets",
                     "weight": 25,
                     "max_points": 25.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "IOP379 - Evolve Viral Communities",
+                    "name": "HGX603 - Architect Mission-Critical Action-Items",
                     "weight": 15,
                     "max_points": 15.0,
                     "earned_points": null,
                     "completed": false
                 }
             ],
-            "phase": "IOP379 - Disintermediate Clicks-And-Mortar Schemas",
+            "phase": "HGX603 - Generate Open-Source E-Markets",
             "progress": 60,
-            "earned_score": 50.6,
+            "earned_score": 51.9,
             "max_score": 100.0
         },
         {
             "project_id": "PRJ-003",
-            "title": "THM942: Reduced Zero-Defect Open System",
+            "title": "BFG186: Vision-Oriented Leadingedge Time-Frame",
             "subject_id": "SUB-003",
             "deadline": "2026-11-30",
             "steps": [
                 {
-                    "name": "THM942 - Cultivate Customized Applications",
+                    "name": "BFG186 - Synergize Cross-Media Supply-Chains",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 14.8,
+                    "earned_points": 15.0,
                     "completed": true
                 },
                 {
-                    "name": "THM942 - Evolve One-To-One Solutions",
+                    "name": "BFG186 - Integrate Best-Of-Breed Relationships",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 15.6,
+                    "earned_points": 15.0,
                     "completed": true
                 },
                 {
-                    "name": "THM942 - Scale Frictionless Supply-Chains",
+                    "name": "BFG186 - Synthesize Cross-Media Architectures",
                     "weight": 20,
                     "max_points": 20.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "THM942 - Morph Holistic E-Business",
+                    "name": "BFG186 - Innovate Synergistic Deliverables",
                     "weight": 20,
                     "max_points": 20.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "THM942 - Enhance Visionary Eyeballs",
+                    "name": "BFG186 - Empower Cross-Media Niches",
                     "weight": 20,
                     "max_points": 20.0,
                     "earned_points": null,
                     "completed": false
                 }
             ],
-            "phase": "THM942 - Scale Frictionless Supply-Chains",
+            "phase": "BFG186 - Synthesize Cross-Media Architectures",
             "progress": 40,
-            "earned_score": 30.4,
+            "earned_score": 30.0,
             "max_score": 100.0
         },
         {
             "project_id": "PRJ-004",
-            "title": "SII010: Multi-Channeled Mobile Monitoring",
+            "title": "URO075: Team-Oriented Scalable Firmware",
             "subject_id": "SUB-004",
-            "deadline": "2026-11-13",
+            "deadline": "2026-11-05",
             "steps": [
                 {
-                    "name": "SII010 - Disintermediate Leading-Edge Applications",
+                    "name": "URO075 - Optimize Turn-Key E-Business",
                     "weight": 15,
                     "max_points": 15.0,
-                    "earned_points": 9.3,
+                    "earned_points": 9.8,
                     "completed": true
                 },
                 {
-                    "name": "SII010 - Mesh Back-End Action-Items",
+                    "name": "URO075 - Reinvent Integrated Schemas",
                     "weight": 15,
                     "max_points": 15.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "SII010 - Mesh One-To-One Info-Mediaries",
+                    "name": "URO075 - Extend Virtual Solutions",
                     "weight": 30,
                     "max_points": 30.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "SII010 - Monetize Leading-Edge Info-Mediaries",
+                    "name": "URO075 - Transition Bricks-And-Clicks Supply-Chains",
                     "weight": 20,
                     "max_points": 20.0,
                     "earned_points": null,
                     "completed": false
                 },
                 {
-                    "name": "SII010 - Utilize Cross-Media E-Tailers",
+                    "name": "URO075 - Deploy Impactful E-Commerce",
                     "weight": 20,
                     "max_points": 20.0,
                     "earned_points": null,
                     "completed": false
                 }
             ],
-            "phase": "SII010 - Mesh Back-End Action-Items",
+            "phase": "URO075 - Reinvent Integrated Schemas",
             "progress": 15,
-            "earned_score": 9.3,
+            "earned_score": 9.8,
             "max_score": 100.0
         },
         {
             "project_id": "PRJ-005",
-            "title": "ATB202: Public-Key Directional Firmware",
+            "title": "XMN440: Up-Sized Cohesive Customer Loyalty",
             "subject_id": "SUB-005",
-            "deadline": "2026-11-27",
+            "deadline": "2026-11-09",
             "steps": [
                 {
-                    "name": "ATB202 - Seize Killer E-Business",
+                    "name": "XMN440 - Generate E-Business Supply-Chains",
                     "weight": 10,
                     "max_points": 10.0,
-                    "earned_points": 5.6,
+                    "earned_points": 5.5,
                     "completed": true
                 },
                 {
-                    "name": "ATB202 - Benchmark User-Centric Models",
+                    "name": "XMN440 - Visualize Synergistic Architectures",
                     "weight": 25,
                     "max_points": 25.0,
-                    "earned_points": 11.5,
+                    "earned_points": 13.0,
                     "completed": true
                 },
                 {
-                    "name": "ATB202 - Empower 24/7 Synergies",
+                    "name": "XMN440 - Embrace 24/365 Interfaces",
                     "weight": 25,
                     "max_points": 25.0,
                     "earned_points": 12.8,
                     "completed": true
                 },
                 {
-                    "name": "ATB202 - Implement Mission-Critical Partnerships",
+                    "name": "XMN440 - Benchmark E-Business Schemas",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 9.8,
+                    "earned_points": 10.8,
                     "completed": true
                 },
                 {
-                    "name": "ATB202 - Incubate One-To-One E-Commerce",
+                    "name": "XMN440 - Reinvent Leading-Edge Communities",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 11.4,
+                    "earned_points": 10.0,
                     "completed": true
                 }
             ],
             "phase": "Completed",
             "progress": 100,
-            "earned_score": 51.1,
-            "max_score": 100.0
-        },
-        {
-            "project_id": "PRJ-006",
-            "title": "a",
-            "subject_id": "SUB-003",
-            "deadline": "2026-12-15",
-            "steps": [
-                {
-                    "name": "ww",
-                    "weight": 100,
-                    "max_points": 100.0,
-                    "earned_points": null,
-                    "completed": false
-                }
-            ],
-            "phase": "ww",
-            "progress": 0,
-            "earned_score": null,
+            "earned_score": 52.1,
             "max_score": 100.0
         }
     ],
     "exams": [
         {
             "exam_id": "EXM-001",
-            "title": "YQC304 - Versatile Grid-Enabled Artificial Intelligence",
+            "title": "NXD346 - Fully-Configurable Value-Added Collaboration",
             "subject_id": "SUB-001",
-            "exam_date": "2026-10-31",
-            "exam_time": "23:09",
-            "exam_type": "Practical",
-            "earned_score": 93.0,
+            "exam_date": "2026-10-18",
+            "exam_time": "08:32",
+            "exam_type": "Quiz",
+            "earned_score": 100.0,
             "max_score": 100.0
         },
         {
             "exam_id": "EXM-002",
-            "title": "IOP379 - Compatible Maximized Firmware",
+            "title": "HGX603 - Balanced Radical Migration",
             "subject_id": "SUB-002",
-            "exam_date": "2026-10-18",
-            "exam_time": "15:23",
-            "exam_type": "Practical",
-            "earned_score": 9.0,
-            "max_score": 10.0
+            "exam_date": "2026-10-19",
+            "exam_time": "22:06",
+            "exam_type": "Final",
+            "earned_score": 83.0,
+            "max_score": 100.0
         },
         {
             "exam_id": "EXM-003",
-            "title": "THM942 - Re-Engineered Heuristic Model",
+            "title": "BFG186 - Synergistic Maximized Standardization",
             "subject_id": "SUB-003",
-            "exam_date": "2026-10-21",
-            "exam_time": "13:52",
+            "exam_date": "2026-10-30",
+            "exam_time": "19:13",
             "exam_type": "Midterm",
-            "earned_score": 90.0,
+            "earned_score": 71.0,
             "max_score": 100.0
         },
         {
             "exam_id": "EXM-004",
-            "title": "SII010 - Upgradable Even-Keeled Interface",
+            "title": "URO075 - Advanced Real-Time Moderator",
             "subject_id": "SUB-004",
-            "exam_date": "2026-10-30",
-            "exam_time": "03:24",
+            "exam_date": "2026-10-28",
+            "exam_time": "01:11",
             "exam_type": "Midterm",
-            "earned_score": 63.0,
+            "earned_score": 66.0,
             "max_score": 100.0
         },
         {
             "exam_id": "EXM-005",
-            "title": "ATB202 - Profound Dedicated Orchestration",
+            "title": "XMN440 - Reverse-Engineered National System Engine",
             "subject_id": "SUB-005",
-            "exam_date": "2026-10-27",
-            "exam_time": "10:10",
-            "exam_type": "Final",
-            "earned_score": 46.0,
+            "exam_date": "2026-10-23",
+            "exam_time": "16:17",
+            "exam_type": "Practical",
+            "earned_score": 51.0,
             "max_score": 100.0
         }
     ],
     "notes": [
         {
             "note_id": "NTE-001",
-            "title": "YQC304 - Repurpose Holistic Web Services",
-            "content": "Player natural serve job. Moment dinner game sign audience. Quite media establish my investment.",
+            "title": "NXD346 - Enhance Integrated Initiatives",
+            "content": "Around network bill send material. Reason successful might personal shoulder voice discuss.",
             "subject_id": "SUB-001",
             "created_at": "2026-10-26"
         },
         {
             "note_id": "NTE-002",
-            "title": "IOP379 - Utilize Dynamic Paradigms",
-            "content": "By open happen war these reality down. Under partner Mr run. Door peace machine agent specific.",
+            "title": "HGX603 - Mesh Proactive Channels",
+            "content": "Piece decide economic large big eight treatment.",
             "subject_id": "SUB-002",
             "created_at": "2026-10-26"
         },
         {
             "note_id": "NTE-003",
-            "title": "THM942 - Matrix Customized Initiatives",
-            "content": "Dinner create public provide pick sea. Impact not several drug try billion. Yourself future prove attention window agent usually.",
+            "title": "BFG186 - Matrix Best-Of-Breed Initiatives",
+            "content": "Attention want sister. Fear partner sell tell worry speak mean.",
             "subject_id": "SUB-003",
             "created_at": "2026-10-26"
         },
         {
             "note_id": "NTE-004",
-            "title": "SII010 - Exploit Global Methodologies",
-            "content": "Service billion thus consumer difficult. Past little interesting doctor anyone cause. History risk life son visit too use.",
+            "title": "URO075 - Revolutionize Real-Time Infrastructures",
+            "content": "Hard require thought. Town day student one conference into common.",
             "subject_id": "SUB-004",
             "created_at": "2026-10-26"
         },
         {
             "note_id": "NTE-005",
-            "title": "ATB202 - Transition Vertical Paradigms",
-            "content": "Computer language draw from. Go discover improve often large onto.",
+            "title": "XMN440 - Iterate Visionary Vortals",
+            "content": "Fire energy employee find material first might. Determine long both. Very since since shake success training answer.",
             "subject_id": "SUB-005",
+            "created_at": "2026-10-26"
+        },
+        {
+            "note_id": "NTE-006",
+            "title": "Study Session (25 mins)",
+            "content": "Completed a 25-minute study session for BFG186 (Distributed Multi-State Array).",
+            "subject_id": "SUB-003",
             "created_at": "2026-10-26"
         }
     ]

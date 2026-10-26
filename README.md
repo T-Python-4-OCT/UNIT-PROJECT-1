@@ -1,65 +1,85 @@
-# StudyMate
+# UniMate 🎓
 
-A terminal-based Python app to help students keep track of their university courses, assignments, projects, exams, and notes during the semester.
+UniMate is a terminal-based Python app I built to help university students manage their semester in one place. It lets you keep track of your courses, tasks, project steps, exams, study notes, and study time directly from the command line.
 
-## What it does
+## Features
 
-- **Login system:** Simple login and sign-up screen with hidden password input and SHA-256 password hashing. Default login info is loaded from a `.env` file.
-- **Dashboard:** Shows estimated GPA (out of 4.00), course averages, overdue tasks, and upcoming exams.
-- **Projects tracker:** Lets you break down each course project into custom steps with specific weights (`%`) and points. Marking a step as done updates the progress bar and total score automatically.
-- **Tasks, Exams & Notes:** Add, view, update, and delete tasks, exams, and study notes for each subject.
-- **Study Timer:** Built-in countdown timer to track study sessions per subject, automatically logging completed sessions into study notes and `activity.log`.
+- **Login & Registration:** Simple account system with hidden password input and SHA-256 password hashing.
+- **Academic Dashboard:** Shows a quick summary of your credit hours, completed tasks, project progress, and average grades, plus a table showing your grade standing (`A` to `F`) for each course.
+- **Manage Subjects:** Add, view, and delete courses. The app prevents deleting a course if it still has tasks, projects, or exams linked to it.
+- **Tasks & Assignments:** Add tasks with due dates and priority levels (`High`, `Medium`, `Low`), mark them as done, and save your scores.
+- **Project Milestones:** Break down any course project into custom steps with percentage weights (`%`). Completing a step automatically updates the progress bar and total score.
+- **Exams & Study Notes:** Schedule upcoming exams, record exam scores, and save or read study notes for your courses.
+- **Study Timer:** Built-in countdown timer (10-second demo, 25-minute standard, or custom time). When the timer finishes, it logs the session to `activity.log` and saves a note automatically.
 
-## Files & Folders
+## Project Files
 
-- `main.py` - Entry point of the app and main menu loop.
-- `models/classes.py` - Contains the main OOP classes (`User`, `Subject`, `Task`, `Project`, `Exam`, `StudyNote`).
-- `services/` - Separate files for each section of the app (`auth_service.py`, `dashboard_service.py`, `subject_service.py`, `task_service.py`, `project_service.py`, `exam_service.py`, `note_service.py`, `pomodoro_service.py`).
-- `storage.py` - Handles reading and saving data to `studymate_data.json`.
-- `utils.py` - Helper functions for `rich` tables and `questionary` inputs.
-- `seed.py` - Generates random sample data using `Faker` to test the app quickly.
-- `requirements.txt` - List of libraries used in the project.
+- `main.py` - Starts the app and runs the main menu.
+- `models/classes.py` - Contains the main OOP classes (`ScoredItem`, `Subject`, `Task`, `Project`, `Exam`, `StudyNote`, `User`).
+- `services/` - Menu and logic files for each part of the app:
+  - `base_service.py` - Shared menu loop and helper methods inherited by other services.
+  - `auth_service.py` - Login and create account screens.
+  - `dashboard_service.py` - Overall stats and course performance table.
+  - `subject_service.py` - Add, view, and delete courses.
+  - `task_service.py` - Manage assignments and task scores.
+  - `project_service.py` - Manage projects and milestone steps.
+  - `exam_service.py` - Schedule exams and record grades.
+  - `note_service.py` - Create, read, and delete study notes.
+  - `pomodoro_service.py` - Study countdown timer and activity logger.
+- `storage.py` - Loads and saves data to `unimate_data.json`.
+- `utils.py` - Input validation functions, `questionary` menus, and `rich` print helpers.
+- `seed.py` - Creates fake test data using `Faker` so you can test the app right away.
+- `requirements.txt` - List of packages used in the project.
 
-## Libraries
+## Libraries Used
 
-- `rich`
-- `questionary`
-- `Faker`
-- `python-dotenv`
+- `rich` - For tables, panels, colors, and progress bars.
+- `questionary` - For interactive menus and user prompts.
+- `Faker` - For generating sample data in `seed.py`.
+- `python-dotenv` - For reading default settings from the `.env` file.
 
-## Setup & Run
+## How to Run
 
-1. Go to the project folder:
+1. Clone the repository and go to the project folder:
    ```bash
    cd UNIT-PROJECT-1
    ```
 
-2. Install the libraries:
+2. Create and activate a virtual environment (optional):
+   ```bash
+   python -m venv venv
+   # On Windows:
+   venv\Scripts\activate
+   # On Mac/Linux:
+   source venv/bin/activate
+   ```
+
+3. Install the required libraries:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Make sure you have a `.env` file in the project folder with these values:
+4. Create a `.env` file in the project folder with these default values:
    ```env
    DEFAULT_USERNAME=student
    DEFAULT_PASSWORD=1234
    DEFAULT_MAJOR=Software Engineering
-   DATA_FILE=studymate_data.json
+   DATA_FILE=unimate_data.json
    ```
 
-4. Run the seed script to generate test data:
+5. Generate sample data to test the app:
    ```bash
    python seed.py
    ```
 
-5. Run the app:
+6. Run the app:
    ```bash
    python main.py
    ```
 
-**Default Login:**
-- Username: `student`
-- Password: `1234`
+### Default Login (after running `seed.py`)
+- **Username:** `student`
+- **Password:** `1234`
 
 ---
-By Ghali Al-Mazmoumi
+By **Ghali Al-Mazmoumi**
