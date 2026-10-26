@@ -223,7 +223,6 @@ __marimo__/
 venv/
 __pycache__/
 *.pyc
-data/
 *.tmp
 .vscode/
 
