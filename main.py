@@ -6,33 +6,27 @@ from guardian.display import show_banner
 from guardian.manager import SORT_OPTIONS, SubscriptionManager
 from guardian.reports import show_spending_report
 from guardian.subscription import CATEGORIES, CYCLES, IMPORTANCE_LEVELS, create_subscription
-from guardian.validation import ask_choice, ask_confirm, ask_months, ask_name, ask_price, ask_start_date
+from guardian.validation import GoBack, ask_choice, ask_confirm, ask_months, ask_name, ask_price, ask_start_date
 
 console = Console()
 manager = SubscriptionManager()
 
 EXIT = "Exit"
-CANCEL = "Cancel"
 DONE = "Done"
 
 
-def ask_cycle(message: str) -> tuple[str, int | None] | None:
-    """Ask for the cycle, and for the number of months if it is custom (None if Ctrl+C)."""
+def ask_cycle(message: str) -> tuple[str, int | None]:
+    """Ask for the cycle, and for the number of months if it is custom."""
     cycle = ask_choice(message, CYCLES)
-    if cycle is None:
-        return None
     months = ask_months("How many months is one cycle? ") if cycle == "custom" else None
     return cycle, months
 
 
 def pick_subscription(message: str):
-    """Let the user pick one subscription from a list (None if they cancel)."""
+    """Let the user pick one subscription from a list (or Back to return to the menu)."""
     # Show each subscription by its text, but give back the object itself
     choices = [Choice(str(sub), value=sub) for sub in manager.subscriptions]
-    subscription = ask_choice(message, choices + [CANCEL])
-    if subscription == CANCEL:
-        return None
-    return subscription
+    return ask_choice(message, choices)
 
 
 def add_subscription():
@@ -40,20 +34,9 @@ def add_subscription():
     console.print("\n[bold]Add a new subscription[/bold]")
     name = ask_name("Name: ", manager.names())
     price = ask_price("Price (SAR): ")
-
-    answer = ask_cycle("Cycle:")
-    if answer is None:
-        return
-    cycle, months = answer
-
+    cycle, months = ask_cycle("Cycle:")
     category = ask_choice("Category:", CATEGORIES)
-    if category is None:
-        return
-
     importance = ask_choice("How important is it to you?", IMPORTANCE_LEVELS)
-    if importance is None:
-        return
-
     start_date = ask_start_date("Start date (YYYY-MM-DD): ")
 
     subscription = create_subscription(cycle, name, price, category, start_date, months, importance)
@@ -70,8 +53,6 @@ def view_subscriptions():
         return
 
     sort_by = ask_choice("Sort by:", list(SORT_OPTIONS))
-    if sort_by is None:
-        return
     manager.view_all(sort_by)
 
 
@@ -87,8 +68,6 @@ def edit_subscription():
         return
 
     sub = pick_subscription("Which subscription do you want to edit?")
-    if sub is None:
-        return
 
     while True:
         fields = [
@@ -99,31 +78,38 @@ def edit_subscription():
             Choice(f"Importance ({sub.importance})", value="importance"),
             Choice(f"Start date ({sub.start_date})", value="start_date"),
         ]
-        field = ask_choice(f"What do you want to change in {sub.name}?", fields + [DONE])
+        field = ask_choice(f"What do you want to change in {sub.name}?", fields + [DONE], back=False)
         if field is None or field == DONE:
             break
 
-        if field == "name":
-            manager.edit(sub, "name", ask_name("New name: ", manager.names(except_for=sub)))
-        elif field == "price":
-            manager.edit(sub, "price", ask_price("New price (SAR): "))
-        elif field == "category":
-            manager.edit(sub, "category", ask_choice("New category:", CATEGORIES) or sub.category)
-        elif field == "importance":
-            manager.edit(sub, "importance", ask_choice("New importance:", IMPORTANCE_LEVELS) or sub.importance)
-        elif field == "start_date":
-            manager.edit(sub, "start_date", ask_start_date("New start date (YYYY-MM-DD): "))
-        elif field == "cycle":
-            answer = ask_cycle("New cycle:")
-            if answer:
-                # Each cycle is a different class, so make a new object
-                new_cycle, months = answer
-                new_sub = create_subscription(new_cycle, sub.name, sub.price, sub.category,
-                                              sub.start_date, months, sub.importance)
-                manager.replace(sub, new_sub)
-                sub = new_sub
-
+        # Going back while changing a field returns to this list, not to the main menu
+        try:
+            sub = change_field(sub, field)
+        except GoBack:
+            continue
         console.print(f"[green]Saved: {sub}[/green]\n")
+
+
+def change_field(sub, field: str):
+    """Ask for the new value of one field, save it, and return the (maybe new) subscription."""
+    if field == "name":
+        manager.edit(sub, "name", ask_name("New name: ", manager.names(except_for=sub)))
+    elif field == "price":
+        manager.edit(sub, "price", ask_price("New price (SAR): "))
+    elif field == "category":
+        manager.edit(sub, "category", ask_choice("New category:", CATEGORIES))
+    elif field == "importance":
+        manager.edit(sub, "importance", ask_choice("New importance:", IMPORTANCE_LEVELS))
+    elif field == "start_date":
+        manager.edit(sub, "start_date", ask_start_date("New start date (YYYY-MM-DD): "))
+    elif field == "cycle":
+        # Each cycle is a different class, so make a new object
+        new_cycle, months = ask_cycle("New cycle:")
+        new_sub = create_subscription(new_cycle, sub.name, sub.price, sub.category,
+                                      sub.start_date, months, sub.importance)
+        manager.replace(sub, new_sub)
+        return new_sub
+    return sub
 
 
 def delete_subscription():
@@ -133,8 +119,6 @@ def delete_subscription():
         return
 
     subscription = pick_subscription("Which subscription do you want to delete?")
-    if subscription is None:
-        return
 
     if ask_confirm(f'Are you sure you want to delete "{subscription.name}"?'):
         manager.delete(subscription)
@@ -159,7 +143,7 @@ def main():
         console.clear()
         show_banner()
 
-        choice = ask_choice("What do you want to do?", list(MENU_OPTIONS) + [EXIT])
+        choice = ask_choice("What do you want to do?", list(MENU_OPTIONS) + [EXIT], back=False)
 
         # choice is None when the user presses Ctrl+C
         if choice is None or choice == EXIT:
@@ -169,6 +153,8 @@ def main():
         # Ctrl+C in the middle of an option cancels it and goes back to the menu
         try:
             MENU_OPTIONS[choice]()
+        except GoBack:
+            continue  # straight back to the menu, no "Press Enter"
         except (KeyboardInterrupt, EOFError):
             console.print("\n[yellow]Cancelled.[/yellow]")
 

@@ -16,6 +16,7 @@
 - Delete a subscription after confirming.
 - Save my subscriptions automatically so they are still there the next time I open the app.
 - Get a clear message and try again when I type something wrong (letters instead of a price, a wrong date, a name that already exists...).
+- Go back at any step by typing `back` or picking Back from a list.
 
 
 
@@ -29,3 +30,4 @@
  - type in 4 to edit a subscription.
  - type in 5 to delete a subscription.
  - type in 6 to exit.
+ - type in back (or pick Back) at any step to go back without saving.

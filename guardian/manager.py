@@ -78,7 +78,7 @@ class SubscriptionManager:
         table.add_column("Name", style="bold")
         # Numbers and dates never wrap; only the name wraps if the window is too narrow
         table.add_column("Price", justify="right", no_wrap=True)
-        table.add_column("/Month", justify="right", no_wrap=True)
+        table.add_column("Per Month", justify="right", no_wrap=True)
         table.add_column("Cycle", no_wrap=True)
         table.add_column("Category")
         table.add_column("Start", no_wrap=True)
