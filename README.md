@@ -1,44 +1,53 @@
-# UNIT-PROJECT-1
+# Daily News & Weather
 
+## Overview
+A Python terminal application that allows users to read the latest news, search for specific topics, check weather information for different cities, and generate PDF reports.
 
-## Based on what you’ve learned until now , create a project of your choosing (impress us with your imagination) . This project must at least satisfy the following minimum requirements :
+## Features
+- **Top News:** Displays the latest news articles.
+- **Saudi News:** Retrieves news from Al Watan.
+- **Sports News:** Displays sports-related news.
+- **Technology News:** Shows the latest technology news.
+- **Search News:** Finds articles using keywords.
+- **Weather:** Displays weather information for a selected city.
+- **PDF Report:** Saves collected news and weather information in a PDF file.
+- **Exit:** Closes the application.
 
-- Must be interactive on CLI.
-- Use your coding skills in Python accurately.
-- Organize Your Code into modules & (or packages)
-- Use git & Github to track changes in your code.
+## Technologies
+- Python
+- Requests
+- NewsAPI
+- Open-Meteo
+- RSS Feed
+- Rich
+- ReportLab
 
-## Example Project :  An online Grocery Store :
+## Installation
 
-#### Overview : An online store that sells fruits to customers. This online store has 2 main users. The customer and the manager of the store . Each one of them should be able to do the following tasks for the store to function properly . 
+1. Install the required packages:
 
-### Features & User Stories
-#### As a customer I should be able to do the following :
-- Browse  Products . 
-- View the product info (summary, specs, price, quantity , etc.)
-- Search for Products.
-- Get recommendations for my next purchase based on my purchase history.
-- Add Products to the shopping cart .
-- Remove a product from the shopping cart.
-- List the products in my shopping cart. 
-- Continue to checkout . 
-- Fill in my address for delivery.
-- Get receipt of my purchases.
-- Check delivery status . 
+   ```bash
+   pip install -r requirements.txt
+   ```
 
+2. Add your NewsAPI key to the `.env` file:
 
+   ```env
+   NEWS_API_KEY=your_api_key_here
+   ```
 
-#### Usage :
- Explain to the user how to use your project . 
- for example:
- - type in search product_name to search for a product.
- - type in list_products to show all the products in the grocery.
- - type in show product_name to get information about this product.
- - type in buy product_name to buy the product . 
- - and so on...
+3. Run the application:
 
+   ```bash
+   python daily_assistant/main.py
+   ```
 
-### For your project. Edit this README.md file to include your own project name,  overview, user stories, and usage. 
+## Project Structure
+- `main.py` — Main menu and application control.
+- `news.py` — News retrieval and search.
+- `weather.py` — Weather information.
+- `pdf_report.py` — PDF report generation.
+- `ui.py` — Terminal interface components.
 
-### NOTE: before submitting the final project, please do the following command:
-`pip freeze > requirements.txt` to enable use to know & use the packages used in your project.
+## Purpose
+This project demonstrates Python programming, API integration, modular development, error handling, and PDF generation.
