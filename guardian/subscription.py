@@ -6,7 +6,7 @@ from guardian.display import money
 
 # Fixed categories (tuple because they never change)
 CATEGORIES = ("video", "music", "sport", "gaming", "apps", "other")
-CYCLES = ("monthly", "yearly")
+CYCLES = ("monthly", "yearly", "custom")
 
 
 class Subscription:
@@ -50,6 +50,10 @@ class Subscription:
         """Total money paid for this subscription since the start date."""
         return self.price * self.payments_made()
 
+    def cycle_name(self) -> str:
+        """The cycle as the user sees it: 'monthly', 'yearly', '18 months'..."""
+        return self.cycle
+
     def to_dict(self) -> dict:
         """Turn the subscription into a dictionary so it can be saved in JSON."""
         return {
@@ -61,7 +65,7 @@ class Subscription:
         }
 
     def __str__(self):
-        return f"{self.name} ({money(self.price)} / {self.cycle})"
+        return f"{self.name} ({money(self.price)} / {self.cycle_name()})"
 
 
 class MonthlySubscription(Subscription):
@@ -88,8 +92,34 @@ class YearlySubscription(Subscription):
         return relativedelta(years=1)
 
 
-def create_subscription(cycle: str, name: str, price: float, category: str, start_date: date) -> Subscription:
-    """Make a MonthlySubscription or a YearlySubscription depending on the cycle."""
+class CustomSubscription(Subscription):
+    """A subscription that renews every N months (3, 6, 18...)."""
+
+    def __init__(self, name: str, price: float, category: str, start_date: date, months: int):
+        super().__init__(name, price, category, start_date)
+        self.cycle = "custom"
+        self.months = months
+
+    def monthly_cost(self) -> float:
+        return self.price / self.months
+
+    def one_cycle(self) -> relativedelta:
+        return relativedelta(months=self.months)
+
+    def cycle_name(self) -> str:
+        return f"{self.months} months"
+
+    def to_dict(self) -> dict:
+        data = super().to_dict()
+        data["months"] = self.months
+        return data
+
+
+def create_subscription(cycle: str, name: str, price: float, category: str, start_date: date,
+                        months: int = None) -> Subscription:
+    """Make the right kind of subscription depending on the cycle."""
     if cycle == "monthly":
         return MonthlySubscription(name, price, category, start_date)
-    return YearlySubscription(name, price, category, start_date)
+    if cycle == "yearly":
+        return YearlySubscription(name, price, category, start_date)
+    return CustomSubscription(name, price, category, start_date, months)

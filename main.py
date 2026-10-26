@@ -1,11 +1,11 @@
 from questionary import Choice
 from rich.console import Console
 
+from guardian.display import show_banner
 from guardian.manager import SORT_OPTIONS, SubscriptionManager
 from guardian.reports import show_spending_report
-from guardian.display import show_banner
 from guardian.subscription import CATEGORIES, CYCLES, create_subscription
-from guardian.validation import ask_choice, ask_confirm, ask_name, ask_price, ask_start_date
+from guardian.validation import ask_choice, ask_confirm, ask_months, ask_name, ask_price, ask_start_date
 
 console = Console()
 manager = SubscriptionManager()
@@ -20,14 +20,24 @@ def other_names(subscription=None) -> list[str]:
     return [sub.name for sub in manager.subscriptions if sub is not subscription]
 
 
+def ask_cycle(message: str) -> tuple[str, int | None] | None:
+    """Ask for the cycle, and for the number of months if it is custom (None if Ctrl+C)."""
+    cycle = ask_choice(message, CYCLES)
+    if cycle is None:
+        return None
+    months = ask_months("How many months is one cycle? ") if cycle == "custom" else None
+    return cycle, months
+
+
 def add_subscription():
     console.print("\n[bold]Add a new subscription[/bold]")
     name = ask_name("Name: ", other_names())
     price = ask_price("Price (SAR): ")
 
-    cycle = ask_choice("Cycle:", CYCLES)
-    if cycle is None:
+    answer = ask_cycle("Cycle:")
+    if answer is None:
         return
+    cycle, months = answer
 
     category = ask_choice("Category:", CATEGORIES)
     if category is None:
@@ -35,7 +45,7 @@ def add_subscription():
 
     start_date = ask_start_date("Start date (YYYY-MM-DD): ")
 
-    subscription = create_subscription(cycle, name, price, category, start_date)
+    subscription = create_subscription(cycle, name, price, category, start_date, months)
     manager.add(subscription)
     console.print(f"[green]Added {subscription}[/green]")
     console.print(f"Next renewal: [bold]{subscription.renewal_date()}[/bold] "
@@ -72,7 +82,7 @@ def edit_subscription():
         fields = [
             Choice(f"Name ({sub.name})", value="name"),
             Choice(f"Price ({sub.price:g} SAR)", value="price"),
-            Choice(f"Cycle ({sub.cycle})", value="cycle"),
+            Choice(f"Cycle ({sub.cycle_name()})", value="cycle"),
             Choice(f"Category ({sub.category})", value="category"),
             Choice(f"Start date ({sub.start_date})", value="start_date"),
         ]
@@ -89,10 +99,11 @@ def edit_subscription():
         elif field == "start_date":
             sub.start_date = ask_start_date("New start date (YYYY-MM-DD): ")
         elif field == "cycle":
-            new_cycle = ask_choice("New cycle:", CYCLES)
-            if new_cycle and new_cycle != sub.cycle:
-                # Monthly and yearly are different classes, so make a new object
-                new_sub = create_subscription(new_cycle, sub.name, sub.price, sub.category, sub.start_date)
+            answer = ask_cycle("New cycle:")
+            if answer:
+                # Each cycle is a different class, so make a new object
+                new_cycle, months = answer
+                new_sub = create_subscription(new_cycle, sub.name, sub.price, sub.category, sub.start_date, months)
                 manager.replace(sub, new_sub)
                 sub = new_sub
 

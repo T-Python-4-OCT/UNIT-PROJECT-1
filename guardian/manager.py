@@ -66,7 +66,7 @@ class SubscriptionManager:
                 sub.name,
                 money(sub.price),
                 money(sub.monthly_cost()),
-                sub.cycle,
+                sub.cycle_name(),
                 sub.category,
                 str(sub.start_date),
                 str(sub.renewal_date()),

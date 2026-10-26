@@ -61,4 +61,5 @@ def subscription_from_dict(data: dict) -> Subscription:
         price=float(data["price"]),
         category=data["category"],
         start_date=date.fromisoformat(data["start_date"]),
+        months=data.get("months"),
     )

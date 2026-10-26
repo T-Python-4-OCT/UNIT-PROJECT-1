@@ -9,6 +9,7 @@ from guardian.subscription import CATEGORIES, CYCLES
 
 MAX_NAME_LENGTH = 30
 MAX_PRICE = 100_000
+MAX_MONTHS = 60
 OLDEST_START_DATE = date(2000, 1, 1)
 
 
@@ -36,6 +37,12 @@ def price_error(price: float) -> str | None:
     return None
 
 
+def months_error(months: int) -> str | None:
+    if months < 1 or months > MAX_MONTHS:
+        return f"The number of months must be from 1 to {MAX_MONTHS}."
+    return None
+
+
 def start_date_error(start_date: date) -> str | None:
     if start_date > date.today():
         return "The start date can't be in the future."
@@ -57,6 +64,12 @@ def subscription_data_error(data: dict, taken_names: list[str] = ()) -> str | No
         return f"unknown cycle {data.get('cycle')!r}"
     if data.get("category") not in CATEGORIES:
         return f"unknown category {data.get('category')!r}"
+    if data["cycle"] == "custom":
+        months = data.get("months")
+        if not isinstance(months, int) or isinstance(months, bool):
+            return "a custom subscription needs a whole number of months"
+        if months_error(months):
+            return months_error(months)
     return name_error(name, taken_names) or price_error(price) or start_date_error(start_date)
 
 
@@ -85,6 +98,21 @@ def ask_price(message: str) -> float:
         console.print(f"[red]{error}[/red]")
         return ask_price(message)
     return price
+
+
+def ask_months(message: str) -> int:
+    """Ask for a whole number of months from 1 to MAX_MONTHS."""
+    try:
+        months = int(input(message))
+    except ValueError:
+        console.print("[red]Enter a whole number of months (example: 6 or 18).[/red]")
+        return ask_months(message)
+
+    error = months_error(months)
+    if error:
+        console.print(f"[red]{error}[/red]")
+        return ask_months(message)
+    return months
 
 
 def ask_date(message: str) -> date:
