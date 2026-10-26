@@ -115,8 +115,12 @@ def ask_float(prompt, low, high, default=None):
 def ask_int(prompt, low, high, default=None):
     while True:
         raw = ask(prompt, default)
-        if raw.isdigit() and low <= int(raw) <= high:
-            return int(raw)
+        try:
+            value = int(raw)
+        except ValueError:
+            value = None
+        if value is not None and low <= value <= high:
+            return value
         error(f"Please enter a whole number between {low} and {high}.")
 
 

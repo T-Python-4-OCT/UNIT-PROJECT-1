@@ -12,6 +12,17 @@ def _target_reps(reps_text):
     return int(reps_text.split("-")[0])
 
 
+def _parse_reps(raw):
+    """Parse a completed rep count within the app's supported training range."""
+    try:
+        reps = int(raw)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Enter a whole number from 1 to 100.") from exc
+    if not 1 <= reps <= 100:
+        raise ValueError("Enter a whole number from 1 to 100.")
+    return reps
+
+
 def rest_timer(seconds):
     """Countdown that can be skipped with Ctrl+C."""
     try:
@@ -52,23 +63,28 @@ def run(account, day):
               + f"  ·  {item['sets']} × {item['reps']}  ·  rest {item['rest']} s")
         if ex:
             ui.info(f"  Tip: {ex['tip']}")
-        load_raw = ui.ask("  Weight used in kg (Enter = bodyweight)", "")
-        try:
-            load = float(load_raw) if load_raw else 0.0
-        except ValueError:
-            load = 0.0
+        load = ui.ask_float("  Weight used in kg (0 = bodyweight)", 0, 500, 0)
 
         completed = 0
         for set_no in range(1, item["sets"] + 1):
             target = _target_reps(item["reps"])
-            raw = ui.ask(f"    Set {set_no}/{item['sets']} — reps done", target).lower()
-            if raw == "q":
-                quit_early = True
+            while True:
+                raw = ui.ask(f"    Set {set_no}/{item['sets']} — reps done "
+                             "(q = finish, s = skip)", target).lower()
+                if raw == "q":
+                    quit_early = True
+                    break
+                if raw == "s":
+                    ui.info("    Skipped.")
+                    break
+                try:
+                    reps = _parse_reps(raw)
+                except ValueError as exc:
+                    ui.error(str(exc))
+                    continue
                 break
-            if raw == "s":
-                ui.info("    Skipped.")
+            if raw in ("q", "s"):
                 break
-            reps = int(raw) if raw.isdigit() and int(raw) <= 100 else target
             completed += 1
             volume += reps * load
             if reps >= target + 3:

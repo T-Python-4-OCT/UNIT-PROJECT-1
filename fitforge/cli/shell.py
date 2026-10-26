@@ -68,14 +68,42 @@ class Shell:
     # ------------------------------------------------------------ login
     def login(self):
         users = storage.list_users()
-        options = [(u, f"Continue as {u}") for u in users] + [("__new__", "Create a new trainee")]
-        if users:
+        corrupt_users = storage.list_corrupt_users()
+        for name in corrupt_users:
+            ui.warn(f"Save for '{name}' is damaged or unreadable.")
+        options = [(u, f"Continue as {u}") for u in users]
+        options += [(f"__recreate__:{name}", f"Recreate damaged profile: {name}")
+                    for name in corrupt_users]
+        options.append(("__new__", "Create a new trainee"))
+        if users or corrupt_users:
             choice = ui.ask_choice("Who's training today?", options)
         else:
             ui.info("Welcome! Let's set up your first profile.")
             choice = "__new__"
 
         if choice == "__new__":
+            name = None
+        elif choice.startswith("__recreate__:"):
+            name = choice.removeprefix("__recreate__:").replace("_", " ")
+        else:
+            try:
+                self.account = storage.Account.load(choice)
+            except storage.SaveError as exc:
+                ui.warn(f"Couldn't load that save: {exc}")
+                if ui.confirm("Recreate this profile?", default=False):
+                    name = choice
+                else:
+                    return self.login()
+            else:
+                ui.success(f"Welcome back, {self.account.profile.name}!")
+                self.greet()
+                return
+
+        if name is not None or choice == "__new__":
+            self._create_profile(name)
+
+    def _create_profile(self, name=None):
+        if name is None:
             while True:
                 name = ui.ask("Your name")
                 if not name:
@@ -91,10 +119,6 @@ class Shell:
             ui.success("Profile saved. Here's what I built for you:")
             views.show_stats(self.account)
             views.show_plan(self.account)
-        else:
-            self.account = storage.Account.load(choice)
-            ui.success(f"Welcome back, {self.account.profile.name}!")
-            self.greet()
 
     def greet(self):
         today = session.pick_today(self.account.plan)
@@ -121,7 +145,10 @@ class Shell:
         except KeyboardInterrupt:
             print()
         if self.account:
-            self.account.save()
+            try:
+                self.account.save()
+            except OSError as exc:
+                ui.error(f"Couldn't save your profile: {exc}")
         print(ui.color("\n  Saved. Stay strong! 💪\n", "green"))
 
     def dispatch(self, line):

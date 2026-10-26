@@ -1,9 +1,15 @@
+import json
+import tempfile
 import unittest
 from dataclasses import replace
+from pathlib import Path
+from unittest.mock import patch
 
 from fitforge.core import calculator, planner
 from fitforge.core.profile import Profile
 from fitforge.data import exercises as db
+from fitforge import storage
+from fitforge.cli.session import _parse_reps
 
 
 def make_profile(**changes):
@@ -96,6 +102,66 @@ class PlannerTests(unittest.TestCase):
         p = make_profile()
         plan = planner.build_plan(p)
         self.assertGreater(planner.weekly_burn(plan, p.weight_kg), 0)
+
+
+class InputAndSaveSafetyTests(unittest.TestCase):
+    def test_profile_rejects_out_of_range_values(self):
+        with self.assertRaises(ValueError):
+            make_profile(age=13)
+        with self.assertRaises(ValueError):
+            make_profile(height_cm=231)
+        with self.assertRaises(ValueError):
+            make_profile(weight_kg=301)
+        with self.assertRaises(ValueError):
+            make_profile(days_per_week=7)
+        with self.assertRaises(ValueError):
+            make_profile(hours_per_session=float("inf"))
+
+    def test_reps_are_bounded(self):
+        self.assertEqual(_parse_reps("8"), 8)
+        self.assertEqual(_parse_reps("100"), 100)
+        for invalid in ("0", "101", "-1", "abc", ""):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                _parse_reps(invalid)
+
+    def test_user_names_cannot_escape_save_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(storage, "SAVE_DIR", Path(directory)):
+                path = storage.path_for("../../outside")
+                self.assertEqual(path.parent, Path(directory).resolve())
+                self.assertEqual(path.name, "outside.json")
+
+    def test_corrupt_save_is_reported_and_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(storage, "SAVE_DIR", Path(directory)):
+                (Path(directory) / "broken.json").write_text("{", encoding="utf-8")
+                self.assertEqual(storage.list_users(), [])
+                self.assertEqual(storage.list_corrupt_users(), ["broken"])
+                with self.assertRaises(storage.SaveError):
+                    storage.Account.load("broken")
+
+    def test_hand_edited_save_with_invalid_profile_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(storage, "SAVE_DIR", Path(directory)):
+                account = storage.Account(make_profile(), planner.build_plan(make_profile()))
+                account.save()
+                path = storage.path_for("Test")
+                payload = json.loads(path.read_text(encoding="utf-8"))
+                payload["profile"]["weight_kg"] = 900
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                self.assertEqual(storage.list_corrupt_users(), ["test"])
+                with self.assertRaises(storage.SaveError):
+                    storage.Account.load("Test")
+                payload["profile"]["weight_kg"] = 10 ** 1000
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                with self.assertRaises(storage.SaveError):
+                    storage.Account.load("Test")
+
+    def test_logged_weight_is_bounded(self):
+        account = storage.Account(make_profile())
+        for invalid in (0, 301, float("nan")):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                account.log_weight(invalid)
 
 
 if __name__ == "__main__":
