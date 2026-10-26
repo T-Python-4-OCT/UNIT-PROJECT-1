@@ -26,5 +26,12 @@
         "email": "mm@ad.com",
         "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
         "role": "admin"
+    },
+    {
+        "id": 6,
+        "full_name": "omar",
+        "email": "omar@11.com",
+        "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
+        "role": "trainee"
     }
 ]

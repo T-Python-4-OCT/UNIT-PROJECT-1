@@ -50,5 +50,18 @@
         "percentage": 66.67,
         "trainer_id": 3,
         "date": "2026-10-26"
+    },
+    {
+        "id": 5,
+        "course_id": 1,
+        "course_title": "Python Programming Basics",
+        "trainee_id": 6,
+        "trainee_name": "omar",
+        "assessment_name": "Quiz 1",
+        "score": 30.0,
+        "maximum_score": 50.0,
+        "percentage": 60.0,
+        "trainer_id": 3,
+        "date": "2026-10-26"
     }
 ]

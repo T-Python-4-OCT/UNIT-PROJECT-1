@@ -21,8 +21,6 @@ GRADES_FILE = os.path.join(BASE_FOLDER, "data", "grades.json")
 
 
 def load_grades():
-    """Load grades from the JSON file."""
-
     if not os.path.exists(GRADES_FILE):
         return []
 
@@ -37,8 +35,6 @@ def load_grades():
 
 
 def view_my_grades(user):
-    """Display the logged-in trainee's grades in a table."""
-
     grades = [
         grade
         for grade in load_grades()
@@ -137,13 +133,20 @@ def trainee_page(user):
     selected_index = 0
 
     def get_menu():
-        return [
-            (
-                "class:selected" if index == selected_index else "class:normal",
-                f"  {'❯' if index == selected_index else ' '} {item}\n"
-            )
-            for index, item in enumerate(menu_items)
-        ]
+        lines = []
+
+        for index, item in enumerate(menu_items):
+            if index == selected_index:
+                if item == "Log Out":
+                    lines.append(("class:logout", f"  ❯ {item}"))
+                else:
+                    lines.append(("class:selected", f"  ❯ {item}"))
+            else:
+                lines.append(("class:normal", f"    {item}"))
+
+            lines.append(("", "\n"))
+
+        return lines
 
     bindings = KeyBindings()
 
@@ -164,8 +167,9 @@ def trainee_page(user):
         event.app.exit(result=menu_items[selected_index])
 
     style = Style.from_dict({
-        "selected": "bg:#008080 #ffffff bold",
-        "normal": "#ffffff",
+        "selected": "fg:#ffffff bg:#008080 bold",
+        "normal": "fg:#ffffff",
+        "logout": "fg:#ffffff bg:#ff0000 bold",
     })
 
     actions = {

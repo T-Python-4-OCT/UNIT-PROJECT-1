@@ -34,5 +34,11 @@
         "trainee_id": 2,
         "date": "2026-10-26",
         "status": "Present"
+    },
+    {
+        "course_id": 1,
+        "trainee_id": 6,
+        "date": "2026-10-26",
+        "status": "Present"
     }
 ]

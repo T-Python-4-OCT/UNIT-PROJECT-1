@@ -46,5 +46,11 @@
         "course_id": 1,
         "enrollment_date": "2026-10-25",
         "status": "enrolled"
+    },
+    {
+        "user_id": 6,
+        "course_id": 1,
+        "enrollment_date": "2026-10-26",
+        "status": "enrolled"
     }
 ]
