@@ -1,8 +1,8 @@
 [
     {
         "id": 4,
-        "title": "task fo test",
-        "description": "for test",
+        "title": "Data Backup",
+        "description": "Perform a backup of important system files",
         "assigned_to": "mamdouh",
         "group_id": 2,
         "group_name": "IT Office",
@@ -21,7 +21,7 @@
         "group_name": "IT Support",
         "priority": "Medium",
         "due_date": "2026-10-25",
-        "status": "To Do",
+        "status": "In Progress",
         "created_by": "ahmed",
         "progress": 0
     },
@@ -47,6 +47,19 @@
         "group_name": "IT Support",
         "priority": "High",
         "due_date": "2026-12-26",
+        "status": "Completed",
+        "created_by": "ahmed",
+        "progress": 100
+    },
+    {
+        "id": 8,
+        "title": "Network",
+        "description": "des",
+        "assigned_to": "saad",
+        "group_id": 1,
+        "group_name": "IT Support",
+        "priority": "High",
+        "due_date": "2026-10-27",
         "status": "Completed",
         "created_by": "ahmed",
         "progress": 100

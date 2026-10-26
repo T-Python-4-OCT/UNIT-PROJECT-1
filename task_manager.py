@@ -146,7 +146,7 @@ def update_task(
         if not title:
             return False, "Task title cannot be empty."
 
-    if not title[0].isascii() or not title[0].isalpha():
+    if title is not None and (not title[0].isascii() or not title[0].isalpha()):
         return False, "Task title must start with an English letter."
 
     if description is not None:

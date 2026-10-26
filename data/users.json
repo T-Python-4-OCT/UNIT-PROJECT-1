@@ -44,7 +44,7 @@
     {
         "username": "moath",
         "role": "member",
-        "active": true,
+        "active": false,
         "salt": "5faded2211160a4bf1e176b5c348aae2",
         "password_hash": "9348ab8d7f722e80469a3200a7937d6ce82ae439a2da330a5d038957361fc0fbda86270f833c5e4dff720a4ef1b621a87b3d7c2db3cf852cf46f33c9ca313dfa"
     }
