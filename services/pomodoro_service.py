@@ -103,7 +103,6 @@ def run_live_countdown(total_secs, active_label, bar_color="green", text_color="
       [P] Pause / Resume
       [B] Switch to Break (when studying)
       [Q] Cancel & Back to Menu
-    Returns "completed" or "switch_to_break".
     """
     _clear_key_buffer()
     paused = False
@@ -154,9 +153,9 @@ def run_live_countdown(total_secs, active_label, bar_color="green", text_color="
 
 
 @log_activity("Study Timer Session")
-def start_study_timer(data, subject, duration_mins, is_demo=False):
+def start_study_timer(data, subject, duration_mins):
     session = StudyTimerSession(subject.code, subject.name, duration_mins)
-    total_secs = 10 if is_demo else session.total_seconds
+    total_secs = session.total_seconds
 
     # Count previous study sessions for this course
     notes = data.get("notes", [])
@@ -191,7 +190,7 @@ def start_study_timer(data, subject, duration_mins, is_demo=False):
         # If the user pressed [B], switch directly to the break timer
         if status == "switch_to_break":
             print_info("Switching to Break Timer...")
-            start_break_timer(duration_mins=5, is_demo=is_demo)
+            start_break_timer(duration_mins=5)
             return
 
         # Save a study note automatically when the timer finishes
@@ -215,9 +214,9 @@ def start_study_timer(data, subject, duration_mins, is_demo=False):
 
 
 @log_activity("Break Timer Session")
-def start_break_timer(duration_mins, is_demo=False):
+def start_break_timer(duration_mins):
     session = BreakTimerSession(duration_mins)
-    total_secs = 10 if is_demo else session.total_seconds
+    total_secs = session.total_seconds
 
     # Break timer uses a magenta color theme so it looks distinct from the study timer
     console.print()
@@ -256,9 +255,8 @@ class PomodoroService(BaseService):
     section_subtitle = "Track your study time and breaks for each course"
     menu_prompt = "Timer Menu:"
     menu_options = [
-        ("⚡ Quick Study Demo (10 Seconds)", "demo"),
-        ("🍅 Standard Study Timer (25 Minutes)", "standard"),
-        ("🎚️  Custom Study Timer", "custom"),
+        ("🍅 Standard Timer (25 Minutes)", "standard"),
+        ("🎚️  Custom Timer Duration", "custom"),
         ("☕ Start Break Timer", "break_menu"),
         ("📜 View Activity Log", "view_log"),
     ]
@@ -269,46 +267,38 @@ class PomodoroService(BaseService):
             return False
         return True
 
-    def demo(self):
-        subject = self.select_subject("Select Subject:")
-        if subject:
-            start_study_timer(self.data, subject, duration_mins=25, is_demo=True)
-
     def standard(self):
         subject = self.select_subject("Select Subject:")
         if subject:
-            start_study_timer(self.data, subject, duration_mins=25, is_demo=False)
+            start_study_timer(self.data, subject, duration_mins=25)
 
     def custom(self):
         subject = self.select_subject("Select Subject:")
         if not subject:
             return
-        mins = prompt_int_range("⏳ Study duration in minutes (1 - 180):", 1, 180, 25)
-        start_study_timer(self.data, subject, duration_mins=mins, is_demo=False)
+        mins = prompt_int_range("⏳ Enter timer duration in minutes (1 - 180):", 1, 180, 25)
+        start_study_timer(self.data, subject, duration_mins=mins)
 
     def break_menu(self):
         choice = prompt_select(
             "Select Break Duration:",
             [
-                "1. ⚡ Quick Break Demo (10 Seconds)",
-                "2. ☕ Short Break (5 Minutes)",
-                "3. 🛋️  Long Break (15 Minutes)",
-                "4. 🎚️  Custom Break Duration",
-                "5. 🔙 Back"
+                "1. ☕ Short Break (5 Minutes)",
+                "2. 🛋️  Long Break (15 Minutes)",
+                "3. 🎚️  Custom Break Duration",
+                "4. 🔙 Back"
             ]
         )
-        if not choice or "5." in choice:
+        if not choice or "4." in choice:
             return
 
         if "1." in choice:
-            start_break_timer(duration_mins=5, is_demo=True)
+            start_break_timer(duration_mins=5)
         elif "2." in choice:
-            start_break_timer(duration_mins=5, is_demo=False)
+            start_break_timer(duration_mins=15)
         elif "3." in choice:
-            start_break_timer(duration_mins=15, is_demo=False)
-        elif "4." in choice:
             mins = prompt_int_range("☕ Break duration in minutes (1 - 60):", 1, 60, 10)
-            start_break_timer(duration_mins=mins, is_demo=False)
+            start_break_timer(duration_mins=mins)
 
     def view_log(self):
         try:

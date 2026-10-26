@@ -10,7 +10,7 @@ UniMate is a terminal-based Python app I built to help university students manag
 - **Tasks & Assignments:** Add tasks with due dates and priority levels (`High`, `Medium`, `Low`), mark them as done, and save your scores.
 - **Project Milestones:** Break down any course project into custom steps with percentage weights (`%`). Completing a step automatically updates the progress bar and total score.
 - **Exams & Study Notes:** Schedule upcoming exams, record exam scores, and save or read study notes for your courses.
-- **Study Timer:** Built-in countdown timer (10-second demo, 25-minute standard, or custom time). When the timer finishes, it logs the session to `activity.log` and saves a note automatically.
+- **Study & Break Timer:** Built-in countdown timer (25-minute standard timer, custom study duration, and break timer) with live controls to pause, switch to a break, or cancel. Completed study sessions are logged to `activity.log` and saved to study notes automatically.
 
 ## Project Files
 
@@ -25,7 +25,7 @@ UniMate is a terminal-based Python app I built to help university students manag
   - `project_service.py` - Manage projects and milestone steps.
   - `exam_service.py` - Schedule exams and record grades.
   - `note_service.py` - Create, read, and delete study notes.
-  - `pomodoro_service.py` - Study countdown timer and activity logger.
+  - `pomodoro_service.py` - Study and break countdown timers and activity logger.
 - `storage.py` - Loads and saves data to `unimate_data.json`.
 - `utils.py` - Input validation functions, `questionary` menus, and `rich` print helpers.
 - `seed.py` - Creates fake test data using `Faker` so you can test the app right away.
@@ -40,26 +40,17 @@ UniMate is a terminal-based Python app I built to help university students manag
 
 ## How to Run
 
-1. Clone the repository and go to the project folder:
+1. Go to the project folder:
    ```bash
    cd UNIT-PROJECT-1
    ```
 
-2. Create and activate a virtual environment (optional):
-   ```bash
-   python -m venv venv
-   # On Windows:
-   venv\Scripts\activate
-   # On Mac/Linux:
-   source venv/bin/activate
-   ```
-
-3. Install the required libraries:
+2. Install the required libraries:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Create a `.env` file in the project folder with these default values:
+3. Make sure you have a `.env` file in the project folder with these default values:
    ```env
    DEFAULT_USERNAME=student
    DEFAULT_PASSWORD=1234
@@ -67,12 +58,12 @@ UniMate is a terminal-based Python app I built to help university students manag
    DATA_FILE=unimate_data.json
    ```
 
-5. Generate sample data to test the app:
+4. Generate sample data to test the app:
    ```bash
    python seed.py
    ```
 
-6. Run the app:
+5. Run the app:
    ```bash
    python main.py
    ```
