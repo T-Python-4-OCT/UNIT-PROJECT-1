@@ -6,7 +6,8 @@
         "created_by": "ahmed",
         "members": [
             "sara",
-            "saad"
+            "saad",
+            "fahad"
         ]
     },
     {
@@ -16,21 +17,8 @@
         "created_by": "ahmed",
         "members": [
             "mamdouh",
-            "ali"
+            "ali",
+            "moath"
         ]
-    },
-    {
-        "id": 3,
-        "name": "1",
-        "description": "m",
-        "created_by": "ahmed",
-        "members": []
-    },
-    {
-        "id": 4,
-        "name": "g11",
-        "description": "des",
-        "created_by": "ahmed",
-        "members": []
     }
 ]

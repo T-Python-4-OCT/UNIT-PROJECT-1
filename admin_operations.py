@@ -649,11 +649,3 @@ class AdminOperations:
             if success else f"[red]{message}[/red]"
         )
         
-# Test the AdminOperations class
-if __name__ == "__main__":
-   admin = AdminOperations({"username": "admin", "role": "admin"})
-   admin.show_users()
-   admin.add_user()
-   admin.create_new_task()
-   admin.show_all_tasks()
-   admin.add_group_member()

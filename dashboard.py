@@ -190,6 +190,4 @@ def show_admin_dashboard():
                 padding=(0, 1),
             )
         )
-# Test the dashboard display
-if __name__ == "__main__":
-    show_admin_dashboard()
+

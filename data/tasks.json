@@ -34,8 +34,21 @@
         "group_name": "IT Support",
         "priority": "High",
         "due_date": "2026-11-25",
-        "status": "To Do",
+        "status": "In Progress",
         "created_by": "ahmed",
-        "progress": 0
+        "progress": 10
+    },
+    {
+        "id": 7,
+        "title": "Network Troubleshooting",
+        "description": "Check network",
+        "assigned_to": "saad",
+        "group_id": 1,
+        "group_name": "IT Support",
+        "priority": "High",
+        "due_date": "2026-12-26",
+        "status": "Completed",
+        "created_by": "ahmed",
+        "progress": 100
     }
 ]
