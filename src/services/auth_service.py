@@ -1,29 +1,25 @@
-import getpass
 import hmac
-import json
 import os
+
 from dotenv import load_dotenv
-from src.utils import display as ui
-from src.utils.security import hash_password, is_hashed, verify_password
+
+from src import config
 from src.models.user import Manager, Dispatcher, FieldSupervisor, FleetOfficer, User
+from src.utils import display as ui
+from src.utils.json_handler import load_json, save_json
+from src.utils.security import (hash_password, is_hashed, is_valid_email,
+                                password_problems, verify_password)
 
 load_dotenv()
 
-USERS_FILE = "data/users.json"
 
 def load_users():
-    if not os.path.exists(USERS_FILE):
-        return []
-    try:
-        with open(USERS_FILE, "r") as f:
-            return json.load(f)
-    except json.JSONDecodeError:
-        return []
+    return load_json(config.data_path(config.USERS_FILE))
+
 
 def save_users(users):
-    os.makedirs(os.path.dirname(USERS_FILE), exist_ok=True)
-    with open(USERS_FILE, "w") as f:
-        json.dump(users, f, indent=2)
+    save_json(config.data_path(config.USERS_FILE), users)
+
 
 def migrate_passwords():
     """One-time upgrade: turn any plain-text passwords in users.json into hashes."""
@@ -37,92 +33,126 @@ def migrate_passwords():
         save_users(users)
     return changed
 
-def register_user():
-    print("\n--- Register New User ---")
-    user_name = input("Enter username: ").strip()
-    
+
+def create_user(user_name, email, password, role, extra=""):
+    """Validate and store a new account. Returns (ok, message). No prompts here."""
+    user_name = " ".join(str(user_name).split())
+    if not user_name:
+        return False, "Username can't be empty."
+    if not is_valid_email(email):
+        return False, "Invalid email format."
+    problems = password_problems(password)
+    if problems:
+        return False, "Password must contain " + ", ".join(problems) + "."
+    if role not in [key for _, key in config.ROLES]:
+        return False, "Unknown role."
     users = load_users()
     if any(u.get("user_name") == user_name for u in users):
-        print("❌ Username already exists! Try logging in or use another username.")
+        return False, "Username already exists."
+
+    data = {"user_name": user_name, "email": email, "password": hash_password(password), "role": role}
+    extra = " ".join(str(extra).split())
+    if role == "manager":
+        data["department"] = extra or "Operations"
+    elif role == "field_supervisor":
+        data["crisis_zone"] = extra or "General Zone"
+    elif role == "fleet_officer":
+        data["specialty"] = extra or "General Fleet"
+    users.append(data)
+    save_users(users)
+    return True, f"User '{user_name}' registered successfully as {role}!"
+
+
+def register_user(allowed_roles=None):
+    """Interactive registration. `allowed_roles` is a list of (label, key);
+    the public form omits Manager/Dispatcher (a manager creates those)."""
+    roles = allowed_roles or config.PUBLIC_ROLES
+    ui.heading("📝", "Register New User", color=None)
+
+    users = load_users()
+    user_name = ui.ask("Enter username (leave empty to cancel):")
+    if not user_name:
+        print("Registration cancelled.")
+        return None
+    if any(u.get("user_name") == user_name for u in users):
+        ui.error("Username already exists! Try logging in or use another username.")
         return None
 
-    email = input("Enter email: ").strip()
-    password = getpass.getpass("Enter password: ").strip()
-    
-    print("\nSelect Role:")
-    print("1. Manager")
-    print("2. Dispatcher")
-    print("3. Field Supervisor")
-    print("4. Fleet Officer")
-    print("5. General User")
-    
-    role_choice = input("Choose role (1-5): ").strip()
-    
-    role_map = {
-        "1": "manager",
-        "2": "dispatcher",
-        "3": "field_supervisor",
-        "4": "fleet_officer",
-        "5": "general"
-    }
-    
-    role = role_map.get(role_choice, "general")
-    
-    extra_field = {}
+    while True:
+        email = ui.ask("Enter email (leave empty to cancel):")
+        if not email:
+            print("Registration cancelled.")
+            return None
+        if is_valid_email(email):
+            break
+        ui.error("Invalid email format. Example: name@example.com")
+
+    ui.password_rules_notice()
+    while True:
+        password = ui.ask_password("Enter password:").strip()
+        problems = password_problems(password)
+        if problems:
+            ui.error("Password must contain " + ", ".join(problems) + ".")
+            continue
+        if ui.ask_password("Confirm password:").strip() != password:
+            ui.error("Passwords don't match. Try again.")
+            continue
+        break
+
+    idx = ui.select("Select Role", [label for label, _ in roles], prompt="Choose role")
+    role = roles[idx][1] if idx >= 0 else "general"
+
+    extra = ""
     if role == "manager":
-        extra_field["department"] = input("Enter department (e.g., Operations): ").strip() or "Operations"
+        extra = ui.ask("Enter department (e.g., Operations):")
     elif role == "field_supervisor":
-        extra_field["crisis_zone"] = input("Enter assigned crisis zone: ").strip() or "General Zone"
+        extra = ui.ask("Enter assigned crisis zone:")
     elif role == "fleet_officer":
-        extra_field["specialty"] = input("Enter fleet specialty (e.g., Drones, Heavy Vehicles): ").strip() or "General Fleet"
+        extra = ui.ask("Enter fleet specialty (e.g., Drones, Heavy Vehicles):")
 
-    user_data = {
-        "user_name": user_name,
-        "email": email,
-        "password": hash_password(password),
-        "role": role,
-        **extra_field
-    }
+    ok, msg = create_user(user_name, email, password, role, extra)
+    (ui.ok if ok else ui.error)(msg)
+    return ok
 
-    users.append(user_data)
-    save_users(users)
-    print(f"✅ User '{user_name}' registered successfully as {role}!")
-    return user_data
+
+def _build_user(data):
+    name, email = data["user_name"], data.get("email")
+    role = data.get("role")
+    if role == "manager":
+        return Manager(name, email, data.get("department", "Operations"))
+    if role == "dispatcher":
+        return Dispatcher(name, email)
+    if role == "field_supervisor":
+        return FieldSupervisor(name, email, data.get("crisis_zone", "General Zone"))
+    if role == "fleet_officer":
+        return FleetOfficer(name, email, data.get("specialty", "General Fleet"))
+    return User(name, email, role="general")
+
+
+def authenticate(user_name, password):
+    """Returns a user object when the credentials are right, otherwise None."""
+    admin_user = os.getenv("ADMIN_USERNAME")
+    admin_pass = os.getenv("ADMIN_PASSWORD") or os.getenv("ADMIN_DEFAULT_PASSWORD")
+    if (admin_user and admin_pass and user_name == admin_user
+            and hmac.compare_digest(password.encode(), admin_pass.encode())):
+        return Manager(user_name, "admin@system.com", "Executive Operations")
+
+    for data in load_users():
+        if data.get("user_name") == user_name and verify_password(password, data.get("password")):
+            return _build_user(data)
+    return None
+
 
 def login_user():
     ui.clear()
     ui.display_header()
     ui.login_panel()
     user_name = ui.ask("Username:")
-    password = getpass.getpass("Password: ").strip()
+    password = ui.ask_password("Password:").strip()
 
-    # 1. التحقق أولاً من حساب المدير من ملف .env
-    admin_env_user = os.getenv("ADMIN_USERNAME")
-    admin_env_pass = os.getenv("ADMIN_PASSWORD") or os.getenv("ADMIN_DEFAULT_PASSWORD")
-
-    if (admin_env_user and admin_env_pass
-            and user_name == admin_env_user
-            and hmac.compare_digest(password.encode(), admin_env_pass.encode())):
-        print(f"✨ Welcome back, System Admin '{user_name}'! Login successful.")
-        return Manager(user_name, "admin@system.com", "Executive Operations")
-
-    # 2. التحقق من بقية المستخدمين المسجلين في ملف users.json
-    users = load_users()
-    for user_data in users:
-        if user_data.get("user_name") == user_name and verify_password(password, user_data.get("password")):
-            print(f"✨ Welcome back, {user_name}! Login successful.")
-            role = user_data.get("role")
-            
-            if role == "manager":
-                return Manager(user_name, user_data.get("email"), user_data.get("department", "Operations"))
-            elif role == "dispatcher":
-                return Dispatcher(user_name, user_data.get("email"))
-            elif role == "field_supervisor":
-                return FieldSupervisor(user_name, user_data.get("email"), user_data.get("crisis_zone", "General Zone"))
-            elif role == "fleet_officer":
-                return FleetOfficer(user_name, user_data.get("email"), user_data.get("specialty", "General Fleet"))
-            else:
-                return User(user_name, user_data.get("email"), role="general")
-
-    print("❌ Invalid username or password.")
+    user = authenticate(user_name, password)
+    if user:
+        print(f"✨ Welcome back, {user_name}! Login successful.")
+        return user
+    ui.error("Invalid username or password.")
     return None

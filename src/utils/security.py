@@ -7,6 +7,7 @@ own random salt, so two users with the same password get different hashes.
 import hashlib
 import hmac
 import os
+import re
 
 PREFIX = "scrypt"
 N, R, P = 2 ** 14, 8, 1      # cost parameters (higher = slower = harder to brute-force)
@@ -40,3 +41,25 @@ def verify_password(password: str, stored: str) -> bool:
     except (ValueError, TypeError):
         return False
     return hmac.compare_digest(digest, bytes.fromhex(hash_hex))
+
+
+# ---------------------------------------------------------------- validation
+EMAIL_RE = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$")
+MIN_PASSWORD_LENGTH = 8
+
+
+def is_valid_email(email: str) -> bool:
+    """name@domain.tld  (no spaces, no double dots, TLD of at least 2 letters)."""
+    return bool(email) and len(email) <= 120 and ".." not in email and bool(EMAIL_RE.match(email))
+
+
+def password_problems(password: str) -> list:
+    """Returns what is missing from the password (an empty list means it is OK)."""
+    problems = []
+    if len(password) < MIN_PASSWORD_LENGTH:
+        problems.append(f"at least {MIN_PASSWORD_LENGTH} characters")
+    if not any(c.isupper() for c in password):
+        problems.append("an UPPERCASE letter")
+    if not any(c.islower() for c in password):
+        problems.append("a lowercase letter")
+    return problems

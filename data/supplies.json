@@ -1,92 +1,72 @@
 [
   {
     "id": "SUPP-009",
-    "item_id": "SUPP-009",
     "name": "Advanced First Aid Kit",
     "category": "Medical",
     "quantity": 28,
-    "unit_weight": 3.0,
     "unit_weight_kg": 3.0
   },
   {
     "id": "SUPP-010",
-    "item_id": "SUPP-010",
     "name": "Emergency Surgical Masks (Box)",
     "category": "Medical",
     "quantity": 8,
-    "unit_weight": 1.2,
     "unit_weight_kg": 1.2
   },
   {
     "id": "SUPP-011",
-    "item_id": "SUPP-011",
     "name": "Drinking Water Bottles (Pack)",
     "category": "Food",
     "quantity": 140,
-    "unit_weight": 12.0,
     "unit_weight_kg": 12.0
   },
   {
     "id": "SUPP-012",
-    "item_id": "SUPP-012",
     "name": "High-Energy Protein Rations",
     "category": "Food",
     "quantity": 5,
-    "unit_weight": 5.5,
     "unit_weight_kg": 5.5
   },
   {
     "id": "SUPP-013",
-    "item_id": "SUPP-013",
     "name": "Heavy-Duty All-Weather Tent",
     "category": "Shelter",
     "quantity": 25,
-    "unit_weight": 18.5,
     "unit_weight_kg": 18.5
   },
   {
     "id": "SUPP-014",
-    "item_id": "SUPP-014",
     "name": "Thermal Emergency Blankets",
     "category": "Shelter",
-    "quantity": 60,
-    "unit_weight": 4.0,
+    "quantity": 45,
     "unit_weight_kg": 4.0
   },
   {
     "id": "SUPP-007",
-    "item_id": "SUPP-007",
     "name": "beans",
     "category": "Food",
     "quantity": 100,
-    "unit_weight": 0.25,
     "unit_weight_kg": 0.25
   },
   {
     "id": "SUPP-008",
-    "item_id": "SUPP-008",
     "name": "jouce",
     "category": "Food",
     "quantity": 15,
-    "unit_weight": 0.25,
     "unit_weight_kg": 0.25
   },
   {
     "id": "SUPP-015",
-    "item_id": "SUPP-015",
     "name": "bred",
     "category": "Food",
     "quantity": 100,
-    "unit_weight": 0.15,
     "unit_weight_kg": 0.15
   },
   {
     "id": "SUPP-016",
-    "item_id": "SUPP-016",
     "name": "fefadol",
     "category": "Medical",
     "quantity": 10,
-    "unit_weight": 0.1,
     "unit_weight_kg": 0.1
   }
 ]

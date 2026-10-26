@@ -1,10 +1,12 @@
 """Terminal UI (Rich) — neon "command center" look."""
 import sys
 import time
+from contextlib import contextmanager
 
 from rich import box
 from rich.align import Align
 from rich.console import Console, Group
+from rich.live import Live
 from rich.panel import Panel
 from rich.progress import BarColumn, Progress, TextColumn
 from rich.table import Table
@@ -60,44 +62,145 @@ def ask(label):
     return console.input(f"[{CYAN}]{label}[/] ").strip()
 
 
-def getch():
-    """Read one key without Enter (Windows / Linux / macOS); falls back to Enter."""
+_raw_depth = 0
+
+
+@contextmanager
+def raw_input():
+    """Put the terminal in single-key mode while active (no-op on Windows / non-terminals).
+    Held for the whole menu so keys typed quickly are not lost between reads."""
+    global _raw_depth
+    if sys.platform == "win32" or not sys.stdin.isatty() or _raw_depth > 0:
+        yield                                            # already in single-key mode: don't reset it
+        return
+    import termios
+    import tty
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    tty.setcbreak(fd, termios.TCSADRAIN)                 # keeps Ctrl+C working; doesn't drop typed keys
+    _raw_depth += 1
+    try:
+        yield
+    finally:
+        _raw_depth -= 1
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+
+
+def read_key():
+    """Read one key press without Enter.
+    Returns 'UP', 'DOWN', 'ENTER', 'ESC' or the typed character ('' if unknown)."""
     try:
         if sys.platform == "win32":
             import msvcrt
-            return msvcrt.getwch()
-        import termios
-        import tty
-        fd = sys.stdin.fileno()
-        old = termios.tcgetattr(fd)
-        try:
-            tty.setraw(fd)
-            return sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old)
-    except Exception:
-        input()
-        return ""
+            ch = msvcrt.getwch()
+            if ch in ("\x00", "\xe0"):                 # arrow / function keys come as 2 codes
+                return {"H": "UP", "P": "DOWN"}.get(msvcrt.getwch(), "")
+            if ch == "\x03":
+                raise KeyboardInterrupt
+            return {"\r": "ENTER", "\x1b": "ESC"}.get(ch, ch)
+
+        import os
+        import select
+        with raw_input():
+            fd = sys.stdin.fileno()
+            ch = os.read(fd, 1).decode(errors="ignore")
+            if ch == "\x1b":
+                if select.select([fd], [], [], 0.05)[0]:
+                    seq = os.read(fd, 2).decode(errors="ignore")
+                    return {"[A": "UP", "[B": "DOWN", "OA": "UP", "OB": "DOWN"}.get(seq, "")
+                return "ESC"
+            return "ENTER" if ch in ("\r", "\n") else ch
+    except (ImportError, OSError, ValueError):
+        input()                                          # not a real terminal: fall back to Enter
+        return "ENTER"
+
+
+def ask_password(label="Password:"):
+    """Like getpass, but shows one '*' per typed character (Backspace works)."""
+    console.print(f"[{CYAN}]{label}[/] ", end="")
+    if not (sys.stdin.isatty() and console.is_terminal):
+        import getpass
+        return getpass.getpass("")
+    chars = []
+    with raw_input():
+        while True:
+            key = read_key()
+            if key == "ENTER":
+                break
+            if key in ("\x7f", "\x08"):                 # Backspace (Linux/macOS, Windows)
+                if chars:
+                    chars.pop()
+                    sys.stdout.write("\b \b")
+            elif len(key) == 1 and key.isprintable():
+                chars.append(key)
+                sys.stdout.write("*")
+            sys.stdout.flush()
+    sys.stdout.write("\n")
+    sys.stdout.flush()
+    return "".join(chars)
+
+
+def getch():
+    return read_key()
 
 
 def pause():
     console.print(f"\n[{CYAN}]Press any key to go back...[/]")
-    getch()
+    read_key()
 
 
-def menu(heading_text, options, default_hint=True):
-    """Numbered menu. Option 1 is highlighted; Enter alone picks it.
-    Returns the chosen number as a string, or '' for invalid input."""
-    title(heading_text)
-    console.print()
-    for i, label in enumerate(options, 1):
-        if i == 1 and default_hint:
-            console.print(Text(f" {i}.  {label:<62}", style=f"bold #021320 on {CYAN}"))
-        else:
-            console.print(f" [dim]{i}.[/]  {label}")
-    console.print(f"\n[{DIM}]{'─' * 70}[/]")
-    raw = ask(f"Choose an option (1-{len(options)}):")
-    return raw or "1"
+def select(heading_text, options, prompt="Choose an option"):
+    """Arrow-key menu. Up/Down move the highlight, Enter selects, and typing a
+    number jumps to that option. Returns the chosen index (0-based), or -1 if
+    the fallback (non-interactive) input was invalid."""
+    n = len(options)
+    if heading_text:
+        title(heading_text)
+    interactive = sys.stdin.isatty() and console.is_terminal
+    if not interactive:
+        for i, label in enumerate(options, 1):
+            console.print(f" {i}.  {label}")
+        raw = ask(f"{prompt} (1-{n}):")
+        if not raw:
+            return 0
+        return int(raw) - 1 if raw.isdigit() and 1 <= int(raw) <= n else -1
+
+    def render(idx, done=False):
+        lines = [Text("")]
+        for i, label in enumerate(options):
+            if i == idx:
+                lines.append(Text(f" {i + 1}.  {label:<62}", style=f"bold #021320 on {CYAN}"))
+            else:
+                lines.append(Text.assemble((f" {i + 1}.  ", "dim"), label))
+        lines.append(Text(""))
+        lines.append(Text("─" * 70, style=DIM))
+        tail = Text.assemble((f"{prompt} (1-{n}): ", CYAN), (str(idx + 1), "bold"))
+        if not done:
+            tail.append("   ↑/↓ move · Enter select", style="dim")
+        lines.append(tail)
+        return Group(*lines)
+
+    idx = 0
+    with raw_input(), Live(render(idx), console=console, auto_refresh=False) as live:
+        while True:
+            key = read_key()
+            if key == "UP":
+                idx = (idx - 1) % n
+            elif key == "DOWN":
+                idx = (idx + 1) % n
+            elif key == "ENTER":
+                break
+            elif key.isdigit() and 1 <= int(key) <= n:
+                idx = int(key) - 1
+            live.update(render(idx), refresh=True)
+        live.update(render(idx, done=True), refresh=True)
+    return idx
+
+
+def menu(heading_text, options):
+    """Same as select(), but returns the choice as a '1'-based string."""
+    idx = select(heading_text, options)
+    return str(idx + 1) if idx >= 0 else ""
 
 
 # ------------------------------------------------------------- header / login
@@ -106,6 +209,13 @@ def display_header():
     sub = Text("Secure Emergency Response & Fleet Dispatch Command Center", style=CYAN)
     console.print(Panel(Align.center(Group(Align.center(t), Align.center(sub))),
                         border_style=CYAN, box=box.DOUBLE, padding=(1, 2)))
+
+
+def password_rules_notice():
+    console.print(Panel(
+        Text.assemble(("🔑 Password rules\n", f"bold {YELLOW}"),
+                      ("• At least 8 characters\n• At least one UPPERCASE letter (A-Z)\n• At least one lowercase letter (a-z)", "")),
+        border_style=YELLOW, width=48, padding=(0, 2)))
 
 
 def login_panel():
@@ -151,7 +261,7 @@ def display_supplies_table(supplies):
         except (TypeError, ValueError):
             qty = 0
         qty_cell = f"[{RED}]{qty} (Low)[/]" if qty < 10 else f"[{YELLOW}]{qty}[/]"
-        weight = item.get("unit_weight") or item.get("unit_weight_kg") or 0.0
+        weight = item.get("unit_weight_kg") or item.get("unit_weight") or 0.0
         table.add_row(str(item.get("id") or item.get("item_id") or "N/A"),
                       str(item.get("name") or "Unknown"),
                       str(item.get("category") or "General"), qty_cell, f"{float(weight):.2f}")
@@ -164,18 +274,10 @@ def display_shipments_table(shipments):
                     ("Destination", {}), ("Vehicle", {}), ("Status", {"justify": "center"})]:
         table.add_column(col, **kw)
     for s in shipments:
-        if "items" in s:  # shipments created through the Shipment model
-            items = s.get("items") or []
-            name = items[0]["item_name"] if items else "—"
-            qty = sum(i.get("quantity", 0) for i in items)
-            dest = s.get("destination_crisis")
-            vehicle = s.get("transport_type")
-        else:
-            name, qty = s.get("item_name", "—"), s.get("quantity", 0)
-            dest, vehicle = s.get("destination"), s.get("vehicle")
+        vehicle = s.get("vehicle")
         veh = Text(vehicle) if vehicle else Text("Unassigned", style=RED)
-        table.add_row(str(s.get("shipment_id")), str(name), str(qty), str(dest or "—").title(),
-                      veh, status_badge(s.get("status")))
+        table.add_row(str(s.get("shipment_id")), str(s.get("item_name", "—")), str(s.get("quantity", 0)),
+                      str(s.get("destination") or "—").title(), veh, status_badge(s.get("status")))
     console.print(table)
 
 

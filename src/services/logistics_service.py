@@ -1,315 +1,215 @@
-import json
-import os
-from src.utils.display import display_supplies_table
-from rich.console import Console
-from rich.table import Table
+"""Business logic for supplies, field requests and shipments.
 
-console = Console()
+Nothing in this module calls input() or print(): every function takes plain
+values and returns (ok, message, ...) so it can be unit-tested. The terminal
+screens that ask the questions live in src/flows.py.
+"""
+import re
 
-SUPPLIES_FILE = "data/supplies.json"
-SHIPMENTS_FILE = "data/shipments.json"
-FIELD_REQUESTS_FILE = "data/field_requests.json"
+from src import config
+from src.models.field_request import FieldRequest
+from src.models.shipment import Shipment
+from src.models.supply import SupplyItem
+from src.utils.json_handler import load_json, save_json
 
+
+# ------------------------------------------------------------------ storage
 def load_supplies():
-    if not os.path.exists(SUPPLIES_FILE):
-        return []
-    try:
-        with open(SUPPLIES_FILE, "r") as f:
-            supplies = json.load(f)
-            updated = False
-            max_num = 0
-            
-            for item in supplies:
-                for key in ["id", "item_id", "SUPP_ID", "code"]:
-                    if key in item and item[key]:
-                        val = str(item[key]).strip()
-                        digits = "".join(filter(str.isdigit, val))
-                        if digits.isdigit():
-                            num = int(digits)
-                            if num > max_num:
-                                max_num = num
-            
-            normalized_supplies = []
-            for item in supplies:
-                item_id = ""
-                for key in ["id", "item_id", "SUPP_ID", "code"]:
-                    if key in item and item[key] and str(item[key]).strip():
-                        item_id = str(item[key]).strip()
-                        break
-                
-                if not item_id or item_id.lower() == "none" or not item_id.startswith("SUPP-"):
-                    max_num += 1
-                    item_id = f"SUPP-{max_num:03d}"
-                    updated = True
-                
-                name = next((str(item[k]).strip() for k in ["name", "item_name", "title"] if k in item and item[k]), "Unknown Item")
-                category = next((str(item[k]).strip() for k in ["category", "type"] if k in item and item[k]), "General")
-                
-                quantity = 0
-                for k in ["quantity", "qty", "stock"]:
-                    if k in item:
-                        try:
-                            quantity = int(item[k])
-                            break
-                        except ValueError:
-                            pass
-                
-                unit_weight = 0.0
-                for k in ["unit_weight", "unit_weight_kg", "weight", "kg"]:
-                    if k in item:
-                        try:
-                            unit_weight = float(item[k])
-                            break
-                        except ValueError:
-                            pass
-                
-                normalized_item = {
-                    "id": item_id,
-                    "item_id": item_id,
-                    "name": name,
-                    "category": category,
-                    "quantity": quantity,
-                    "unit_weight": unit_weight,
-                    "unit_weight_kg": unit_weight
-                }
-                
-                if item != normalized_item:
-                    updated = True
-                
-                normalized_supplies.append(normalized_item)
-                
-            if updated:
-                save_supplies(normalized_supplies)
-                
-            return normalized_supplies
-    except json.JSONDecodeError:
-        return []
+    return load_json(config.data_path(config.SUPPLIES_FILE))
+
 
 def save_supplies(supplies):
-    os.makedirs(os.path.dirname(SUPPLIES_FILE), exist_ok=True)
-    with open(SUPPLIES_FILE, "w") as f:
-        json.dump(supplies, f, indent=2)
+    save_json(config.data_path(config.SUPPLIES_FILE), supplies)
+
 
 def load_shipments():
-    if not os.path.exists(SHIPMENTS_FILE):
-        return []
-    try:
-        with open(SHIPMENTS_FILE, "r") as f:
-            return json.load(f)
-    except json.JSONDecodeError:
-        return []
+    return load_json(config.data_path(config.SHIPMENTS_FILE))
+
 
 def save_shipments(shipments):
-    os.makedirs(os.path.dirname(SHIPMENTS_FILE), exist_ok=True)
-    with open(SHIPMENTS_FILE, "w") as f:
-        json.dump(shipments, f, indent=2)
+    save_json(config.data_path(config.SHIPMENTS_FILE), shipments)
+
 
 def load_field_requests():
-    if not os.path.exists(FIELD_REQUESTS_FILE):
-        return []
-    try:
-        with open(FIELD_REQUESTS_FILE, "r") as f:
-            return json.load(f)
-    except json.JSONDecodeError:
-        return []
+    return load_json(config.data_path(config.REQUESTS_FILE))
+
 
 def save_field_requests(requests):
-    os.makedirs(os.path.dirname(FIELD_REQUESTS_FILE), exist_ok=True)
-    with open(FIELD_REQUESTS_FILE, "w") as f:
-        json.dump(requests, f, indent=2)
+    save_json(config.data_path(config.REQUESTS_FILE), requests)
+
 
 def view_supplies():
     return load_supplies()
 
-def display_field_requests_table(requests):
-    table = Table(title="🚨 Field Supervisor Requests Dashboard", title_style="bold magenta", border_style="cyan")
-    table.add_column("Request ID", style="cyan", justify="center")
-    table.add_column("Item Name", style="white")
-    table.add_column("Quantity", style="green", justify="right")
-    table.add_column("Zone", style="yellow")
-    table.add_column("Status", style="bold", justify="center")
 
-    for r in requests:
-        status = r.get('status', 'Pending')
-        if status == "Pending":
-            status_str = "[yellow]Pending (Awaiting Dispatch)[/yellow]"
-        elif status == "In Transit" or status == "Converted":
-            status_str = "[cyan]In Transit / Processed[/cyan]"
-        else:
-            status_str = f"[green]{status}[/green]"
-            
-        table.add_row(
-            r.get('request_id'),
-            r.get('item_name'),
-            str(r.get('quantity')),
-            r.get('zone'),
-            status_str
-        )
-    console.print(table)
+# ------------------------------------------------------------------ helpers
+def next_id(existing_ids, prefix, width=3, start=0):
+    """'SUPP' + ['SUPP-009', 'SUPP-012'] -> 'SUPP-013' (highest number + 1, never reused)."""
+    numbers = [int(m.group(1)) for i in existing_ids
+               if (m := re.fullmatch(rf"{prefix}-(\d+)", str(i or "")))]
+    return f"{prefix}-{max(numbers, default=start) + 1:0{width}d}"
 
-def add_supply_item():
-    console.print("\n[bold yellow]--- Add New Supply Item ---[/bold yellow]")
+
+def find_supply(supplies, item_id):
+    return next((s for s in supplies if s.get("id") == item_id), None)
+
+
+def get_vehicle(name):
+    return next((v for v in config.VEHICLES if v["name"] == name), None)
+
+
+def vehicle_problem(vehicle, shipment):
+    """Why this vehicle can't take this shipment ('' when it can)."""
+    if not vehicle["ready"]:
+        return "in maintenance"
+    weight = shipment.get("total_weight_kg")
+    if weight and weight > vehicle["capacity_kg"]:
+        return f"over capacity ({weight:g} kg > {vehicle['capacity_kg']} kg)"
+    return ""
+
+
+# ----------------------------------------------------------------- supplies
+def add_supply(name, category, quantity, unit_weight_kg):
+    name, category = " ".join(str(name).split()), " ".join(str(category).split()).title()
+    if not name or not category:
+        return False, "Name and category are required.", None
+    try:
+        quantity, unit_weight_kg = int(quantity), float(unit_weight_kg)
+    except (TypeError, ValueError):
+        return False, "Quantity must be a whole number and weight a number.", None
+    if quantity < 0:
+        return False, "Quantity can't be negative.", None
+    if unit_weight_kg <= 0:
+        return False, "Unit weight must be greater than zero.", None
+
     supplies = load_supplies()
-    
-    max_num = 0
-    for item in supplies:
-        db_id = str(item.get("id", ""))
-        digits = "".join(filter(str.isdigit, db_id))
-        if digits.isdigit():
-            num = int(digits)
-            if num > max_num:
-                max_num = num
-    item_id = f"SUPP-{max_num + 1:03d}"
-    
-    console.print(f"[cyan]Auto-generated Item ID: {item_id}[/cyan]")
-    name = input("Enter item name: ").strip()
-    category = input("Enter category (Medical, Food, Shelter): ").strip()
-    
-    try:
-        quantity = int(input("Enter quantity: ").strip())
-        unit_weight = float(input("Enter unit weight (kg): ").strip())
-    except ValueError:
-        console.print("[bold red]❌ Invalid number format. Item creation cancelled.[/bold red]")
-        return
-        
-    new_item = {
-        "id": item_id,
-        "item_id": item_id,
-        "name": name,
-        "category": category,
-        "quantity": quantity,
-        "unit_weight": unit_weight,
-        "unit_weight_kg": unit_weight
-    }
-    
-    supplies.append(new_item)
+    item = SupplyItem(next_id([s.get("id") for s in supplies], "SUPP"), name, category,
+                      quantity, round(unit_weight_kg, 3)).to_dict()
+    supplies.append(item)
     save_supplies(supplies)
-    console.print(f"[bold green]✅ Success: Item '{name}' ({item_id}) added to inventory automatically![/bold green]")
+    return True, f"Item '{name}' ({item['id']}) added to inventory.", item
 
-def create_field_request(zone):
-    console.print("\n[bold yellow]--- Report Urgent Field Request ---[/bold yellow]")
-    item_name = input("Enter required material name: ").strip()
+
+# ----------------------------------------------------------- field requests
+def create_field_request(zone, item_name, quantity, priority="Medium"):
+    item_name = " ".join(str(item_name).split())
+    if not item_name:
+        return False, "Material name is required.", None
     try:
-        quantity = int(input("Enter required quantity: ").strip())
-    except ValueError:
-        console.print("[bold red]❌ Invalid quantity format.[/bold red]")
-        return False
-        
-    priority = {"1": "High", "2": "Medium", "3": "Low"}.get(
-        input("Priority (1=High, 2=Medium, 3=Low) [2]: ").strip() or "2", "Medium")
+        quantity = int(quantity)
+    except (TypeError, ValueError):
+        return False, "Quantity must be a whole number.", None
+    if quantity <= 0:
+        return False, "Quantity must be greater than zero.", None
+    if priority not in config.PRIORITIES:
+        priority = "Medium"
 
     requests = load_field_requests()
-    req_id = f"REQ-{len(requests) + 101}"
-    
-    new_req = {
-        "request_id": req_id,
-        "item_name": item_name,
-        "quantity": quantity,
-        "zone": zone,
-        "priority": priority,
-        "status": "Pending"
-    }
-    
-    requests.append(new_req)
+    req = FieldRequest(next_id([r.get("request_id") for r in requests], "REQ", start=100),
+                       item_name, quantity, zone, priority).to_dict()
+    requests.append(req)
     save_field_requests(requests)
-    console.print(f"[bold green]✅ Urgent request {req_id} for {quantity}x '{item_name}' submitted for zone {zone} (Sent to Dispatcher)![/bold green]")
-    return True
+    return True, f"Request {req['request_id']} for {quantity}x '{item_name}' sent to the dispatcher.", req
 
-def create_shipment():
-    console.print("\n[bold yellow]--- Create Shipment Request (Dispatcher) ---[/bold yellow]")
-    supplies = load_supplies()
-    
-    if not supplies:
-        console.print("[bold red]❌ No supplies available in inventory to ship.[/bold red]")
-        return None
-        
-    display_supplies_table(supplies)
-    
-    item_id_input = input("Enter Supply ID to dispatch (e.g., SUPP-003 or 3): ").strip().lower()
-    
-    clean_input = item_id_input.strip().lower()
-    input_digits = "".join(filter(str.isdigit, clean_input))
-    
-    target_item = None
-    for item in supplies:
-        db_id = str(item.get("id", "")).strip().lower()
-        db_digits = "".join(filter(str.isdigit, db_id))
-        
-        if db_id == clean_input:
-            target_item = item
-            break
-        if input_digits and db_digits and int(db_digits) == int(input_digits):
-            target_item = item
-            break
-            
-    if not target_item:
-        console.print("[bold red]❌ Supply ID not found.[/bold red]")
-        return None
-        
-    console.print(f"[cyan]Selected Item: {target_item['name']} (Available: {target_item['quantity']})[/cyan]")
-    
-    try:
-        qty_to_ship = int(input(f"Enter quantity to ship: ").strip())
-    except ValueError:
-        console.print("[bold red]❌ Invalid quantity entered.[/bold red]")
-        return None
-        
-    if qty_to_ship <= 0 or qty_to_ship > target_item['quantity']:
-        console.print("[bold red]❌ Invalid quantity amount or exceeds available stock.[/bold red]")
-        return None
-        
-    destination = input("Enter destination zone (Riyadh, Tabuk, Jeddah, Dammam): ").strip() or "General Zone"
-    
-    target_item['quantity'] -= qty_to_ship
-    save_supplies(supplies)
-    
-    shipments = load_shipments()
-    shipment_id = f"SHP-{len(shipments) + 101}"
-    
-    new_shipment = {
-        "shipment_id": shipment_id,
-        "item_name": target_item['name'],
-        "quantity": qty_to_ship,
-        "destination": destination,
-        "status": "Pending Fleet Assignment",
-        "vehicle": None
-    }
-    
-    shipments.append(new_shipment)
-    save_shipments(shipments)
-    
-    # تحديث حالة الطلبات الميدانية المرتبطة لتصبح قيد المعالجة
-    requests = load_field_requests()
+
+def open_requests():
+    """Requests still waiting for a shipment, most urgent first."""
+    order = {p: i for i, p in enumerate(config.PRIORITIES)}
+    pending = [r for r in load_field_requests() if r.get("status") == config.REQ_PENDING]
+    return sorted(pending, key=lambda r: order.get(r.get("priority", "Medium"), 1))
+
+
+def _set_request_status(requests, request_id, status):
     for r in requests:
-        if r.get('status') == "Pending" and r.get('item_name').lower() in target_item['name'].lower():
-            r['status'] = "In Transit / Processed"
-    save_field_requests(requests)
-    
-    console.print(f"[bold green]✅ Shipment {shipment_id} created successfully for '{target_item['name']}' and sent to Fleet Officer![/bold green]")
-    return shipment_id
-
-def get_pending_shipments():
-    shipments = load_shipments()
-    return [s for s in shipments if s.get("status") == "Pending Fleet Assignment"]
-
-def assign_vehicle_to_shipment(shipment_id, vehicle_name):
-    shipments = load_shipments()
-    updated = False
-    for s in shipments:
-        if s.get("shipment_id") == shipment_id:
-            s["vehicle"] = vehicle_name
-            s["status"] = "Completed & In Transit"
-            updated = True
-            break
-            
-    if updated:
-        save_shipments(shipments)
-        
-        requests = load_field_requests()
-        for r in requests:
-            if r.get('status') != "Completed":
-                r['status'] = "Completed (Dispatched)"
-        save_field_requests(requests)
-        
-        return True
+        if request_id and r.get("request_id") == request_id:
+            r["status"] = status
+            return True
     return False
+
+
+# ---------------------------------------------------------------- shipments
+def create_shipment(item_id, quantity, destination, request_id=None):
+    """Take stock out of the inventory and queue a shipment for the fleet officer."""
+    try:
+        quantity = int(quantity)
+    except (TypeError, ValueError):
+        return False, "Quantity must be a whole number.", None
+    destination = " ".join(str(destination).split()).title()
+    if not destination:
+        return False, "Destination is required.", None
+
+    supplies = load_supplies()
+    item = find_supply(supplies, item_id)
+    if not item:
+        return False, "Supply item not found.", None
+    if quantity <= 0:
+        return False, "Quantity must be greater than zero.", None
+    if quantity > item["quantity"]:
+        return False, f"Only {item['quantity']} in stock.", None
+
+    requests = load_field_requests()
+    if request_id:
+        linked = next((r for r in requests if r.get("request_id") == request_id), None)
+        if not linked or linked.get("status") != config.REQ_PENDING:
+            return False, f"Request {request_id} isn't waiting for a shipment.", None
+
+    shipments = load_shipments()
+    shipment = Shipment(
+        next_id([s.get("shipment_id") for s in shipments], "SHP", start=100),
+        item["name"], quantity, destination,
+        total_weight_kg=round(quantity * item["unit_weight_kg"], 3), request_id=request_id).to_dict()
+
+    item["quantity"] -= quantity
+    shipments.append(shipment)
+    _set_request_status(requests, request_id, config.REQ_APPROVED)
+    save_shipments(shipments)
+    save_field_requests(requests)
+    save_supplies(supplies)
+    return True, f"Shipment {shipment['shipment_id']} created and sent to the fleet officer.", shipment
+
+
+def pending_shipments():
+    return [s for s in load_shipments() if s.get("status") == config.SHIP_PENDING]
+
+
+def in_transit_shipments():
+    return [s for s in load_shipments() if s.get("status") == config.SHIP_IN_TRANSIT]
+
+
+def assign_vehicle(shipment_id, vehicle_name):
+    vehicle = get_vehicle(vehicle_name)
+    if not vehicle:
+        return False, "Unknown vehicle."
+    shipments = load_shipments()
+    data = next((s for s in shipments if s.get("shipment_id") == shipment_id
+                 and s.get("status") == config.SHIP_PENDING), None)
+    if not data:
+        return False, "Shipment not found or already assigned."
+    problem = vehicle_problem(vehicle, data)
+    if problem:
+        return False, f"{vehicle['name']} can't take it: {problem}."
+
+    shipment = Shipment.from_dict(data)
+    shipment.assign(vehicle["name"])
+    data.update(shipment.to_dict())
+    requests = load_field_requests()
+    if _set_request_status(requests, shipment.request_id, config.REQ_IN_TRANSIT):
+        save_field_requests(requests)
+    save_shipments(shipments)
+    return True, f"Shipment {shipment_id} assigned to '{vehicle['name']}' and marked 'In Transit'."
+
+
+def mark_delivered(shipment_id):
+    shipments = load_shipments()
+    data = next((s for s in shipments if s.get("shipment_id") == shipment_id
+                 and s.get("status") == config.SHIP_IN_TRANSIT), None)
+    if not data:
+        return False, "Shipment not found or not in transit."
+    shipment = Shipment.from_dict(data)
+    shipment.deliver()
+    data.update(shipment.to_dict())
+    requests = load_field_requests()
+    if _set_request_status(requests, shipment.request_id, config.REQ_DONE):
+        save_field_requests(requests)
+    save_shipments(shipments)
+    return True, f"Shipment {shipment_id} delivered. Request closed."

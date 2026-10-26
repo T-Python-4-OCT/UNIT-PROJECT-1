@@ -1,39 +1,31 @@
 [
   {
     "shipment_id": "SHIP-001",
-    "destination_crisis": "riadh",
-    "transport_type": "Truck",
-    "status": "Pending",
+    "item_name": "Advanced First Aid Kit",
+    "quantity": 5,
+    "destination": "Riadh",
     "total_weight_kg": 15.0,
-    "items": [
-      {
-        "item_id": "SUPP-001",
-        "item_name": "Advanced First Aid Kit",
-        "quantity": 5,
-        "total_weight_kg": 15.0
-      }
-    ]
+    "request_id": null,
+    "status": "In Transit",
+    "vehicle": "Cargo Drone Beta"
   },
   {
     "shipment_id": "SHIP-002",
-    "destination_crisis": "tabuk",
-    "transport_type": "Drone",
-    "status": "Pending",
+    "item_name": "Advanced First Aid Kit",
+    "quantity": 10,
+    "destination": "Tabuk",
     "total_weight_kg": 30.0,
-    "items": [
-      {
-        "item_id": "SUPP-001",
-        "item_name": "Advanced First Aid Kit",
-        "quantity": 10,
-        "total_weight_kg": 30.0
-      }
-    ]
+    "request_id": null,
+    "status": "Pending Fleet Assignment",
+    "vehicle": null
   },
   {
     "shipment_id": "SHP-103",
     "item_name": "Advanced First Aid Kit",
     "quantity": 10,
     "destination": "Riadh",
+    "total_weight_kg": 30.0,
+    "request_id": null,
     "status": "In Transit",
     "vehicle": "Truck Alpha"
   },
@@ -42,6 +34,8 @@
     "item_name": "Advanced First Aid Kit",
     "quantity": 20,
     "destination": "Riadh",
+    "total_weight_kg": 60.0,
+    "request_id": null,
     "status": "In Transit",
     "vehicle": "Truck Alpha"
   },
@@ -50,6 +44,8 @@
     "item_name": "Advanced First Aid Kit",
     "quantity": 10,
     "destination": "Riadh",
+    "total_weight_kg": 30.0,
+    "request_id": null,
     "status": "In Transit",
     "vehicle": "Cargo Drone Beta"
   },
@@ -57,16 +53,20 @@
     "shipment_id": "SHP-106",
     "item_name": "fefadol",
     "quantity": 10,
-    "destination": "riadh",
-    "status": "Completed & In Transit",
+    "destination": "Riadh",
+    "total_weight_kg": 1.0,
+    "request_id": null,
+    "status": "In Transit",
     "vehicle": "Cargo Drone Beta"
   },
   {
     "shipment_id": "SHP-107",
     "item_name": "Advanced First Aid Kit",
     "quantity": 12,
-    "destination": "riadh",
-    "status": "Completed & In Transit",
+    "destination": "Riadh",
+    "total_weight_kg": 36.0,
+    "request_id": null,
+    "status": "In Transit",
     "vehicle": "Cargo Drone Beta"
   },
   {
@@ -74,7 +74,19 @@
     "item_name": "Drinking Water Bottles (Pack)",
     "quantity": 10,
     "destination": "Riadh",
-    "status": "Completed & In Transit",
+    "total_weight_kg": 120.0,
+    "request_id": null,
+    "status": "In Transit",
     "vehicle": "Cargo Drone Beta"
+  },
+  {
+    "shipment_id": "SHP-109",
+    "item_name": "Thermal Emergency Blankets",
+    "quantity": 15,
+    "destination": "Riyadh",
+    "total_weight_kg": 60.0,
+    "request_id": "REQ-106",
+    "status": "Pending Fleet Assignment",
+    "vehicle": null
   }
 ]

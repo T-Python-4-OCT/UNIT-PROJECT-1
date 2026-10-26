@@ -4,28 +4,32 @@
     "item_name": "food",
     "quantity": 20,
     "zone": "riadh",
-    "status": "Completed (Dispatched)"
+    "status": "Completed",
+    "priority": "Medium"
   },
   {
     "request_id": "REQ-102",
     "item_name": "food",
     "quantity": 10,
     "zone": "riadh",
-    "status": "Completed (Dispatched)"
+    "status": "Completed",
+    "priority": "Medium"
   },
   {
     "request_id": "REQ-103",
     "item_name": "midecal",
     "quantity": 10,
     "zone": "riadh",
-    "status": "Completed (Dispatched)"
+    "status": "Completed",
+    "priority": "Medium"
   },
   {
     "request_id": "REQ-104",
     "item_name": "midecal",
     "quantity": 12,
     "zone": "riadh",
-    "status": "Completed (Dispatched)"
+    "status": "Completed",
+    "priority": "Medium"
   },
   {
     "request_id": "REQ-105",
@@ -33,6 +37,14 @@
     "quantity": 10,
     "zone": "riadh",
     "priority": "High",
-    "status": "Completed (Dispatched)"
+    "status": "Completed"
+  },
+  {
+    "request_id": "REQ-106",
+    "item_name": "shelter",
+    "quantity": 15,
+    "zone": "riadh",
+    "priority": "Low",
+    "status": "Approved"
   }
 ]

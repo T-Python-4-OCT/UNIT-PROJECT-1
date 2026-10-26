@@ -6,11 +6,11 @@ class SupplyItem:
         self.quantity = quantity
         self.unit_weight_kg = unit_weight_kg
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
-            "item_id": self.item_id,
+            "id": self.item_id,
             "name": self.name,
             "category": self.category,
             "quantity": self.quantity,
-            "unit_weight_kg": self.unit_weight_kg
+            "unit_weight_kg": self.unit_weight_kg,
         }

@@ -1,38 +1,41 @@
-from typing import List, Dict
+from src import config
+
 
 class Shipment:
-    def __init__(self, shipment_id: str, destination_crisis: str, transport_type: str):
+    """One shipment record, exactly as stored in data/shipments.json."""
+
+    def __init__(self, shipment_id: str, item_name: str, quantity: int, destination: str,
+                 total_weight_kg=None, request_id=None, status: str = config.SHIP_PENDING, vehicle=None):
         self.shipment_id = shipment_id
-        self.destination_crisis = destination_crisis
-        self.transport_type = transport_type  
-        self.status = "Pending"  
-        self.items: List[Dict] = []  
+        self.item_name = item_name
+        self.quantity = quantity
+        self.destination = destination
+        self.total_weight_kg = total_weight_kg
+        self.request_id = request_id          # the field request this shipment answers (optional)
+        self.status = status
+        self.vehicle = vehicle
 
+    def assign(self, vehicle_name: str):
+        self.vehicle = vehicle_name
+        self.status = config.SHIP_IN_TRANSIT
 
-    def add_item(self, item_id: str, item_name: str, quantity: int, unit_weight_kg: float):
-        self.items.append({
-            "item_id": item_id,
-            "item_name": item_name,
-            "quantity": quantity,
-            "total_weight_kg": quantity * unit_weight_kg
-        })
-
-
-
-    def get_total_weight(self) -> float:
-        return sum(item["total_weight_kg"] for item in self.items)
-
-
-    def update_status(self, new_status: str):
-        self.status = new_status
-
+    def deliver(self):
+        self.status = config.SHIP_DONE
 
     def to_dict(self) -> dict:
         return {
             "shipment_id": self.shipment_id,
-            "destination_crisis": self.destination_crisis,
-            "transport_type": self.transport_type,
+            "item_name": self.item_name,
+            "quantity": self.quantity,
+            "destination": self.destination,
+            "total_weight_kg": self.total_weight_kg,
+            "request_id": self.request_id,
             "status": self.status,
-            "total_weight_kg": self.get_total_weight(),
-            "items": self.items
+            "vehicle": self.vehicle,
         }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Shipment":
+        return cls(d["shipment_id"], d.get("item_name", ""), d.get("quantity", 0), d.get("destination", ""),
+                   d.get("total_weight_kg"), d.get("request_id"),
+                   d.get("status", config.SHIP_PENDING), d.get("vehicle"))
