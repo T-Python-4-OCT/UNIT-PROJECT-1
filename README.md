@@ -1,210 +1,177 @@
-# SkyRoute ✈️ - وكالة سفر بسطر الأوامر
+<div align="center">
 
-برنامج وكالة سفر تفاعلي مكتوب بلغة Python ويشتغل من الترمنل. العميل يتصفح 28 وجهة مع **طقس مباشر**،
-يكتب **ميزانيته** ويحصل على خطة رحلة يوم بيوم، ثم يحجز ويدفع ويستلم **فاتورة**، مع **رسائل بريد حقيقية**
-عند كل خطوة. والمدير يدير الوكالة: الوجهات، العملاء، الحجوزات، التقارير وأكواد الخصم.
+# ✈️ SkyRoute
 
-## الهدف
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&center=true&vCenter=true&width=520&lines=A+travel+agency+in+your+terminal+🌍;Plan+•+Book+•+Pay+•+Fly+🧳;Live+weather+☀️+Smart+receipt+🧾)](https://git.io/typing-svg)
 
-التخطيط لرحلة غالبًا يعني التنقل بين مواقع كثيرة. SkyRoute يجمع الرحلة كاملة في مكان واحد:
-*وين أقدر أسافر بميزانيتي؟* ← *كيف بيكون الطقس؟* ← *أحجز وأدفع* ← *فاتورة على الإيميل*،
-وفي نفس الوقت يعطي صاحب الوكالة أدوات لإدارتها. المشروع مبني للتدريب على أساسيات بايثون:
-الدوال، الحلقات، التحقق من المدخلات، الوحدات (modules)، التخزين في ملفات، API خارجي،
-البريد (SMTP)، الاختبارات وGit.
+![Python](https://img.shields.io/badge/Python-3-blue?logo=python&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-179%20passed-brightgreen)
+![API](https://img.shields.io/badge/weather-Open--Meteo-orange)
+![Status](https://img.shields.io/badge/status-complete-success)
 
-> **ملاحظة:** كل الأسعار تقديرية بالريال السعودي (طيران ذهاب وعودة من الرياض + تكاليف يومية
-> للشخص). هي لأغراض التعلم وليست للحجز الحقيقي. وأسعار الصرف في الفاتورة تقريبية وثابتة داخل الكود.
+### 👨‍💻 Developed by **Mohammed Alnsafi**
 
-## المميزات وقصص المستخدم (User Stories)
+</div>
 
-**كعميل أقدر:**
-- أسجّل باسم المستخدم والاسم الكامل و**الإيميل ورقم الجوال**، ويعطيني البرنامج **رقم العميل**.
-  وتوصلني رسالة ترحيب على الإيميل اللي كتبته.
-- أسجّل الدخول وتظهر لي **رسالة ترحيب** برقم العميل وأهم اللي يحتاج انتباهي (حجوزات غير مدفوعة، رحلتي القادمة).
-- أتصفح كل الوجهات (الدولة مع **علمها**، أشهر مدينة، نوع الرحلة بإيموجي، سعر الطيران والفندق).
-  الرحلات الموقوفة من المدير تظهر عليها خط.
-- أشوف تفاصيل الوجهة: المعالم، أفضل موسم، التكاليف اليومية، وسعر تقديري يتغير حسب الأيام وعدد المسافرين ونمط السفر.
-- أبحث عن الوجهات **بالدولة أو المدينة أو النوع** (city / beach / culture / adventure).
-  الأخطاء الإملائية الصغيرة تتصحح، فـ `turky` تلقى Turkey.
-- أشوف **الطقس المباشر وتوقعات الأيام** لمدينة الوجهة (بيانات حقيقية من Open-Meteo؛ وإذا ما فيه إنترنت
-  يظهر تنبيه والبرنامج يكمل شغله).
-- أدخل ميزانيتي وعدد المسافرين ونمط السفر (economy / standard / luxury) و**عدد الأيام**
-  (يقترح 7 وأنا أختار من 2 إلى 30). تطلع لي رحلات مناسبة مع تفاصيل المدينة، وعند اختيار واحدة أشوف
-  معلوماتها وطقسها وبرنامج يوم بيوم وتفصيل التكلفة.
-- أحصل على **خصم 10% للمجموعة** إذا كنا مسافرين اثنين بالضبط (يظهر كسطر في السعر).
-- تظهر لي تحت القوائم ملاحظة عرض الشخصين، وملاحظة **كود خصم نهاية السنة** `YEAREND10` (خصم 10% في ديسمبر).
-- أحجز رحلة بتاريخ سفر (الرحلات الموقوفة ما تنحجز). قبل الدفع يسألني البرنامج عن كود خصم؛
-  الكود الصحيح (مثل `EID20`) يعطي **خصم 20%**، وبعدها أروح مباشرة للدفع.
-- أدفع بالبطاقة (**اسم حامل البطاقة، رقم من 8 إلى 16 خانة، وCVV**) أو Apple Pay وأحصل على رقم مرجعي.
-- تصلني **رسالة على إيميلي** عند التسجيل والحجز والدفع والإلغاء.
-- أشوف حجوزاتي وحالتها (pending / confirmed / completed / cancelled).
-- ألغي حجزًا. الحجز المدفوع يظهر مبلغ الاسترجاع ورسالة
-  *"Your money will be refunded within 24 hours to 4 business days."* (وتوصل في الإيميل أيضًا).
-- أحصل على **فاتورة** للحجوزات المدفوعة، وفيها: تفاصيل الرحلة وتفصيل التكلفة، **عملة الدولة وسعر
-  الصرف مقابل الريال** مع مجموعي بعملة البلد، **الطقس في يوم السفر**، وبرنامج **وش بتزور** يوم بيوم.
-- أختار **نوع الرحلة** و**المدة** وأحصل على توصيات: المدينة، نوعها، طقسها وخطة يوم بيوم.
+## 📖 Overview
+A command-line travel agency built with **Python**. Customers plan a trip by budget, book, pay, and get a **receipt** with the weather, a day-by-day plan and the local currency. The manager runs destinations, customers, bookings and discount codes. 🎓
 
-**كمدير أقدر:**
-- أشوف رسالة ترحيب ولوحة تحكم: الإيرادات، الحجوزات حسب الحالة، أكثر الوجهات حجزًا، عدد العملاء.
-- أشوف **مين حجز**: قائمة الحجوزات تعرض اسم العميل واسم المستخدم والرقم والإيميل والجوال.
-- أعرض كل العملاء (مع عدد حجوزاتهم والمبالغ المدفوعة).
-- **أحذف عميلًا**: حجوزاته النشطة تُلغى والمدفوعة تُسترجع، ويوصله إيميل، وتبقى حجوزاته
-  المنتهية أو الملغية في السجل (تظهر كـ "Deleted customer #id"). المدير لا يمكن حذفه.
-- أغيّر حالة الحجز (completed، cancelled مع استرجاع...) ويوصل العميل إيميل عند الإلغاء أو الإكمال.
-- أضيف وأعدّل وأحذف الوجهات.
-- أدير **أكواد الخصم للمناسبات** (العيد، نهاية السنة...): أضيف كودًا مع مناسبته (20% افتراضيًا)،
-  أفعّله أو أوقفه أو أحذفه. الكودان `EID20` و`YEAREND10` جاهزان من أول تشغيل. والحجوزات اللي استخدمت كودًا تحتفظ بخصمها.
-- **أوقف رحلة إلى إشعار آخر** (وأعيدها لاحقًا). الرحلة الموقوفة عليها خط في كل القوائم، ما تنحجز
-  وما تُقترح. الحجوزات الموجودة ما تتغير، والمدير يقدر يلغيها.
+## ✨ Features
 
-## المكتبات
-
-| المكتبة | الاستخدام |
+| 👤 Customer | 🛠️ Manager |
 |---|---|
-| [rich](https://pypi.org/project/rich/) | الألوان والجداول والإطارات ورسائل الخطأ الحمراء |
-| [pyfiglet](https://pypi.org/project/pyfiglet/) | بانر بحروف فنية (Text Art) |
+| 🌍 Browse 28 destinations with flags | 📊 Dashboard and revenue report |
+| 🔎 Search by country / city / type (fixes typos) | 👥 List and delete customers |
+| ☀️ Live weather from an API | 🗺️ Add / edit / delete destinations |
+| 💰 Trip plan based on your budget | ⏸️ Suspend a trip until further notice |
+| 🏷️ 10% off for two travelers + codes `EID20` `YEAREND10` | 🎟️ Manage discount codes |
+| 💳 Pay by card or Apple Pay | 📝 Update booking status |
+| ✉️ Email at every step | |
+| 🧾 Receipt: travel-day weather + itinerary + exchange rate | |
+| 🔔 Welcome voice at login, airplane chime on the receipt | |
 
-الباقي كله من مكتبة بايثون القياسية (json, hashlib, dataclasses, unittest, `urllib` لـ API الطقس،
-`smtplib` للبريد...). الطقس من واجهة [Open-Meteo](https://open-meteo.com/) المجانية وما تحتاج مفتاح API.
+## 📝 User Stories
 
-## التثبيت والتشغيل
+**As a customer, I can:**
+- 🧑‍💼 register and log in, and get my customer ID and a welcome email
+- 🌍 browse and search destinations, and see the live weather of each city
+- 💰 enter my budget, days and travelers, and get matching trips with a day-by-day plan
+- 🏷️ get 10% off when we are two travelers, or use a discount code like `EID20`
+- 🎫 book a trip, pay by card or Apple Pay, and get a confirmation email
+- ❌ cancel a booking and see how long the refund takes
+- 🧾 view my receipt with the weather on my travel day, what I will visit and the exchange rate
+- ⭐ get trip recommendations by type and length
+
+**As a manager, I can:**
+- 📊 see revenue, bookings by status and the top destinations
+- 👥 see who booked, list customers, and delete a customer
+- 🗺️ add, edit and delete destinations, or suspend a trip until further notice
+- 📝 update a booking status (completed, cancelled with refund)
+- 🎟️ create and switch discount codes for Eid and the end of the year
+
+## 🚀 Run
 
 ```bash
 python -m venv venv
-source venv/Scripts/activate          # Windows (Git Bash / MSYS2)
-# .\venv\Scripts\Activate.ps1         # Windows PowerShell
-# source venv/bin/activate            # macOS / Linux
+source venv/Scripts/activate      # Windows (Git Bash / MSYS2)
 python -m pip install -r requirements.txt
 python main.py
 ```
 
-ملف `requirements.txt` فيه المكتبات بنسخها المحددة (rich 15.0.0 وpyfiglet 1.0.4 ومكتباتهما المساعدة).
+🔑 Manager account: `admin` / `admin123`  
 
-**حساب المدير الافتراضي:** `admin` / `admin123`
-والعملاء ينشئون حساباتهم بأنفسهم من القائمة الرئيسية.
-للتجربة في الدفع: أي اسم، أي رقم بطاقة من 8 إلى 16 خانة، وأي CVV من 3 أرقام.
-التحقق يتم من البيانات ولا تنحفظ أبدًا. أكواد الخصم التجريبية: `EID20`, `YEAREND10`.
 
-## إعداد البريد (اختياري)
+## 🎮 Usage
 
-الرسائل تُرسل بمكتبة `smtplib` الجاهزة في بايثون، فما تحتاج مكتبة إضافية.
+1. **Welcome menu:** `1` Login · `2` Register · `0` Exit
+2. **Customer menu:** type the number of the action
 
-1. انسخ `.env.example` إلى ملف جديد اسمه `.env` (بجانب `main.py`).
-2. اكتب فيه بيانات بريدك. في Gmail فعّل التحقق بخطوتين وأنشئ **كلمة مرور تطبيق (App password)** من
-   <https://myaccount.google.com/apppasswords>؛ كلمة مرور Gmail العادية تُرفض.
-3. تأكد أنها تشتغل: `python main.py --test-email your_address@gmail.com`، وافتح Gmail في جوالك.
-4. شغّل البرنامج. بعد التسجيل أو الحجز أو الدفع تشوف `✉ An email was sent to ...`، ورسالة الدفع هي الفاتورة.
+| # | Action | # | Action |
+|---|---|---|---|
+| 1 | 🌍 Browse destinations | 6 | 📋 My bookings |
+| 2 | ☀️ Details + live weather | 7 | 💳 Pay for a booking |
+| 3 | 🔎 Search destinations | 8 | ❌ Cancel a booking |
+| 4 | 💰 Plan a trip by budget | 9 | 🧾 View receipt |
+| 5 | 🎫 Book a trip | 10 | ⭐ Recommendations |
 
-بدون ملف `.env` كل شيء يشتغل: كل رسالة تنحفظ كملف نصي في `data/outbox/` والشاشة تقول ذلك.
-وإذا تعذر الوصول لخادم البريد يتم الحجز عادي وتظهر السبب على الشاشة. ملف `.env` فيه كلمة مرور،
-لذلك هو مكتوب في `.gitignore` ولا يُرفع أبدًا إلى GitHub.
+3. **Manager menu:**
 
-## الاستخدام
+| # | Action | # | Action |
+|---|---|---|---|
+| 1 | 📊 Dashboard | 7 | ➕ Add destination |
+| 2 | 📋 All bookings | 8 | ✏️ Edit destination |
+| 3 | 📝 Update booking status | 9 | 🗑️ Delete destination |
+| 4 | 👥 List customers | 10 | ⏸️ Suspend / resume a trip |
+| 5 | 🗑️ Delete a customer | 11 | 🎟️ Discount codes |
+| 6 | 🗺️ List destinations | 0 | 🚪 Logout |
 
-1. القائمة الرئيسية: `1` تسجيل دخول، `2` إنشاء حساب، `0` خروج.
-2. قائمة العميل - اكتب رقم الإجراء:
+**Example: plan and book a trip**
+1. Register (`2`), or log in (`1`).
+2. Type `4`, enter a budget like `20000`, press Enter for 7 days, and pick a trip.
+3. Type `y` to book, enter a date like `2026-12-25`, and a code like `EID20` (or `no`).
+4. Pay with `card`, then type `9` to see your receipt. 🎉
 
-| # | الإجراء |
-|---|---|
-| 1 | تصفح الوجهات |
-| 2 | تفاصيل وجهة + الطقس المباشر (اكتب الرقم) |
-| 3 | بحث: اختر *country* أو *city* أو *type* ثم اختر نتيجة لتفاصيلها وطقسها |
-| 4 | تخطيط رحلة حسب الميزانية (الأيام الافتراضية 7، والشخصان يحصلان على خصم 10%) |
-| 5 | حجز رحلة (التاريخ، كود الخصم، ثم الدفع مباشرة) |
-| 6 | حجوزاتي |
-| 7 | دفع حجز (بطاقة: الاسم، الرقم، CVV / Apple Pay) |
-| 8 | إلغاء حجز |
-| 9 | الفاتورة (تفاصيل الرحلة، العملة وسعر الصرف، الطقس في يوم السفر، وش بتزور) |
-| 10 | توصيات: اختر نوع الرحلة (أو `any`) وعدد الأيام |
-| 0 | تسجيل خروج |
+## 🖥️ Sample output
 
-3. قائمة المدير:
-
-| # | الإجراء |
-|---|---|
-| 1 | لوحة التحكم وتقرير الإيرادات |
-| 2 | كل الحجوزات (مع بيانات العملاء) |
-| 3 | تحديث حالة حجز |
-| 4 | عرض العملاء |
-| 5 | حذف عميل |
-| 6 | عرض الوجهات |
-| 7 | إضافة وجهة |
-| 8 | تعديل وجهة |
-| 9 | حذف وجهة |
-| 10 | إيقاف / إعادة رحلة |
-| 11 | أكواد الخصم (عرض، إضافة، تفعيل/إيقاف، حذف) |
-| 0 | تسجيل خروج |
-
-**مثال: تخطيط رحلة وحجزها كعميل**
-- اكتب `2` في القائمة الرئيسية للتسجيل (اسم المستخدم، الاسم الكامل، الإيميل، الجوال، كلمة المرور)، أو `1` لتسجيل الدخول.
-- اكتب `4` (تخطيط حسب الميزانية)، أدخل ميزانية مثل `20000`، اضغط Enter لقبول 7 أيام، اكتب `2` لمسافرين اثنين (خصم 10%)، واختر نوع الرحلة.
-- اكتب رقم نتيجة لتشوف تفاصيل المدينة والطقس والبرنامج وتفصيل التكلفة، ثم `y` للحجز.
-- أدخل تاريخ السفر مثل `2026-12-25` وكود خصم مثل `EID20` (أو `no`).
-- اكتب `y` للدفع الآن، اختر `card`، وأدخل أي اسم ورقم بطاقة من 8 إلى 16 خانة وCVV من 3 أرقام.
-- اكتب `9` لتشوف الفاتورة؛ وتصلك رسالة تأكيد على الإيميل المسجل.
-
-**مثال: البحث**
-- اكتب `3` واختر `city` واكتب `turky` أو `Dubai`؛ ثم اختر رقم نتيجة لتفاصيلها وطقسها.
-
-**الرجوع:** في أي سؤال اكتب `b` (أو `back`) للإلغاء والعودة للقائمة؛ وفي أسئلة الأرقام يشتغل `0` أيضًا. ولا يُحفظ شيء عند الرجوع.
-
-الألوان: **أخضر** = نجاح، **أحمر** = خطأ، **أصفر** = تنبيه، **سماوي** = معلومة.
-
-## هيكل المشروع
-
-```
-UNIT-PROJECT-1/
-├── main.py                  نقطة البداية: القائمة الرئيسية، الدخول، التسجيل
-├── .env.example             قالب إعدادات البريد (انسخه إلى .env)
-├── requirements.txt         المكتبات بنسخها
-├── agency/
-│   ├── config.py            المسارات والثوابت (أيام الرحلة الافتراضية، نسب الخصم)
-│   ├── errors.py            ServiceError (أخطاء تظهر للمستخدم)
-│   ├── flags.py             أعلام الدول
-│   ├── seed.py              ينشئ ملفات البيانات الأولى
-│   ├── countries_data.py    الوجهات الـ 28
-│   ├── models/              dataclasses: User, Country, Booking
-│   ├── storage/json_db.py   قراءة وكتابة ملفات JSON بأمان
-│   ├── services/            منطق العمل (بدون طباعة)
-│   │   ├── auth.py  users.py  countries.py  planner.py  promos.py
-│   │   ├── bookings.py  reports.py  recommendations.py
-│   │   └── weather.py  currency.py  notifications.py
-│   ├── ui/                  كل ما يراه المستخدم
-│   │   ├── console.py       الألوان والبانر ودوال الإدخال
-│   │   ├── views.py         الجداول والإطارات
-│   │   └── customer_menu.py  manager_menu.py
-│   └── utils/               security.py, validators.py, env_file.py
-└── tests/                   test_services.py, test_ui_smoke.py
+```text
+╭───────────────────────── SkyRoute Receipt ──────────────────────────╮
+│ Reference: SR-0006-D72E                                             │
+│ Customer:  MohammedAlnsafi                                          │
+│ Trip:      🇹🇷 Istanbul, Turkey                                      │
+│ Date:      2026-12-25  (7 days, 1 traveler(s), luxury)              │
+│ Payment:   card                                                     │
+│ Status:    confirmed                                                │
+│                                                                     │
+│   Flights                      1,200 SAR                            │
+│   Hotel                        3,240 SAR                            │
+│   Food                         1,512 SAR                            │
+│   Transport                      280 SAR                            │
+│   Activities                   1,260 SAR                            │
+│   Code YEAREND10 (10%)          -749 SAR                            │
+│   --------------------------------------                            │
+│   TOTAL PAID                   6,743 SAR                            │
+│                                                                     │
+│ Currency: Turkish lira (TRY): 1 SAR = 10.93 TRY (approx.)           │
+│                                                                     │
+│ Weather on 2026-12-25: no forecast yet                              │
+│ Best season: Apr-Jun, Sep-Nov                                       │
+│                                                                     │
+│ What you will visit (7 days)                                        │
+│   Day 1: Arrive in Istanbul, check in and relax                     │
+│   Day 2: Hagia Sophia                                               │
+│   Day 3: Grand Bazaar                                               │
+│   Day 4: Bosphorus cruise                                           │
+│   Day 5: Galata Tower                                               │
+│   Day 6: Hagia Sophia                                               │
+│   Day 7: Last-minute shopping and departure                         │
+│                                                                     │
+│ Company email: support@skyroute.example                             │
+╰─────────────────────────────────────────────────────────────────────╯
 ```
 
-الطبقات: **models** تحمل البيانات، **services** تحمل المنطق، **ui** تتعامل مع العرض والإدخال.
+🎨 Colors: 🟢 success · 🔴 error · 🟡 warning · 🔵 info  
+↩️ Type `b` at any question to go back.
 
-## الاختبارات
+## 🗂️ Structure
+
+```text
+main.py            ▶️ entry point
+agency/
+├── models/        📦 data (User, Country, Booking)
+├── services/      🧠 logic (booking, payment, weather, currency, email)
+├── ui/            🖥️ screens and menus
+├── storage/       💾 JSON files
+├── utils/         🛡️ encryption, validation, sound
+└── sounds/        🔔 airplane chime
+tests/             🧪 179 tests
+```
+
+## 🧪 Tests
 
 ```bash
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests
 ```
 
-الاختبارات تغطي قواعد العمل (حساب الخطة، الحجز، التحقق من البطاقة، الاسترجاع، الحالات، خصم المجموعة
-وأكواد المناسبات، الرحلات الموقوفة، البحث مع تصحيح الإملاء، التوصيات، العملاء وحذفهم، التقارير)،
-وقراءة بيانات الطقس (بواجهة وهمية فتشتغل بدون إنترنت)، والرسائل البريدية (بخادم بريد محلي صغير فيُختبر
-بروتوكول SMTP الحقيقي بدون إرسال شيء)، والقوائم (بمدخلات وهمية). الاختبارات لا تستخدم ملف `.env` الخاص بك.
+## 🔒 Security
+- 🔐 Passwords: PBKDF2 hash + salt
+- 🗝️ The users file `data/users.json` is encrypted (Fernet); the key is in `data/secret.key`
+- 💳 Card details are only checked, never saved
+- 🙈 `.env`, `data/` and `venv/` are never uploaded to GitHub
 
-**تحسينات بعد التجربة:**
-- الجولة 1: طلب المستخدمون طريقة للرجوع من أي سؤال (صارت `b`)، وصار رقم البطاقة ظاهرًا أثناء الكتابة لأن الإدخال المخفي أربكهم.
-- الجولة 2: حُذف التحويل البنكي وصار الدفع بالبطاقة يسأل عن الاسم والرقم وCVV؛ يعرف العميل مدة الاسترجاع؛
-  التوصيات تسأل عن النوع أولًا وتعرض الطقس والخطة؛ البحث بالدولة أو المدينة أو النوع مع تصحيح الإملاء؛
-  خطط الميزانية تعرض تفاصيل المدينة؛ رسالة ترحيب بعد الدخول؛ والمدير يوقف الرحلات إلى إشعار آخر.
-- الجولة 3: التسجيل يطلب رقم الجوال ويعرض رقم العميل؛ رسائل بريد حقيقية؛ المدير يشوف مين حجز ويحذف العملاء؛
-  الرحلة 7 أيام افتراضيًا (وأي مدة مسموحة)؛ البحث وخطط الميزانية تعرض معلومات المدينة والطقس.
-- الجولة 4: سؤال الأيام يقول "اختر اللي يناسبك"؛ خصم 10% للشخصين؛ أكواد خصم للعيد ونهاية السنة؛
-  سؤال الكود قبل الدفع ثم الدفع مباشرة؛ أرقام البطاقات من 8 إلى 16 خانة؛ و`--test-email` للتأكد أن الرسالة توصل للجوال.
-- الجولة 5: الفاتورة صارت تعرض الطقس في يوم السفر وبرنامج الزيارة وعملة الدولة وسعر الصرف؛
-  وتظهر عروض الخصم تحت قوائم الوجهات.
+## ⚙️ Email (optional)
+Copy `.env.example` to `.env` and fill in your Gmail details (App Password), then check:
 
-## ملاحظات الأمان
-- كلمات المرور تُخزَّن كـ hash بخوارزمية PBKDF2-SHA256 مع salt، ولا تُحفظ نصًا أبدًا.
-- بيانات البطاقة (الاسم، الرقم، CVV) يتم التحقق منها فقط ولا تُحفظ ولا تُرسل بالبريد.
-- كلمة مرور البريد موجودة فقط في ملف `.env` أو متغيرات البيئة، ولا تُرفع، والبرنامج لا يطبعها.
-- أسماء العملاء وإيميلاتهم يتم فحصها حتى لا يقدرون يحقنون أسطرًا إضافية داخل رسالة البريد.
-- مجلد `data/` (الحسابات والحجوزات والرسائل المحفوظة) و`.env` و`venv/` و`__pycache__/` كلها في `.gitignore`.
+```bash
+python main.py --test-email your_address@gmail.com
+```
+
+Without `.env`, emails are saved in `data/outbox/`.
+
+## 📚 Libraries
+`rich` 🎨 · `pyfiglet` 🔠 · `cryptography` 🔐 · everything else is the Python standard library.
+
+> 💡 Prices and exchange rates are rough estimates for learning purposes.
+
+## 👨‍💻 Developer
+**Mohammed Alnsafi** 🚀  
+Python course unit project: SkyRoute ✈️

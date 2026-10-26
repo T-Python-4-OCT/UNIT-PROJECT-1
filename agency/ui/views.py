@@ -5,7 +5,7 @@ from rich.markup import escape
 from rich.panel import Panel
 from rich.table import Table
 
-from agency.config import APP_NAME, CURRENCY, DEFAULT_DAYS
+from agency.config import APP_NAME, CURRENCY, DEFAULT_DAYS, SUPPORT_EMAIL
 from agency.flags import flag
 from agency.services import currency, planner
 from agency.ui.console import console
@@ -327,9 +327,9 @@ def show_receipt(booking, customer_name: str, destination=None, day_weather=None
             lines.append(f"  {item:<22}{money(value):>16}")
     lines.append(f"  {'-' * 38}")
     lines.append(f"  [bold green]{'TOTAL PAID':<22}{money(booking.total_price):>16}[/]")
-    money_lines = currency.describe(booking.country, booking.total_price)
-    if money_lines:
-        lines += ["", f"[bold]Currency:[/bold] {escape(money_lines[0])}", f"  {escape(money_lines[1])}"]
+    rate_line = currency.describe(booking.country)
+    if rate_line:
+        lines += ["", f"[bold]Currency:[/bold] {escape(rate_line)}"]
     if destination is not None:
         if day_weather:
             weather_line = (f"{day_weather['condition']}, {day_weather['min']}-{day_weather['max']}°C")
@@ -340,6 +340,7 @@ def show_receipt(booking, customer_name: str, destination=None, day_weather=None
                   "", f"[bold]What you will visit ({booking.days} days)[/bold]"]
         lines += [f"  [cyan]Day {i}[/cyan]: {escape(step)}" for i, step in
                   enumerate(planner.build_itinerary(destination, booking.days), start=1)]
+    lines += ["", f"[bold red]Company email: {escape(SUPPORT_EMAIL)}[/bold red]"]
     console.print(Panel("\n".join(lines), title=f"{APP_NAME} Receipt",
                         border_style="green", expand=False))
 

@@ -11,7 +11,7 @@ from agency.ui import views
 from agency.ui.console import (GoBack, ask_choice, ask_int, ask_text,
                                confirm, console, error, heading, info, pause,
                                success, warn)
-from agency.utils import validators
+from agency.utils import sound, validators
 
 MENU = [
     ("1", "Browse destinations"),
@@ -355,6 +355,7 @@ def receipt(user: User) -> None:
         except ServiceError:      # weather is a bonus: the receipt must still show
             weather_note = "not available right now"
     views.show_receipt(booking, user.full_name, destination, day_weather, weather_note)
+    sound.receipt_sound()
 
 
 # تسأل عن نوع الرحلة والأيام وتعرض توصيات مع الطقس والخطة.

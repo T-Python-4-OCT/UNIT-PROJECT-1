@@ -8,6 +8,7 @@ _TMP = tempfile.mkdtemp()
 os.environ.setdefault("SKYROUTE_DATA_DIR", _TMP)
 
 os.environ["SKYROUTE_SMTP_HOST"] = ""
+os.environ["SKYROUTE_SOUND"] = "off"      # no beeps or voice while testing
 
 for _stream in (sys.stdout, sys.stderr):
     try:
@@ -180,6 +181,18 @@ class TestCustomerMenu(unittest.TestCase):
         with mock.patch.object(customer_menu, "ask_int", return_value=10), \
              mock.patch("urllib.request.urlopen", side_effect=OSError("offline")):
             customer_menu.details()
+
+    def test_receipt_screen_survives_no_internet(self):
+        soon = (date.today() + timedelta(days=5)).isoformat()   # inside the 16-day forecast window
+        booking = bookings.create(self.user.id, city_id("Dubai"), soon, 4, 1, "standard")
+        bookings.pay(booking.id, self.user.id, "apple_pay")
+        with mock.patch.object(customer_menu, "ask_int", return_value=booking.id), \
+             mock.patch("urllib.request.urlopen", side_effect=OSError("offline")), \
+             views.console.capture() as cap:
+            customer_menu.receipt(self.user)
+        text = " ".join(cap.get().split())
+        self.assertIn("not available right now", text)
+        self.assertIn("What you will visit", text)
 
     def run_menu(self, action, **patches):
         return run_screen(customer_menu, lambda: action(self.user), **patches)
@@ -555,6 +568,29 @@ class TestDiscounts(unittest.TestCase):
         self.assertIn("Group discount (10%)", text)
         self.assertIn("Code EID20 (20%)", text)
 
+    def test_the_receipt_shows_currency_weather_and_the_plan(self):
+        self.book(["no"], travelers=1, pay_now=True)
+        booking = bookings.list_for_user(self.user.id)[0]
+        destination = countries.get(booking.country_id)
+        day = {"date": booking.travel_date, "condition": "Clear sky", "min": 20, "max": 31}
+        with views.console.capture() as cap:
+            views.show_receipt(booking, "Test User", destination, day)
+        text = " ".join(cap.get().split())
+        self.assertIn("UAE dirham (AED): 1 SAR =", text)
+        self.assertNotIn("Your total is about", text)
+        self.assertIn(f"Weather on {booking.travel_date}: Clear sky, 20-31°C", text)
+        self.assertIn("What you will visit", text)
+        self.assertIn("Day 1", text)
+        self.assertIn("Company email: support@skyroute.example", text)
+
+    def test_the_receipt_works_without_the_weather(self):
+        self.book(["no"], travelers=1, pay_now=True)
+        booking = bookings.list_for_user(self.user.id)[0]
+        with views.console.capture() as cap:
+            views.show_receipt(booking, "Test User", countries.get(booking.country_id),
+                               None, "not available right now")
+        self.assertIn("not available right now", " ".join(cap.get().split()))
+
 
 class TestManagerDiscountCodes(unittest.TestCase):
     def setUp(self):
@@ -638,10 +674,61 @@ class TestRegistrationScreen(unittest.TestCase):
         self.assertIn("To: noor@mail.com", mail)
         self.assertIn(f"Customer ID : #{user.id}", mail)
 
-    def test_a_bad_phone_number_is_refused(self):
-        with self.assertRaises(ServiceError):
-            self.register(**{"Mobile number": "12"})
-        self.assertEqual(outbox_texts(), [])
+    def test_a_wrong_answer_shows_the_error_and_asks_the_same_question_again(self):
+        asked = []
+        answers = {"Choose a username": ["12", "bad name", "noor"],
+                   "Full name": ["Noor Ali"],
+                   "Email": ["14fe", "noor@mail.com"],
+                   "Mobile number": ["23", "0551234567"]}
+
+        def fake_ask(label, *args, **kwargs):
+            asked.append(label)
+            for key, values in answers.items():
+                if label.startswith(key):
+                    return values.pop(0)
+            raise AssertionError(f"Unexpected prompt: {label}")
+
+        with mock.patch.object(main, "ask_text", side_effect=fake_ask), \
+                mock.patch.object(main, "ask_password", return_value="secret1"), \
+                main.console.capture() as cap:
+            user = main.do_register()
+        out = " ".join(cap.get().split())
+        self.assertEqual(user.username, "noor")
+        self.assertEqual(sum(label.startswith("Choose a username") for label in asked), 3)
+        self.assertEqual(sum(label.startswith("Full name") for label in asked), 1)
+        self.assertEqual(sum(label.startswith("Email") for label in asked), 2)
+        self.assertEqual(sum(label.startswith("Mobile number") for label in asked), 2)
+        for message in ("Username must be 3-20 characters", "Email address is not valid",
+                        "Mobile number is not valid"):
+            self.assertIn(message, out)
+
+    def test_a_taken_username_is_refused_on_the_spot(self):
+        auth.register("noor", "secret1", "Noor Ali", "first@mail.com", PHONE)
+        names = iter(["noor", "noor2"])
+        others = {"Full name": "Noor Ali", "Email": "n2@mail.com", "Mobile number": PHONE}
+
+        def fake_ask(label, *args, **kwargs):
+            if label.startswith("Choose a username"):
+                return next(names)
+            return next(value for key, value in others.items() if label.startswith(key))
+
+        with mock.patch.object(main, "ask_text", side_effect=fake_ask), \
+                mock.patch.object(main, "ask_password", return_value="secret1"), \
+                main.console.capture() as cap:
+            user = main.do_register()
+        self.assertEqual(user.username, "noor2")
+        self.assertIn("already taken", cap.get())
+
+    def test_a_short_password_and_a_wrong_repeat_ask_again(self):
+        passwords = iter(["123", "secret1", "other", "secret1", "secret1"])
+        with mock.patch.object(main, "ask_text", side_effect=answer_by_label(self.ANSWERS)), \
+                mock.patch.object(main, "ask_password", side_effect=lambda *a, **k: next(passwords)), \
+                main.console.capture() as cap:
+            user = main.do_register()
+        out = " ".join(cap.get().split())
+        self.assertIn("Password must be at least 6 characters", out)
+        self.assertIn("Passwords do not match", out)
+        self.assertEqual(auth.login(user.username, "secret1").id, user.id)
 
 
 if __name__ == "__main__":

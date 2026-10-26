@@ -14,23 +14,26 @@ from datetime import date, timedelta
 from pathlib import Path
 from unittest import mock
 
-
+# Must be set before importing the agency package.
 _TMP = tempfile.mkdtemp()
 os.environ["SKYROUTE_DATA_DIR"] = _TMP
-
+# An empty SMTP host overrides any real .env file, so the tests can never send real emails.
 os.environ["SKYROUTE_SMTP_HOST"] = ""
+os.environ["SKYROUTE_SOUND"] = "off"      # no beeps or voice while testing
 
-from agency import seed
-from agency.config import (BOOKINGS_FILE, COUNTRIES_FILE, DEFAULT_DAYS,
+from agency import seed  # noqa: E402
+from agency.config import (BOOKINGS_FILE, COUNTRIES_FILE, DEFAULT_DAYS,  # noqa: E402
                            OUTBOX_DIR, PROMOS_FILE, REFUND_NOTICE, USERS_FILE)
-from agency.countries_data import COUNTRIES
-from agency.errors import ServiceError
-from agency.flags import UNKNOWN_FLAG, flag
-from agency.services import (auth, bookings, countries, notifications,
+from agency.countries_data import COUNTRIES  # noqa: E402
+from agency.errors import ServiceError  # noqa: E402
+from agency.flags import UNKNOWN_FLAG, flag  # noqa: E402
+from agency.storage import json_db  # noqa: E402
+from agency.utils import secure, sound  # noqa: E402
+from agency.services import (auth, bookings, countries, notifications,  # noqa: E402
                              planner, promos, recommendations, reports, users, weather)
-from agency.utils import validators
-from agency.utils.env_file import read_env_file
-from agency.utils.security import hash_password, verify_password
+from agency.utils import validators  # noqa: E402
+from agency.utils.env_file import read_env_file  # noqa: E402
+from agency.utils.security import hash_password, verify_password  # noqa: E402
 
 FUTURE = (date.today() + timedelta(days=30)).isoformat()
 GOOD_CARD = "4242 4242 4242 4242"
@@ -70,7 +73,7 @@ class TestSecurity(unittest.TestCase):
         h = hash_password("abc123")
         self.assertTrue(verify_password("abc123", h))
         self.assertFalse(verify_password("wrong", h))
-        self.assertNotEqual(h, hash_password("abc123"))
+        self.assertNotEqual(h, hash_password("abc123"))  # random salt
         self.assertFalse(verify_password("abc123", "garbage"))
 
 
@@ -137,24 +140,24 @@ class TestSeedAndAuth(Base):
 
     def test_register_errors(self):
         make_customer()
-        bad = [("sara", "secret1", "Ali", "x@mail.com", PHONE),
-               ("new1", "secret1", "Ali", "sara@mail.com", PHONE),
-               ("ab", "secret1", "Ali", "x@mail.com", PHONE),
-               ("new2", "123", "Ali", "x@mail.com", PHONE),
-               ("new3", "secret1", " ", "x@mail.com", PHONE),
-               ("new4", "secret1", "Ali", "not-an-email", PHONE),
-               ("new5", "secret1", "Ali", "x@mail.com", "123"),
-               ("new6", "secret1", "Ali", "x@mail.com", "abc12345"),
-               ("new7", "secret1", "Ali", "x@mail.com", ""),
-               ("new8", "secret1", "Ali\nBcc: a@b.c", "x@mail.com", PHONE)]
+        bad = [("sara", "secret1", "Ali", "x@mail.com", PHONE),       # duplicate username
+               ("new1", "secret1", "Ali", "sara@mail.com", PHONE),    # duplicate email
+               ("ab", "secret1", "Ali", "x@mail.com", PHONE),         # short username
+               ("new2", "123", "Ali", "x@mail.com", PHONE),           # short password
+               ("new3", "secret1", " ", "x@mail.com", PHONE),         # empty name
+               ("new4", "secret1", "Ali", "not-an-email", PHONE),     # bad email
+               ("new5", "secret1", "Ali", "x@mail.com", "123"),       # phone too short
+               ("new6", "secret1", "Ali", "x@mail.com", "abc12345"),  # letters in the phone
+               ("new7", "secret1", "Ali", "x@mail.com", ""),          # phone is required
+               ("new8", "secret1", "Ali\nBcc: a@b.c", "x@mail.com", PHONE)]  # header injection
         for args in bad:
             with self.assertRaises(ServiceError, msg=str(args)):
                 auth.register(*args)
 
     def test_old_accounts_without_a_phone_still_load(self):
-        records = json.loads(USERS_FILE.read_text(encoding="utf-8"))
+        records = json_db.load(USERS_FILE)
         records[0].pop("phone", None)
-        USERS_FILE.write_text(json.dumps(records), encoding="utf-8")
+        json_db.save(USERS_FILE, records)
         self.assertEqual(auth.login("admin", "admin123").phone, "")
 
     def test_login_fail(self):
@@ -178,7 +181,7 @@ class TestCountries(Base):
         self.assertEqual(c.highlights, ["Safari", "Giraffe Centre"])
         self.assertEqual(countries.update(c.id, {"hotel": 350}).hotel, 350)
         with self.assertRaises(ServiceError):
-            countries.add(data)
+            countries.add(data)  # duplicate city
         countries.delete(c.id)
         with self.assertRaises(ServiceError):
             countries.get(c.id)
@@ -198,7 +201,7 @@ class TestPlanner(Base):
     def test_estimate_math(self):
         istanbul = countries.get(city_id("Istanbul"))
         cost = planner.estimate(istanbul, 3, 2, "standard")
-
+        # base 5160, two travelers get 10% off (516)
         self.assertEqual(cost, {"Flights": 2400, "Hotel": 1200, "Food": 720, "Transport": 240,
                                 "Activities": 600, "Group discount (10%)": -516, "Total": 4644})
 
@@ -212,12 +215,12 @@ class TestPlanner(Base):
 
     def test_promo_is_a_percent_of_the_base_costs(self):
         c = countries.get(city_id("Istanbul"))
-        single = planner.estimate(c, 3, 1, "standard")
+        single = planner.estimate(c, 3, 1, "standard")          # 2580
         cost = planner.apply_promo(single, "EID20", 20)
         self.assertEqual(cost["Code EID20 (20%)"], -516)
         self.assertEqual(cost["Total"], 2580 - 516)
         pair = planner.apply_promo(planner.estimate(c, 3, 2, "standard"), "EID20", 20)
-        self.assertEqual(pair["Total"], 5160 - 516 - 1032)
+        self.assertEqual(pair["Total"], 5160 - 516 - 1032)     # both discounts, each of the base
 
     def test_style_changes_price(self):
         c = countries.get(city_id("Paris"))
@@ -263,7 +266,7 @@ class TestPlanner(Base):
 class TestFlags(unittest.TestCase):
     def test_a_known_country_gets_its_flag(self):
         self.assertEqual(flag("Turkey"), "\U0001F1F9\U0001F1F7")
-        self.assertEqual(flag(" uae "), "\U0001F1E6\U0001F1EA")
+        self.assertEqual(flag(" uae "), "\U0001F1E6\U0001F1EA")      # capital letters and spaces do not matter
         self.assertEqual(flag("United Kingdom"), "\U0001F1EC\U0001F1E7")
 
     def test_an_unknown_country_gets_a_globe(self):
@@ -373,13 +376,13 @@ class TestBookings(Base):
     def test_pay_flow(self):
         b = self.book()
         with self.assertRaises(ServiceError):
-            bookings.pay(b.id, self.user.id, "card", **{**CARD, "card_number": "1234"})
+            bookings.pay(b.id, self.user.id, "card", **{**CARD, "card_number": "1234"})  # too short
         paid = bookings.pay(b.id, self.user.id, "card", **CARD)
         self.assertTrue(paid.paid)
         self.assertEqual(paid.status, "confirmed")
         self.assertTrue(paid.reference.startswith("SR-"))
         with self.assertRaises(ServiceError):
-            bookings.pay(b.id, self.user.id, "card", **CARD)
+            bookings.pay(b.id, self.user.id, "card", **CARD)  # already paid
         with self.assertRaises(ServiceError):
             bookings.pay(b.id, self.user.id, "bitcoin")
 
@@ -388,7 +391,7 @@ class TestBookings(Base):
         for bad in ({"card_holder": ""}, {"card_holder": "R2D2"}, {"cvv": ""}, {"cvv": "12"}, {"cvv": "12a4"}):
             with self.assertRaises(ServiceError, msg=str(bad)):
                 bookings.pay(b.id, self.user.id, "card", **{**CARD, **bad})
-        self.assertFalse(bookings.get(b.id).paid)
+        self.assertFalse(bookings.get(b.id).paid)  # nothing was saved by the failed attempts
 
     def test_bank_transfer_was_removed(self):
         b = self.book()
@@ -414,7 +417,7 @@ class TestBookings(Base):
     def test_cancel_refund(self):
         b = self.book()
         _, refund = bookings.cancel(b.id, self.user.id)
-        self.assertEqual(refund, 0)
+        self.assertEqual(refund, 0)  # nothing was paid
         b2 = self.book()
         bookings.pay(b2.id, self.user.id, "apple_pay")
         cancelled, refund = bookings.cancel(b2.id, self.user.id)
@@ -422,14 +425,14 @@ class TestBookings(Base):
         self.assertEqual(cancelled.status, "cancelled")
         self.assertFalse(cancelled.paid)
         with self.assertRaises(ServiceError):
-            bookings.cancel(b2.id, self.user.id)
+            bookings.cancel(b2.id, self.user.id)  # already cancelled
         with self.assertRaises(ServiceError):
             bookings.pay(b2.id, self.user.id, "apple_pay")
 
     def test_manager_status_rules(self):
         b = self.book()
         with self.assertRaises(ServiceError):
-            bookings.set_status(b.id, "confirmed")
+            bookings.set_status(b.id, "confirmed")   # unpaid
         with self.assertRaises(ServiceError):
             bookings.set_status(b.id, "flying")
         bookings.pay(b.id, self.user.id, "apple_pay")
@@ -437,7 +440,7 @@ class TestBookings(Base):
         _, refund = bookings.set_status(b.id, "cancelled")
         self.assertEqual(refund, b.total_price)
         with self.assertRaises(ServiceError):
-            bookings.set_status(b.id, "pending")
+            bookings.set_status(b.id, "pending")     # cancelled is final
         with self.assertRaises(ServiceError):
             bookings.set_status(999, "pending")
 
@@ -457,22 +460,22 @@ class TestReportsAndRecommendations(Base):
         self.assertEqual(r["customers"], 1)
         self.assertEqual(r["by_status"]["confirmed"], 1)
         self.assertEqual(r["by_status"]["cancelled"], 1)
-        self.assertEqual(len(r["top_destinations"]), 1)
+        self.assertEqual(len(r["top_destinations"]), 1)  # cancelled one is excluded
 
     def test_recommend_without_history(self):
         u = make_customer()
         recs = recommendations.recommend(u.id)
         self.assertEqual(len(recs), 3)
         costs = [planner.estimate(c, DEFAULT_DAYS, 1, "standard")["Total"] for c, _ in recs]
-        self.assertEqual(costs, sorted(costs))
+        self.assertEqual(costs, sorted(costs))  # cheapest first when nobody booked yet
 
     def test_recommend_from_history(self):
         u = make_customer()
-        bookings.create(u.id, city_id("Bali"), FUTURE, 5, 1, "standard")
+        bookings.create(u.id, city_id("Bali"), FUTURE, 5, 1, "standard")  # a beach trip
         recs = recommendations.recommend(u.id)
         names = [c.city for c, _ in recs]
         self.assertNotIn("Bali", names)
-        self.assertEqual(recs[0][0].city, "Male")
+        self.assertEqual(recs[0][0].city, "Male")  # the only other beach destination
         self.assertIn("beach", recs[0][1])
 
     def test_cancelled_booking_does_not_count(self):
@@ -484,6 +487,7 @@ class TestReportsAndRecommendations(Base):
 
 
 class TestWeather(Base):
+    """The weather API is faked, so these tests also run offline."""
 
     GEOCODING = {"results": [
         {"name": "Male", "country": "India", "latitude": 1.0, "longitude": 1.0},
@@ -518,7 +522,7 @@ class TestWeather(Base):
         with mock.patch.object(weather, "_get_json", side_effect=self.fake_api):
             weather.get_forecast(self.male)
         forecast_params = self.calls[1][1]
-        self.assertEqual(forecast_params["latitude"], 4.17)
+        self.assertEqual(forecast_params["latitude"], 4.17)   # Maldives, not India
 
     def test_unknown_city(self):
         with mock.patch.object(weather, "_get_json", return_value={}):
@@ -643,12 +647,13 @@ class TestWelcomeNotes(Base):
         self.assertIn("1 trip(s) are suspended", reports.welcome_notes(admin)[1])
 
 class TestCustomerAccounts(Base):
+    """What the manager sees and does with customer accounts."""
 
     def setUp(self):
         super().setUp()
         self.sara = make_customer("sara")
         self.omar = make_customer("omar")
-
+        # sara: one paid+confirmed, one pending, one paid+completed (history)
         self.paid = bookings.create(self.sara.id, city_id("Dubai"), FUTURE, 3, 1, "standard")
         bookings.pay(self.paid.id, self.sara.id, "apple_pay")
         self.pending = bookings.create(self.sara.id, city_id("Paris"), FUTURE, 3, 1, "standard")
@@ -659,7 +664,7 @@ class TestCustomerAccounts(Base):
 
     def test_overview_lists_customers_only(self):
         rows = {row.user.username: row for row in users.customer_overview()}
-        self.assertEqual(set(rows), {"sara", "omar"})
+        self.assertEqual(set(rows), {"sara", "omar"})          # the admin is not a customer
         self.assertEqual((rows["sara"].bookings, rows["sara"].active), (3, 2))
         self.assertEqual(rows["sara"].paid_total, self.paid.total_price + self.done.total_price)
         self.assertEqual((rows["omar"].bookings, rows["omar"].paid_total), (1, 0))
@@ -693,23 +698,24 @@ class TestCustomerAccounts(Base):
         with self.assertRaises(ServiceError):
             auth.login("sara", "secret1")
         self.assertEqual(bookings.get(self.paid.id).status, "cancelled")
-        self.assertFalse(bookings.get(self.paid.id).paid)
+        self.assertFalse(bookings.get(self.paid.id).paid)             # refunded
         self.assertEqual(bookings.get(self.pending.id).status, "cancelled")
-        self.assertEqual(bookings.get(self.done.id).status, "completed")
-        self.assertEqual(bookings.get(self.omar_booking.id).status, "pending")
+        self.assertEqual(bookings.get(self.done.id).status, "completed")   # history is kept
+        self.assertEqual(bookings.get(self.omar_booking.id).status, "pending")   # others untouched
 
     def test_revenue_ignores_refunded_money(self):
         users.delete_customer(self.sara.id)
         self.assertEqual(reports.summary()["revenue"], self.done.total_price)
 
     def test_ids_of_deleted_customers_are_never_reused(self):
-        users.delete_customer(self.omar.id)
+        users.delete_customer(self.omar.id)                  # omar had the highest id and a booking
         newcomer = auth.register("noor", "secret1", "Noor Ali", "noor@mail.com", PHONE)
         self.assertGreater(newcomer.id, self.omar.id)
-        self.assertEqual(bookings.list_for_user(newcomer.id), [])
+        self.assertEqual(bookings.list_for_user(newcomer.id), [])   # no inherited history
 
 
 class FakeSMTPServer:
+    """A tiny local SMTP server (no login, no TLS) that records every message it receives."""
 
     def __init__(self):
         self.messages = []
@@ -761,6 +767,7 @@ class FakeSMTPServer:
 
 
 def smtp_env(**overrides):
+    """Environment variables for a plain local SMTP server."""
     values = {"SKYROUTE_SMTP_HOST": "127.0.0.1", "SKYROUTE_SMTP_PORT": "25", "SKYROUTE_SMTP_SECURITY": "none",
               "SKYROUTE_MAIL_FROM": "agency@skyroute.test", "SKYROUTE_SMTP_USER": "",
               "SKYROUTE_SMTP_PASSWORD": ""}
@@ -777,7 +784,7 @@ class TestEmailSettings(Base):
                       SKYROUTE_SMTP_USER="me@gmail.com", SKYROUTE_SMTP_PASSWORD="abcd efgh", SKYROUTE_MAIL_FROM=""):
             settings = notifications.load_settings()
         self.assertEqual((settings.host, settings.port, settings.security), ("smtp.gmail.com", 465, "ssl"))
-        self.assertEqual(settings.sender, "me@gmail.com")
+        self.assertEqual(settings.sender, "me@gmail.com")          # the sender defaults to the login
         self.assertEqual(settings.password, "abcd efgh")
 
     def test_port_587_uses_starttls(self):
@@ -798,7 +805,7 @@ class TestEmailSettings(Base):
                          {"SKYROUTE_SMTP_HOST": "smtp.example.com", "SKYROUTE_MAIL_FROM": "a@b.co"})
         self.assertEqual(read_env_file(Path(_TMP) / "missing.env"), {})
         with mock.patch.object(notifications, "ENV_FILE", env_file):
-            with mock.patch.dict(os.environ, {"SKYROUTE_SMTP_HOST": ""}):
+            with mock.patch.dict(os.environ, {"SKYROUTE_SMTP_HOST": ""}):     # empty = switched off
                 self.assertIsNone(notifications.load_settings())
             with mock.patch.dict(os.environ, {}, clear=False):
                 os.environ.pop("SKYROUTE_SMTP_HOST", None)
@@ -822,15 +829,15 @@ class TestEmailSending(Base):
             with smtp_env(SKYROUTE_SMTP_PORT=str(server.port)):
                 result = notifications.send_email("sara@mail.com", "Hi\nBcc: evil@x.y", "Line one\nLine two")
         self.assertEqual(result.status, "sent")
-        self.assertEqual(self.outbox_files(), [])
+        self.assertEqual(self.outbox_files(), [])                       # sent, so no saved copy
         message = server.messages[0]
         self.assertEqual((message["To"], message["From"]), ("sara@mail.com", "agency@skyroute.test"))
-        self.assertEqual(message["Subject"], "Hi Bcc: evil@x.y")
+        self.assertEqual(message["Subject"], "Hi Bcc: evil@x.y")        # no header injection
         self.assertIsNone(message["Bcc"])
         self.assertIn("Line two", message.get_content())
 
     def test_a_computer_name_with_arabic_letters_does_not_break_sending(self):
-
+        # smtplib puts the computer's name in the EHLO greeting; Arabic letters crash it unless we pass our own
         with FakeSMTPServer() as server, mock.patch("socket.getfqdn", return_value="جهاز-محمد.local"):
             with smtp_env(SKYROUTE_SMTP_PORT=str(server.port)):
                 result = notifications.send_email("sara@mail.com", "Hi", "Body")
@@ -844,7 +851,7 @@ class TestEmailSending(Base):
             result = notifications.send_email("sara@mail.com", "Subject", "Body")
         self.assertEqual(result.status, "failed")
         self.assertIn("character", result.detail)
-        self.assertEqual(len(self.outbox_files()), 1)
+        self.assertEqual(len(self.outbox_files()), 1)                  # the copy is still saved
 
     def test_ssl_login_and_send(self):
         with smtp_env(SKYROUTE_SMTP_PORT="465", SKYROUTE_SMTP_SECURITY="ssl", SKYROUTE_SMTP_USER="me@gmail.com",
@@ -876,7 +883,7 @@ class TestEmailSending(Base):
     def test_unreachable_server_never_raises(self):
         with socket.socket() as probe:
             probe.bind(("127.0.0.1", 0))
-            closed_port = probe.getsockname()[1]
+            closed_port = probe.getsockname()[1]                  # nobody listens on it any more
         with smtp_env(SKYROUTE_SMTP_PORT=str(closed_port)):
             result = notifications.send_email("sara@mail.com", "Subject", "Body")
         self.assertEqual(result.status, "failed")
@@ -949,7 +956,7 @@ class TestEmailContent(Base):
 
     def test_notify_booking_sends_to_the_customers_email(self):
         with FakeSMTPServer() as server, smtp_env(SKYROUTE_SMTP_PORT=str(server.port)):
-            result = notifications.notify_booking("created", self.booking)
+            result = notifications.notify_booking("created", self.booking)       # user looked up by id
             welcome = notifications.notify_welcome(self.user)
         self.assertEqual((result.status, welcome.status), ("sent", "sent"))
         self.assertEqual([m["To"] for m in server.messages], ["sara@mail.com", "sara@mail.com"])
@@ -959,13 +966,116 @@ class TestEmailContent(Base):
         users.delete_customer(self.user.id)
         result = notifications.notify_booking("cancelled", self.booking)
         self.assertEqual(result.status, "failed")
-
+        # ... but with the deleted account passed in, the email still goes out
         self.assertEqual(notifications.notify_booking("cancelled", self.booking, user=self.user).status, "saved")
         self.assertEqual(notifications.notify_account_deleted(self.user, 1, 0).status, "saved")
 
 
+
 def tearDownModule():
     shutil.rmtree(_TMP, ignore_errors=True)
+
+
+class TestEncryptedUsers(Base):
+    def test_the_users_file_is_not_readable_text(self):
+        make_customer("sara")
+        raw = USERS_FILE.read_bytes()
+        for secret in (b"sara@mail.com", b"Sara Ali", PHONE.encode(), b"admin@skyroute.com", b"password_hash"):
+            self.assertNotIn(secret, raw)
+        with self.assertRaises(ValueError):
+            json.loads(raw.decode("utf-8"))
+
+    def test_the_app_still_reads_and_writes_users_normally(self):
+        make_customer("sara")
+        self.assertEqual(auth.login("sara", "secret1").email, "sara@mail.com")
+        self.assertEqual({user.username for user in users.list_all()}, {"admin", "sara"})
+
+    def test_the_other_data_files_stay_plain_json(self):
+        self.assertIsInstance(json.loads(COUNTRIES_FILE.read_text(encoding="utf-8")), list)
+
+    def test_an_old_plain_text_users_file_is_upgraded(self):
+        records = json_db.load(USERS_FILE)
+        USERS_FILE.write_text(json.dumps(records), encoding="utf-8")       # the old format
+        self.assertEqual(auth.login("admin", "admin123").username, "admin")
+        make_customer("sara")                                              # any save encrypts it
+        self.assertNotIn(b"admin@skyroute.com", USERS_FILE.read_bytes())
+
+    def test_a_wrong_key_gives_a_clear_error(self):
+        other_key = secure.Fernet.generate_key().decode()
+        with mock.patch.dict(os.environ, {secure.KEY_NAME: other_key}):
+            with self.assertRaises(ServiceError) as caught:
+                users.list_all()
+        self.assertIn("cannot be decrypted", str(caught.exception))
+
+    def test_an_invalid_key_gives_a_clear_error(self):
+        with mock.patch.dict(os.environ, {secure.KEY_NAME: "not-a-key"}):
+            with self.assertRaises(ServiceError):
+                users.list_all()
+
+    def test_the_key_file_is_created_once_and_reused(self):
+        make_customer("sara")
+        self.assertTrue(secure.KEY_FILE.exists())
+        first = secure.KEY_FILE.read_bytes()
+        make_customer("omar")
+        self.assertEqual(secure.KEY_FILE.read_bytes(), first)
+
+
+class TestSound(unittest.TestCase):
+    def test_sounds_are_off_while_testing(self):
+        self.assertFalse(sound.enabled())
+
+    def test_off_values_switch_the_sound_off(self):
+        for value in ("off", "0", "no", "false", " OFF "):
+            with mock.patch.dict(os.environ, {"SKYROUTE_SOUND": value}):
+                self.assertFalse(sound.enabled())
+        with mock.patch.dict(os.environ, {"SKYROUTE_SOUND": "on"}):
+            self.assertTrue(sound.enabled())
+
+    def test_welcome_says_the_text_on_windows(self):
+        with mock.patch.dict(os.environ, {"SKYROUTE_SOUND": "on"}), \
+             mock.patch.object(sound.sys, "platform", "win32"), \
+             mock.patch.object(sound.subprocess, "Popen") as popen:
+            sound.welcome()
+        arguments = popen.call_args[0][0]
+        self.assertEqual(arguments[0], "powershell.exe")
+        self.assertIn("Welcome to SkyRoute", arguments[-1])
+
+    def test_welcome_falls_back_to_the_chime_without_a_voice(self):
+        with mock.patch.dict(os.environ, {"SKYROUTE_SOUND": "on"}), \
+             mock.patch.object(sound.sys, "platform", "linux"), \
+             mock.patch.object(sound.shutil, "which", return_value=None), \
+             mock.patch.object(sound, "_in_background", side_effect=lambda task: task()), \
+             mock.patch.object(sound, "_play_files") as play:
+            sound.welcome()
+        play.assert_called_once_with((sound.CHIME_SOUND,))
+
+    def test_nothing_plays_when_switched_off(self):
+        with mock.patch.object(sound.subprocess, "Popen") as popen, \
+             mock.patch.object(sound, "_play_files") as play:
+            sound.welcome()
+            sound.receipt_sound()
+        popen.assert_not_called()
+        play.assert_not_called()
+
+    def test_a_missing_powershell_does_not_crash(self):
+        with mock.patch.dict(os.environ, {"SKYROUTE_SOUND": "on"}), \
+             mock.patch.object(sound.sys, "platform", "win32"), \
+             mock.patch.object(sound.subprocess, "Popen", side_effect=OSError("no powershell")), \
+             mock.patch.object(sound, "_in_background", side_effect=lambda task: task()), \
+             mock.patch.object(sound, "_play_files"):
+            sound.welcome()
+
+    def test_the_receipt_rings_the_chime(self):
+        with mock.patch.dict(os.environ, {"SKYROUTE_SOUND": "on"}), \
+             mock.patch.object(sound, "_in_background", side_effect=lambda task: task()), \
+             mock.patch.object(sound, "_play_files") as play:
+            sound.receipt_sound()
+        play.assert_called_once_with((sound.CHIME_SOUND,))
+
+    def test_the_chime_file_exists_and_is_a_real_wav_file(self):
+        import wave
+        with wave.open(str(sound.SOUNDS_DIR / sound.CHIME_SOUND)) as wav:
+            self.assertGreater(wav.getnframes(), 0)
 
 
 if __name__ == "__main__":

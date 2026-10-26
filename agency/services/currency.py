@@ -46,12 +46,6 @@ def local_currency(country: str):
     return name, code, per_usd / SAR_PER_USD
 
 
-# تحوّل مبلغ بالريال إلى عملة الدولة.
-def convert(amount_sar: float, rate: float) -> float:
-    """An amount in riyals expressed in the local currency."""
-    return amount_sar * rate
-
-
 # تنسّق الرقم عشان يقرأ بسهولة (بدون كسور للكبير، وكسور للصغير).
 def format_amount(value: float) -> str:
     """Readable number: no decimals for big values (yen, rupiah), more decimals for small ones."""
@@ -61,11 +55,10 @@ def format_amount(value: float) -> str:
 
 
 # ترجع سطرين للإيصال: سعر الصرف والمجموع بعملة الدولة.
-def describe(country: str, total_sar: float):
-    """Two receipt lines (rate, total in local currency), or None when the country is unknown."""
+def describe(country: str):
+    """One receipt line with the local currency and the approximate rate, or None for an unknown country."""
     found = local_currency(country)
     if found is None:
         return None
     name, code, rate = found
-    return (f"{name} ({code}): 1 {CURRENCY} = {format_amount(rate)} {code} (approx.)",
-            f"Your total is about {format_amount(convert(total_sar, rate))} {code}")
+    return f"{name} ({code}): 1 {CURRENCY} = {format_amount(rate)} {code} (approx.)"
