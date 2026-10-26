@@ -1,44 +1,26 @@
-# UNIT-PROJECT-1
+# 🔐 CLI Password Manager
 
+A secure, lightweight, and interactive command-line interface (CLI) password manager built with Python. It allows users to securely store, manage, and generate strong credentials locally with environment configuration security.
 
-## Based on what you’ve learned until now , create a project of your choosing (impress us with your imagination) . This project must at least satisfy the following minimum requirements :
+---
 
-- Must be interactive on CLI.
-- Use your coding skills in Python accurately.
-- Organize Your Code into modules & (or packages)
-- Use git & Github to track changes in your code.
+## ✨ Features
 
-## Example Project :  An online Grocery Store :
+- **Interactive CLI Menu**: Easy-to-navigate terminal interface powered by `colorama` for clean visual styling.
+- **Popular Sites Quick Selection**: Pre-configured menu options for popular platforms (Gmail, GitHub, Twitter, etc.) to prevent spelling errors and maintain data consistency.
+- **Secure Masking**: Displays masked passwords in summary views while preserving actual data integrity.
+- **Strong Password Generator**: Automatically generates robust, randomized passwords containing letters, numbers, and special symbols.
+- **Vault Statistics & Dashboard**: View summary analytics regarding total accounts and unique managed sites.
+- **Environment Security (`.env`)**: Uses `python-dotenv` and sensitive configuration management adhering to academic best practices.
+- **Version Control Safety**: Protected via `.gitignore` to prevent secret leaks on GitHub.
 
-#### Overview : An online store that sells fruits to customers. This online store has 2 main users. The customer and the manager of the store . Each one of them should be able to do the following tasks for the store to function properly . 
+---
 
-### Features & User Stories
-#### As a customer I should be able to do the following :
-- Browse  Products . 
-- View the product info (summary, specs, price, quantity , etc.)
-- Search for Products.
-- Get recommendations for my next purchase based on my purchase history.
-- Add Products to the shopping cart .
-- Remove a product from the shopping cart.
-- List the products in my shopping cart. 
-- Continue to checkout . 
-- Fill in my address for delivery.
-- Get receipt of my purchases.
-- Check delivery status . 
+## 🛠️ Project Architecture
 
+- `main.py`: The entry point and core controller handling the CLI loop and user interactions[cite: 1, 2].
+- `file_manager.py`: Manages JSON I/O operations and reads configurations safely from environment variables[cite: 1, 2].
+- `models.py`: Defines the `VaultItem` class structure and serialization methods[cite: 1, 2].
+- `.env`: Stores confidential environment variables (Ignored by Git)[cite: 1, 2].
 
-
-#### Usage :
- Explain to the user how to use your project . 
- for example:
- - type in search product_name to search for a product.
- - type in list_products to show all the products in the grocery.
- - type in show product_name to get information about this product.
- - type in buy product_name to buy the product . 
- - and so on...
-
-
-### For your project. Edit this README.md file to include your own project name,  overview, user stories, and usage. 
-
-### NOTE: before submitting the final project, please do the following command:
-`pip freeze > requirements.txt` to enable use to know & use the packages used in your project.
+---
