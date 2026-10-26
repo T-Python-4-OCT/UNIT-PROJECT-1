@@ -1,14 +1,20 @@
+"""
+storage.py
+Loads and saves app data to a JSON file.
+"""
 import json
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
-DATA_FILE = os.getenv("DATA_FILE", "studymate_data.json")
+DATA_FILE = os.getenv("DATA_FILE", "unimate_data.json")
+DATA_KEYS = ["users", "subjects", "tasks", "projects", "exams", "notes"]
+
 
 def load_data():
-    default_data = {"users": [], "subjects": [], "tasks": [], "projects": [], "exams": [], "notes": []}
+    # Load data from JSON, or return empty lists if the file does not exist
+    default_data = {key: [] for key in DATA_KEYS}
     if not os.path.exists(DATA_FILE):
         return default_data
     try:
@@ -21,16 +27,16 @@ def load_data():
     except Exception:
         return default_data
 
+
 def save_data(data):
+    # Convert objects to dictionaries and write them to the JSON file
     try:
-        serializable_data = {
-            "users": [u.to_dict() if hasattr(u, "to_dict") else u for u in data.get("users", [])],
-            "subjects": [s.to_dict() if hasattr(s, "to_dict") else s for s in data.get("subjects", [])],
-            "tasks": [t.to_dict() if hasattr(t, "to_dict") else t for t in data.get("tasks", [])],
-            "projects": [p.to_dict() if hasattr(p, "to_dict") else p for p in data.get("projects", [])],
-            "exams": [e.to_dict() if hasattr(e, "to_dict") else e for e in data.get("exams", [])],
-            "notes": [n.to_dict() if hasattr(n, "to_dict") else n for n in data.get("notes", [])]
-        }
+        serializable_data = {}
+        for key in DATA_KEYS:
+            serializable_data[key] = [
+                item.to_dict() if hasattr(item, "to_dict") else item
+                for item in data.get(key, [])
+            ]
         with open(DATA_FILE, "w", encoding="utf-8") as file:
             json.dump(serializable_data, file, indent=4, ensure_ascii=False)
         return True

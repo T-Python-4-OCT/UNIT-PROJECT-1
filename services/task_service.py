@@ -1,50 +1,28 @@
+"""
+services/task_service.py
+Add, view, complete, and delete tasks.
+"""
 from datetime import date
 from rich.table import Table
 from models.classes import Task
-from storage import save_data
+from services.base_service import BaseService
 from utils import (
     console,
     print_header,
     print_success,
-    print_error,
     print_info,
-    prompt_required_text,
+    prompt_text,
+    prompt_date,
+    prompt_float_range,
     prompt_select,
-    confirm_delete,
     show_spinner
 )
 
-def manage_tasks_menu(data):
-    while True:
-        print_header(
-            "SECTION: Task Management",
-            "View, add, complete, or delete your tasks"
-        )
-        choices = [
-            "1. View All Tasks",
-            "2. Add New Task",
-            "3. Mark Task as Completed",
-            "4. Delete Task",
-            "5. Back to Main Menu"
-        ]
-        choice = prompt_select("Select an action:", choices)
-
-        if choice is None or "5." in choice:
-            break
-        elif "1." in choice:
-            view_all_tasks(data)
-        elif "2." in choice:
-            add_task(data)
-        elif "3." in choice:
-            complete_task(data)
-        elif "4." in choice:
-            delete_task(data)
 
 def format_task_score(earned, max_s):
-    """Format and colorize task score based on percentage."""
     if earned is None or max_s is None or max_s <= 0:
-        return "[dim]Pending[/dim]"
-    
+        return "[dim]⏳ Pending[/dim]"
+
     pct = (earned / max_s) * 100
     if pct >= 85:
         color = "bold green"
@@ -54,16 +32,17 @@ def format_task_score(earned, max_s):
         color = "yellow"
     else:
         color = "bold red"
-        
+
     return f"[{color}]{earned:g}/{max_s:g} ({pct:.0f}%)[/{color}]"
 
+
 def format_priority(priority):
-    """Colorize task priority for better visual scanning."""
     if priority == "High":
-        return "[bold red]High[/bold red]"
+        return "[bold red]🔴 High[/bold red]"
     elif priority == "Medium":
-        return "[yellow]Medium[/yellow]"
-    return "[green]Low[/green]"
+        return "[yellow]🟡 Medium[/yellow]"
+    return "[green]🟢 Low[/green]"
+
 
 def display_tasks_table(tasks, subjects):
     if not tasks:
@@ -77,119 +56,92 @@ def display_tasks_table(tasks, subjects):
     table.add_column("Title", width=28)
     table.add_column("Course", width=10)
     table.add_column("Due Date", width=12)
-    table.add_column("Priority", width=10)
-    table.add_column("Status", width=14)
+    table.add_column("Priority", width=12)
+    table.add_column("Status", width=16)
     table.add_column("Score", width=18)
 
     for t in tasks:
         course_code = sub_map.get(t.subject_id, "N/A")
-        score_str = format_task_score(t.earned_score, t.max_score)
-        priority_str = format_priority(t.priority)
-        status_color = "green" if t.status == "Completed" else "yellow"
+        if t.status == "Completed":
+            status_str = "[green]✅ Completed[/green]"
+        else:
+            status_str = f"[yellow]⏳ {t.status}[/yellow]"
 
         table.add_row(
             t.task_id,
             t.title,
             f"[bold]{course_code}[/bold]",
             t.due_date,
-            priority_str,
-            f"[{status_color}]{t.status}[/{status_color}]",
-            score_str
+            format_priority(t.priority),
+            status_str,
+            format_task_score(t.earned_score, t.max_score)
         )
 
     console.print()
     console.print(table)
 
-def view_all_tasks(data):
-    print_header("VIEW: All Tasks", "Complete list of assignments and grades")
-    show_spinner("Loading tasks...")
-    display_tasks_table(data["tasks"], data["subjects"])
 
-def generate_next_task_id(tasks):
-    max_num = 0
-    for item in tasks:
-        if item.task_id.startswith("TSK-"):
-            num_part = item.task_id.replace("TSK-", "")
-            if num_part.isdigit():
-                num = int(num_part)
-                if num > max_num:
-                    max_num = num
-    return f"TSK-{max_num + 1:03d}"
+class TaskService(BaseService):
+    section_title = "📝 Manage Tasks & Assignments"
+    section_subtitle = "View, add, complete, or delete your tasks"
+    menu_options = [
+        ("📋 View All Tasks", "view_all"),
+        ("➕ Add New Task", "add"),
+        ("✅ Mark Task as Completed", "complete"),
+        ("🗑️  Delete Task", "delete"),
+    ]
 
-def add_task(data):
-    print_header("ACTION: Add New Task", "Create a new assignment")
-    
-    if not data["subjects"]:
-        print_error("Please add at least one subject first.")
-        return
+    def view_all(self):
+        print_header("📋 All Tasks", "List of assignments and grades")
+        show_spinner("Loading tasks...")
+        display_tasks_table(self.data["tasks"], self.data["subjects"])
 
-    sub_choices = [f"[{s.subject_id}] {s.code} - {s.name}" for s in data["subjects"]]
-    selected_sub_str = prompt_select("Select Course:", sub_choices)
-    if not selected_sub_str:
-        return
+    def add(self):
+        print_header("➕ Add New Task", "Create a new assignment")
 
-    sub_id = selected_sub_str.split("]")[0].replace("[", "").strip()
+        subject = self.select_subject()
+        if not subject:
+            return
 
-    title = prompt_required_text("Enter Task Title:")
-    description = prompt_required_text("Enter Description:")
-    due_date = prompt_required_text("Enter Due Date (YYYY-MM-DD):", default_value=str(date.today()))
-    priority = prompt_select("Select Priority:", ["High", "Medium", "Low"]) or "Medium"
+        title = prompt_text("📝 Task Title:")
+        description = prompt_text("📄 Description:")
+        due_date = prompt_date("📅 Due Date (YYYY-MM-DD):", default_value=str(date.today()))
+        priority = prompt_select("🚦 Priority:", ["High", "Medium", "Low"]) or "Medium"
 
-    new_id = generate_next_task_id(data["tasks"])
-    new_task = Task(new_id, title, description, sub_id, due_date, priority)
+        new_task = Task(self.next_id("tasks", "TSK", "task_id"), title, description,
+                        subject.subject_id, due_date, priority)
 
-    show_spinner("Saving task...")
-    data["tasks"].append(new_task)
-    save_data(data)
-    print_success(f"Task '{title}' added successfully.")
+        show_spinner("Saving task...")
+        self.data["tasks"].append(new_task)
+        self.save()
+        print_success(f"Task '{title}' added successfully.")
 
-def complete_task(data):
-    print_header("ACTION: Complete Task", "Update task status and score")
-    
-    pending_tasks = [t for t in data["tasks"] if t.status != "Completed"]
-    if not pending_tasks:
-        print_info("No pending tasks available.")
-        return
+    def complete(self):
+        print_header("✅ Complete Task", "Update task status and record score")
 
-    choices = [f"[{t.task_id}] {t.title}" for t in pending_tasks]
-    choices.append("Cancel")
+        pending_tasks = [t for t in self.data["tasks"] if t.status != "Completed"]
+        if not pending_tasks:
+            print_info("No pending tasks available.")
+            return
 
-    selected = prompt_select("Select task to complete:", choices)
-    if not selected or selected == "Cancel":
-        return
+        task = self.select_item(pending_tasks, lambda t: f"[{t.task_id}] {t.title}", "Select task to complete:")
+        if not task:
+            return
 
-    task_id = selected.split("]")[0].replace("[", "").strip()
-    target_task = next((t for t in data["tasks"] if t.task_id == task_id), None)
+        max_s = prompt_float_range("🎯 Maximum Score:", 0, None, default_value=100, min_exclusive=True)
+        earned = prompt_float_range(f"⭐ Earned Score (0 - {max_s:g}):", 0, max_s,
+                                    default_value=min(95, max_s))
 
-    if not target_task:
-        return
+        task.mark_completed(earned, max_s)
 
-    earned = prompt_required_text("Enter Earned Score:", default_value="95")
-    max_s = prompt_required_text("Enter Maximum Score:", default_value="100")
+        show_spinner("Updating task...")
+        self.save()
+        print_success("Task marked as completed.")
 
-    target_task.mark_completed(earned, max_s)
+    def delete(self):
+        print_header("🗑️  Delete Task", "Remove a task")
+        self.delete_record("tasks", lambda t: f"[{t.task_id}] {t.title}", "task")
 
-    show_spinner("Updating task...")
-    save_data(data)
-    print_success("Task marked as completed.")
 
-def delete_task(data):
-    print_header("ACTION: Delete Task", "Remove a task")
-    if not data["tasks"]:
-        print_info("No tasks available.")
-        return
-
-    choices = [f"[{t.task_id}] {t.title}" for t in data["tasks"]]
-    choices.append("Cancel")
-
-    selected = prompt_select("Select task to delete:", choices)
-    if not selected or selected == "Cancel":
-        return
-
-    task_id = selected.split("]")[0].replace("[", "").strip()
-    if confirm_delete(selected):
-        data["tasks"] = [t for t in data["tasks"] if t.task_id != task_id]
-        save_data(data)
-        print_success("Task deleted successfully.")
-    else:
-        print_info("Deletion cancelled.")
+def manage_tasks_menu(data):
+    TaskService(data).run()
