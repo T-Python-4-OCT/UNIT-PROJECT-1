@@ -1,0 +1,54 @@
+[
+    {
+        "id": 1,
+        "course_id": 2,
+        "course_title": "Web Development Fundamentals",
+        "trainee_id": 4,
+        "trainee_name": "kk@.com",
+        "assessment_name": "Python Quiz 1",
+        "score": 85.0,
+        "maximum_score": 100.0,
+        "percentage": 85.0,
+        "trainer_id": 6,
+        "date": "2026-10-25"
+    },
+    {
+        "id": 2,
+        "course_id": 1,
+        "course_title": "Python Programming Basics",
+        "trainee_id": 2,
+        "trainee_name": "mohammed",
+        "assessment_name": "Quiz 2",
+        "score": 18.0,
+        "maximum_score": 20.0,
+        "percentage": 90.0,
+        "trainer_id": 3,
+        "date": "2026-10-26"
+    },
+    {
+        "id": 3,
+        "course_id": 1,
+        "course_title": "Python Programming Basics",
+        "trainee_id": 2,
+        "trainee_name": "mohammed",
+        "assessment_name": "Quiz 3",
+        "score": 19.0,
+        "maximum_score": 20.0,
+        "percentage": 95.0,
+        "trainer_id": 3,
+        "date": "2026-10-26"
+    },
+    {
+        "id": 4,
+        "course_id": 1,
+        "course_title": "Python Programming Basics",
+        "trainee_id": 2,
+        "trainee_name": "mohammed",
+        "assessment_name": "Quiz 4",
+        "score": 20.0,
+        "maximum_score": 30.0,
+        "percentage": 66.67,
+        "trainer_id": 3,
+        "date": "2026-10-26"
+    }
+]

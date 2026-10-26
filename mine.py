@@ -5,6 +5,7 @@ from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
 
+
 from courses.course_manager import browse_courses
 from courses.course_search import search_course
 from auth.users import login_page, create_account_page

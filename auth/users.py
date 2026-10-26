@@ -44,15 +44,27 @@ def create_account_page():
         "Enter your full name:"
     ).ask()
 
-    if not full_name or not full_name.strip():
+    if full_name is None:
+        return
+
+    full_name = full_name.strip()
+
+    if not full_name:
         print("\nName is required.")
+        return
+
+    if not all(
+        character.isalpha() or character.isspace()
+        for character in full_name
+    ):
+        print("\nName must contain letters and spaces only.")
         return
 
     email = questionary.text(
         "Enter your email:"
     ).ask()
 
-    if not email or not email.strip():
+    if email is None or not email.strip():
         print("\nEmail is required.")
         return
 
@@ -88,7 +100,7 @@ def create_account_page():
             (user.get("id", 0) for user in users),
             default=0
         ) + 1,
-        "full_name": full_name.strip(),
+        "full_name": full_name,
         "email": email,
         "password": hash_password(password),
         "role": "trainee"
@@ -110,7 +122,7 @@ def login_page():
         "Enter your email:"
     ).ask()
 
-    if not email:
+    if email is None or not email.strip():
         return None
 
     password = questionary.password(

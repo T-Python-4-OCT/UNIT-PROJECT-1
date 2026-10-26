@@ -1,14 +1,7 @@
 [
     {
-        "id": 1,
-        "full_name": "nn",
-        "email": "dmfd@.com",
-        "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
-        "role": "trainee"
-    },
-    {
         "id": 2,
-        "full_name": "mm",
+        "full_name": "mohammed",
         "email": "mm@nn.com",
         "password": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
         "role": "trainee"
@@ -16,43 +9,22 @@
     {
         "id": 3,
         "full_name": "Ahmed Ali",
-        "email": "ahmed@motqen.com",
+        "email": "ahmed@mot.com",
         "password": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
         "role": "trainer"
     },
     {
         "id": 4,
-        "full_name": "kk@.com",
+        "full_name": "khaled",
         "email": "kk@.com",
         "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
         "role": "trainee"
     },
     {
         "id": 5,
-        "full_name": "mohammed",
-        "email": "mm@.com",
+        "full_name": "Admin",
+        "email": "mm@ad.com",
         "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
         "role": "admin"
-    },
-    {
-        "id": 6,
-        "full_name": "bb@.com",
-        "email": "bb@.com",
-        "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
-        "role": "trainer"
-    },
-    {
-        "id": 7,
-        "full_name": "omar",
-        "email": "omar@1413.com",
-        "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
-        "role": "trainee"
-    },
-    {
-        "id": 8,
-        "full_name": "omar",
-        "email": "omar111@.com",
-        "password": "b99c57cc8aa90e508d6b5b88539b4091456e4a02569494061e651410c18504a3",
-        "role": "trainer"
     }
 ]
