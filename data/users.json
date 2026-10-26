@@ -1,0 +1,51 @@
+[
+    {
+        "username": "ahmed",
+        "role": "admin",
+        "active": true,
+        "salt": "aa91f3860cbf5d284c0c9da493d6f0ba",
+        "password_hash": "23fc59b25b448b9d5f6e7db47b124b550b8199d56959a82358f79ed1db563fe495053687b93c87e709ae03cee246b8b11638d3bdf56b1e4e1d65f55425ab287a"
+    },
+    {
+        "username": "mamdouh",
+        "role": "member",
+        "active": true,
+        "salt": "400ffa2d6024ecac6a67317263a5c099",
+        "password_hash": "c0ea26974fe60f924a8961694bc6cc4a60577c01ffc6158ac1fcc5ba101a3a79550b159bfaeefdd1718436600e9360fcc4cdeeeea8be8756540c198e97ae9f29"
+    },
+    {
+        "username": "sara",
+        "role": "member",
+        "active": true,
+        "salt": "835e5376d8a7316f7fec42ff90b6cb35",
+        "password_hash": "fe8e1acb78a7f5f3add0f0afefa3ce72f3129fef508f6c0d0b0d6b692775da970489bf64ad3abf8b09c8e94ff8928fb4040abf990daf094312b7af47ccedf5e6"
+    },
+    {
+        "username": "ali",
+        "role": "member",
+        "active": true,
+        "salt": "887801970faeb365cd67d14cd3d44de8",
+        "password_hash": "c5f2ee79a3b31543ce89c519713d5407adad98beb3f3adf0716661b5f77557b03f08d72afc9c180f92169547ff75af57c92320d7ca1bb471b4a07a3ae5686311"
+    },
+    {
+        "username": "saad",
+        "role": "member",
+        "active": true,
+        "salt": "0459d908c769136e29a16d2c23ab6d13",
+        "password_hash": "0fb4d33abbfc3a7360f1bff6fa7efd4b145162504297500e4ad009491f4191f7b19c93d893a3ffa0acaf0a478acb6590e209a79de853c5bef42e7d1b52a661ae"
+    },
+    {
+        "username": "fahad",
+        "role": "member",
+        "active": true,
+        "salt": "66791c4878f6e71cdf20bf0824b8b0ff",
+        "password_hash": "a524158bd35694796a2344bef035b6ddd1b6733f302d20762bd91aaae8ab23ddc75be2fa55bb1ccfcb698476738aecda94f7adcb294113669cdda5d0be10c0ce"
+    },
+    {
+        "username": "moath",
+        "role": "member",
+        "active": false,
+        "salt": "5faded2211160a4bf1e176b5c348aae2",
+        "password_hash": "9348ab8d7f722e80469a3200a7937d6ce82ae439a2da330a5d038957361fc0fbda86270f833c5e4dff720a4ef1b621a87b3d7c2db3cf852cf46f33c9ca313dfa"
+    }
+]
