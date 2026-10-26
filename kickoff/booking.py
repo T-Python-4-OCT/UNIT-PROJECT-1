@@ -127,5 +127,6 @@ def cancel_booking(session, booking_id, phone):
                 raise MatchClosedError("You cannot cancel a booking for a match that is not upcoming.")
             booking.status = "cancelled"
             storage.save_bookings(session.bookings)
+            storage.save_ticket_file(booking.id, receipt_text(session, booking))
             return booking
     raise NotFoundError("No booking found with this ID for your phone number.")
