@@ -1,0 +1,38 @@
+{
+  "vehicles": [
+    {
+      "plate": "1234abc",
+      "owner": {
+        "name": "Ahmed Alharbi",
+        "phone": "0501234567"
+      },
+      "make": "Toyota",
+      "model": "Camry",
+      "year": 2018,
+      "mileage": 52300,
+      "services": [
+        {
+          "type": "Oil change",
+          "date": "2025-12-10",
+          "mileage": 45000,
+          "cost": 180.0,
+          "notes": "Synthetic oil 5W-30"
+        },
+        {
+          "type": "Filters",
+          "date": "2025-12-10",
+          "mileage": 45000,
+          "cost": 120.0,
+          "notes": "Oil and air filters"
+        },
+        {
+          "type": "Brakes",
+          "date": "2026-03-01",
+          "mileage": 40000,
+          "cost": 650.0,
+          "notes": "Front brake pads replaced"
+        }
+      ]
+    }
+  ]
+}
