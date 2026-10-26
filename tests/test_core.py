@@ -17,6 +17,7 @@ from fitforge.data import exercises as db
 from fitforge import storage
 from fitforge.cli.session import _parse_reps
 from fitforge.cli import views
+from fitforge.cli.shell import Shell
 from fitforge.ai.coach import AICoach, CoachError, build_context
 
 
@@ -232,6 +233,12 @@ class AICoachTests(unittest.TestCase):
         with self.assertRaisesRegex(CoachError, "ANTHROPIC_API_KEY"):
             coach.ask("Help me plan lunch.", self.make_account())
 
+    def test_model_uses_environment_override(self):
+        with patch("fitforge.ai.coach.load_dotenv"), patch.dict(
+            os.environ, {"ANTHROPIC_API_KEY": "", "FITFORGE_MODEL": "claude-test"}
+        ):
+            self.assertEqual(AICoach().model, "claude-test")
+
     def test_api_failure_becomes_a_friendly_coach_error(self):
         client = Mock()
         client.messages.create.side_effect = anthropic.APIError(
@@ -248,6 +255,20 @@ class AICoachTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             coach.ask(" ", self.make_account())
         client.messages.create.assert_not_called()
+
+    def test_cli_continues_after_missing_key(self):
+        with patch("fitforge.ai.coach.load_dotenv"), patch.dict(
+            os.environ, {"ANTHROPIC_API_KEY": ""}
+        ):
+            shell = Shell()
+            shell.account = self.make_account()
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                shell.cmd_ask("What should I eat today?")
+                shell.cmd_plan("")
+        self.assertIn("ANTHROPIC_API_KEY", output.getvalue())
+        self.assertIn("Weekly plan", output.getvalue())
+        self.assertTrue(shell.running)
 
 
 if __name__ == "__main__":

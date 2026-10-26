@@ -1,7 +1,7 @@
 # FitForge : Your Personal Trainer
 
 ## Overview :
-FitForge is a personal trainer that works on the command line (CLI). It asks the trainee about his body (height, weight, age) and his goal, then calculates his daily calories and builds him a complete weekly workout plan (Full Body, Upper / Lower or Push / Pull / Legs) based on how many days and hours he can train. It also calculates the calories he will burn in every workout, guides him through his workout set by set, and tracks his progress until he reaches his target weight.
+FitForge is a personal trainer that works on the command line (CLI). It asks the trainee about his body (height, weight, age) and his goal, then calculates his daily calories and builds him a complete weekly workout plan (Full Body, Upper / Lower or Push / Pull / Legs) based on how many days and hours he can train. It also calculates the calories he will burn in every workout, guides him through his workout set by set, tracks his progress until he reaches his target weight, and optionally provides an AI coach.
 
 ## Features & User Stories
 As a trainee I should be able to do the following :
@@ -22,6 +22,8 @@ As a trainee I should be able to do the following :
 * Unlock achievements when I make progress.
 * Edit my profile and get a new plan.
 * Save my plan to a file.
+* Chat with an AI coach that considers my profile, today's nutrition, weekly plan and recent workouts.
+* Ask the AI coach a quick question or request three tips based on my plan and progress.
 
 ## Usage :
 To start the program type in `python main.py`, answer the coach's questions, then :
@@ -46,3 +48,9 @@ To start the program type in `python main.py`, answer the coach's questions, the
 * type in `badges` to show your achievements.
 * type in `switch` to change the user.
 * type in `exit` to save and quit.
+* type in `coach` to chat with the AI coach (type `back` to return).
+* type in `ask what should I eat after training?` to ask one quick question.
+* type in `review` to get three tips for this week based on your plan and progress.
+
+## Setup AI Coach
+The AI coach is optional; the rest of FitForge works without an API key. Copy `.env.example` to `.env`, then replace `your-key-here` with your Anthropic API key. The app reads `ANTHROPIC_API_KEY` from `.env` or the environment. Keep `.env` private and do not commit it. To choose a different Anthropic model, set `FITFORGE_MODEL`; the default is `claude-sonnet-5-5`.
