@@ -2,66 +2,76 @@
 
 ## Overview
 
-Riyadh Smart Trip is an interactive Python CLI application designed to help users plan trips within Riyadh, Saudi Arabia.
+Riyadh Smart Trip is an interactive Python command-line application that helps users plan trips within Riyadh, Saudi Arabia.
 
-The application estimates trip duration based on the user's starting location, destination, departure time, and simulated traffic conditions. Its goal is to demonstrate how Python can be used to build a simple trip-planning tool.
+The application estimates car travel duration using simulated traffic conditions, compares car and metro travel options, suggests departure times, and provides trip reports. It also allows users to save, view, update, and delete planned trips.
 
-**Note:** The current version uses simulated traffic data and user-provided base travel durations. It does not provide real-time traffic information or actual navigation routes.
+**Important:** This project uses sample route data and simulated traffic conditions. Travel durations, metro fares, and fuel costs are estimates. The application does not provide real-time traffic data or live navigation.
 
-## Features & User Stories
+## Features
 
-### As a user, I should be able to:
+### Trip Planning
+- Enter a starting location, destination, and departure time.
+- Calculate estimated travel duration based on the selected route and simulated traffic conditions.
+- Display a trip summary and save planned trips.
 
-- Plan a trip by entering a starting location and destination.
-- Enter my preferred departure time.
-- Provide an estimated base travel duration.
-- Receive an estimated trip duration based on simulated traffic conditions.
-- View the expected traffic period, such as morning peak or off-peak.
-- Receive clear error messages when entering invalid information.
-- Save planned trips and view previously saved trips (once storage functionality is implemented).
+### Traffic Estimation
+- Identify the expected traffic period based on departure time.
+- Estimate travel duration using predefined traffic factors.
+- Suggest a departure time based on a desired arrival time.
 
-## Usage
+### Trip Management (CRUD)
+- **Create:** Save planned trips.
+- **Read:** View saved trips and trip reports.
+- **Update:** Modify saved trip information.
+- **Delete:** Remove saved trips.
 
-Run the application from the terminal:
+### Transport Comparison
+- Compare estimated car and metro travel durations and costs.
+- Choose a trip priority: fastest trip, lowest cost, or best balance between time and cost.
+- Display a Smart Trip Summary with estimated differences and a recommendation.
 
-```bash
-python main.py
-```
+### Reports
+- View the total number of saved trips.
+- Calculate the average estimated trip duration.
+- Review available car and metro trip estimates.
+- View traffic statistics based on the project's sample data.
 
-Follow the interactive menu to select an available action.
+### Input Validation
+- Validate departure and arrival time formats.
+- Check that required locations are provided.
+- Display error messages for invalid input or unavailable sample routes.
 
-For example, to plan a trip, enter:
+## Technologies Used
 
-- Starting location: Al Narjis
-- Destination: KAFD
-- Departure time: 08:30
-- Estimated base duration: 20 minutes
-
-The application calculates an estimated duration using the simulated traffic factor for the selected departure time.
+- Python
+- JSON for data storage
+- Python modules and functions
+- Object-Oriented Programming (OOP)
+- Git and GitHub
 
 ## Project Structure
 
 ```text
 Riyadh-Smart-Trip/
 ├── main.py
-├── traffic_data.py
+├── models.py
 ├── trips.py
 ├── storage.py
+├── traffic_data.py
+├── traffic_stats.py
+├── transport_advisor.py
+├── metro_data.py
+├── routes.json
+├── locations.json
+├── transport_options.json
+├── traffic_stats.json
 ├── trips.json
-├── requirements.txt
+├── .gitignore
 └── README.md
 ```
 
-The project is organized into separate Python modules to keep the application logic maintainable and easy to understand. The structure will be updated as development progresses.
-
-## Technologies Used
-
-- Python
-- Git
-- GitHub
-- JSON for data storage (planned)
-
-## Installation
+## Installation and Usage
 
 1. Clone or download the repository.
 2. Open a terminal in the project directory.
@@ -71,12 +81,24 @@ The project is organized into separate Python modules to keep the application lo
 python main.py
 ```
 
+4. Follow the interactive menu to select an action.
+
+The application menu includes trip planning, viewing saved trips, trip reports, updating and deleting trips, comparing transport options, and suggesting departure times.
+
+## Limitations
+
+- Traffic conditions are simulated and are not retrieved from a live traffic service.
+- Route information is based on the project's sample data.
+- Metro travel durations and fares are sample estimates.
+- Car costs estimate fuel expenses only and do not include parking, tolls, or other expenses.
+- The application does not provide live maps or turn-by-turn navigation.
+
 ## Future Improvements
 
-- Store and retrieve trip history.
-- Compare estimated durations across different departure times.
-- Integrate a suitable maps or traffic API.
-- Improve trip summaries and reporting.
+- Integrate a real-time traffic or mapping API.
+- Improve route-specific metro duration and fare estimates.
+- Expand the sample route database.
+- Add automated tests and further input validation.
 
 ## Project Status
 
