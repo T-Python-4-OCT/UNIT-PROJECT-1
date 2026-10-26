@@ -1,24 +1,24 @@
-
 import re
 from datetime import datetime
-from html import escape
 from pathlib import Path
+from html import escape
 
 import arabic_reshaper
 from bidi.algorithm import get_display
 
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import cm
 from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
-    HRFlowable,
-    Paragraph,
     SimpleDocTemplate,
+    Paragraph,
     Spacer,
+    HRFlowable,
 )
 
 from ui import console, error
@@ -26,241 +26,279 @@ from ui import console, error
 
 OUTPUT_DIR = Path(__file__).resolve().parent
 FONT_PATH = OUTPUT_DIR / "NotoNaskhArabic-Regular.ttf"
+ARABIC_RE = re.compile(r"[\u0600-\u06FF]")
 
-BLUE = colors.HexColor("#1565C0")
-BLACK = colors.black
+# عرض الإطار المتاح داخل A4 بعد الهوامش (تقريبًا)
+MAX_LINE_WIDTH = 470
+ARABIC_FONT_SIZE = 10
 
-if not FONT_PATH.exists():
-    raise FileNotFoundError(
-        f"Arabic font not found: {FONT_PATH}"
-    )
-
-pdfmetrics.registerFont(
-    TTFont("ArabicFont", str(FONT_PATH))
-)
+if FONT_PATH.exists():
+    if "ArabicFont" not in pdfmetrics.getRegisteredFontNames():
+        pdfmetrics.registerFont(TTFont("ArabicFont", str(FONT_PATH)))
+else:
+    print(f"تحذير: لم يُعثر على الخط العربي في {FONT_PATH}")
 
 
 class PDFReport:
+
     def __init__(self):
+        self.output_path = OUTPUT_DIR / "daily_news_weather_report.pdf"
+        self.has_arabic_font = FONT_PATH.exists()
+
         styles = getSampleStyleSheet()
 
         self.title_style = ParagraphStyle(
             "ReportTitle",
             parent=styles["Title"],
-            fontName="ArabicFont",
-            fontSize=22,
-            leading=30,
+            fontName="Helvetica-Bold",
+            fontSize=20,
+            leading=26,
             alignment=TA_CENTER,
-            textColor=BLACK,
-            spaceAfter=10,
-        )
-
-        self.heading_style = ParagraphStyle(
-            "CategoryHeading",
-            parent=styles["Heading1"],
-            fontName="ArabicFont",
-            fontSize=16,
-            leading=22,
-            textColor=BLACK,
-            spaceBefore=14,
+            textColor=colors.HexColor("#123B5D"),
             spaceAfter=8,
         )
 
-        self.article_style = ParagraphStyle(
-            "ArticleTitle",
+        self.subtitle_style = ParagraphStyle(
+            "ReportSubtitle",
+            parent=styles["Normal"],
+            fontName="Helvetica",
+            fontSize=9,
+            alignment=TA_CENTER,
+            textColor=colors.HexColor("#64748B"),
+            spaceAfter=18,
+        )
+
+        self.section_style = ParagraphStyle(
+            "SectionHeading",
             parent=styles["Heading2"],
-            fontName="ArabicFont",
-            fontSize=12,
-            leading=18,
-            textColor=BLACK,
-            spaceBefore=8,
-            spaceAfter=4,
+            fontName="Helvetica-Bold",
+            fontSize=14,
+            leading=19,
+            textColor=colors.HexColor("#087E8B"),
+            spaceBefore=12,
+            spaceAfter=8,
+        )
+
+        self.heading_style = ParagraphStyle(
+            "SummaryHeading",
+            parent=styles["Heading3"],
+            fontName="Helvetica-Bold",
+            fontSize=10,
+            leading=14,
+            textColor=colors.HexColor("#334155"),
+            spaceBefore=5,
+            spaceAfter=5,
         )
 
         self.body_style = ParagraphStyle(
-            "ReportBody",
+            "SummaryBody",
             parent=styles["BodyText"],
-            fontName="ArabicFont",
-            fontSize=10,
-            leading=16,
-            textColor=BLACK,
+            fontName="Helvetica",
+            fontSize=9,
+            leading=14,
+            alignment=TA_LEFT,
             spaceAfter=5,
         )
 
         self.arabic_style = ParagraphStyle(
             "ArabicBody",
-            parent=self.body_style,
-            alignment=2,
+            parent=styles["BodyText"],
+            fontName="ArabicFont" if self.has_arabic_font else "Helvetica",
+            fontSize=ARABIC_FONT_SIZE,
+            leading=17,
+            alignment=TA_RIGHT,
+            spaceAfter=6,
         )
+
+        self.arabic_heading_style = ParagraphStyle(
+            "ArabicHeading",
+            parent=self.heading_style,
+            fontName="ArabicFont" if self.has_arabic_font else "Helvetica-Bold",
+            alignment=TA_RIGHT,
+        )
+
+    @staticmethod
+    def is_arabic(text):
+        return bool(ARABIC_RE.search(str(text)))
+
+    @staticmethod
+    def shape_arabic(text):
+        """تشكيل الحروف وترتيب الاتجاه لسطر واحد."""
+        return get_display(arabic_reshaper.reshape(text))
+
+    def wrap_arabic(self, text):
+        """تقسيم النص إلى أسطر منطقيًا قبل التشكيل، ثم تشكيل كل سطر."""
+        words = text.split()
+        lines, current = [], ""
+
+        for word in words:
+            candidate = f"{current} {word}".strip()
+            width = stringWidth(
+                self.shape_arabic(candidate), "ArabicFont", ARABIC_FONT_SIZE
+            )
+            if width <= MAX_LINE_WIDTH:
+                current = candidate
+            else:
+                if current:
+                    lines.append(current)
+                current = word
+
+        if current:
+            lines.append(current)
+
+        return [self.shape_arabic(line) for line in lines]
 
     def format_text(self, text):
-        text = str(text or "")
+        text = str(text)
 
-        if re.search(r"[\u0600-\u06FF]", text):
-            text = arabic_reshaper.reshape(text)
-            text = get_display(text)
+        if not (self.is_arabic(text) and self.has_arabic_font):
+            return text
 
-        return text
+        shaped_lines = []
+        for raw_line in text.splitlines():
+            if raw_line.strip():
+                shaped_lines.extend(self.wrap_arabic(raw_line))
+            else:
+                shaped_lines.append("")
 
-    def make_paragraph(self, text, style=None):
-        formatted = self.format_text(text)
-        safe_text = escape(formatted)
+        return "\n".join(shaped_lines)
 
-        if style is None:
-            style = (
-                self.arabic_style
-                if re.search(r"[\u0600-\u06FF]", str(text or ""))
-                else self.body_style
-            )
+    def make_paragraph(self, text):
+        text = str(text)
+        safe_text = escape(self.format_text(text)).replace("\n", "<br/>")
 
-        return Paragraph(safe_text, style)
+        if self.is_arabic(text):
+            return Paragraph(safe_text, self.arabic_style)
 
-    def generate_report(self, news_sections, weather_data=None):
-        output_path = (
-            OUTPUT_DIR
-            / f"daily_report_{datetime.now():%Y%m%d_%H%M%S}.pdf"
-        )
-
-        try:
-            doc = SimpleDocTemplate(
-                str(output_path),
-                pagesize=A4,
-                leftMargin=2 * cm,
-                rightMargin=2 * cm,
-                topMargin=2 * cm,
-                bottomMargin=2 * cm,
-            )
-
-            story = self._header()
-
-            for category, articles in (news_sections or {}).items():
-                story.extend(
-                    self._news_section(category, articles)
-                )
-
-            if weather_data:
-                story.extend(
-                    self._weather_section(weather_data)
-                )
-
-            doc.build(story)
-
-        except Exception as err:
-            error(f"PDF generation failed: {err}")
-            return None
-
-        console.print(
-            "\n[bold green]PDF saved successfully![/]"
-        )
-        console.print(f"[dim]Location: {output_path}[/]")
-
-        return str(output_path)
+        return Paragraph(safe_text, self.body_style)
 
     def _header(self):
         return [
-            self.make_paragraph(
-                "Daily News & Weather",
-                self.title_style,
+            Paragraph("DAILY NEWS &amp; WEATHER REPORT", self.title_style),
+            Paragraph(
+                f"Generated on {datetime.now().strftime('%d %B %Y, %I:%M %p')}",
+                self.subtitle_style,
             ),
-            self.make_paragraph(
-                "Generated: "
-                + datetime.now().strftime("%d %B %Y, %H:%M"),
-                self.body_style,
-            ),
-            Spacer(1, 8),
             HRFlowable(
                 width="100%",
                 thickness=1,
-                color=BLUE,
+                color=colors.HexColor("#087E8B"),
+                spaceAfter=12,
             ),
         ]
 
-    def _news_section(self, category, articles):
-        flow = [
-            self.make_paragraph(
-                category,
-                self.heading_style,
-            )
+    def _summary_section(self, summaries):
+        story = [
+            Paragraph("NEWS SUMMARIES", self.section_style),
         ]
 
-        if not articles:
-            flow.append(
-                self.make_paragraph("No articles available.")
-            )
-            return flow
+        if not summaries:
+            story.append(self.make_paragraph("No news summaries are available."))
+            story.append(self.make_paragraph("لا تتوفر ملخصات للأخبار."))
+            return story
 
-        for number, article in enumerate(articles, start=1):
-            title = article.get("title") or "No title"
-            source = (
-                (article.get("source") or {}).get("name")
-                or "Unknown"
-            )
-            description = (
-                article.get("description")
-                or "No description available."
-            )
+        for section_name, summary in summaries.items():
+            story.append(Spacer(1, 8))
+            story.append(Paragraph(escape(section_name), self.section_style))
 
-            flow.append(
-                self.make_paragraph(
-                    f"{number}. {title}",
-                    self.article_style,
+            english = summary.get("english", "")
+            arabic = summary.get("arabic", "")
+
+            story.append(Paragraph("English Summary", self.heading_style))
+
+            if english:
+                for line in english.splitlines():
+                    line = line.strip()
+                    if line:
+                        story.append(self.make_paragraph(line))
+            else:
+                story.append(self.make_paragraph("Summary unavailable."))
+
+            story.append(Spacer(1, 4))
+            story.append(
+                Paragraph(
+                    self.format_text("الملخص باللغة العربية"),
+                    self.arabic_heading_style,
                 )
             )
 
-            flow.append(
-                self.make_paragraph(
-                    f"Source: {source}"
+            if arabic:
+                for line in arabic.splitlines():
+                    line = line.strip()
+                    if line:
+                        story.append(self.make_paragraph(line))
+            else:
+                story.append(self.make_paragraph("الملخص العربي غير متاح."))
+
+            story.append(
+                HRFlowable(
+                    width="100%",
+                    thickness=0.5,
+                    color=colors.HexColor("#CBD5E1"),
+                    spaceBefore=6,
+                    spaceAfter=8,
                 )
             )
 
-            flow.append(
-                self.make_paragraph(
-                    f"Description: {description}"
-                )
-            )
+        return story
 
-            link = article.get("url") or ""
-
-            if link.startswith(("https://", "http://")):
-                safe_link = escape(link, quote=True)
-                flow.append(
-                    Paragraph(
-                        f'<link href="{safe_link}" color="blue">'
-                        "Read full article</link>",
-                        self.body_style,
-                    )
-                )
-
-            flow.append(Spacer(1, 6))
-
-        return flow
-
-    def _weather_section(self, weather):
-        flow = [
-            self.make_paragraph(
-                "Weather Report",
-                self.heading_style,
-            )
+    def _weather_section(self, weather_data):
+        story = [
+            Paragraph("WEATHER REPORT", self.section_style),
         ]
 
-        weather_fields = [
-            ("City", "city", ""),
-            ("Condition", "condition", ""),
-            ("Temperature", "temperature", " °C"),
-            ("Feels like", "feels_like", " °C"),
-            ("Humidity", "humidity", "%"),
-            ("Wind speed", "wind_speed", " km/h"),
-            ("Updated at", "time", ""),
+        if not weather_data:
+            story.append(self.make_paragraph("No weather information was collected."))
+            story.append(self.make_paragraph("لم يتم جمع معلومات الطقس."))
+            return story
+
+        fields = [
+            ("City", "city"),
+            ("Condition", "condition"),
+            ("Temperature", "temperature"),
+            ("Feels Like", "feels_like"),
+            ("Humidity", "humidity"),
+            ("Wind Speed", "wind_speed"),
+            ("Time", "time"),
         ]
 
-        for label, key, suffix in weather_fields:
-            value = weather.get(key)
+        for label, key in fields:
+            value = weather_data.get(key)
 
-            if value is not None:
-                flow.append(
-                    self.make_paragraph(
-                        f"{label}: {value}{suffix}"
-                    )
-                )
+            if value is not None and value != "":
+                story.append(self.make_paragraph(f"{label}: {value}"))
 
-        return flow
+        return story
+
+    def generate_report(
+        self,
+        news_sections=None,
+        weather_data=None,
+        ai_summary=None,
+    ):
+        try:
+            story = self._header()
+            story.extend(self._summary_section(ai_summary))
+            story.extend(self._weather_section(weather_data))
+
+            document = SimpleDocTemplate(
+                str(self.output_path),
+                pagesize=A4,
+                rightMargin=2 * cm,
+                leftMargin=2 * cm,
+                topMargin=1.5 * cm,
+                bottomMargin=1.5 * cm,
+                title="Daily News and Weather Report",
+            )
+
+            document.build(story)
+
+            console.print(
+                f"[green]PDF saved successfully: {self.output_path}[/]"
+            )
+
+            return str(self.output_path)
+
+        except Exception as err:
+            error(f"Could not create PDF report: {err}")
+            return None

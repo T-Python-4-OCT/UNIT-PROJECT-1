@@ -152,8 +152,6 @@ class NewsManager:
             "magenta",
         )
 
-   
-    
     def search_news(self):
         while True:
             keyword = console.input(

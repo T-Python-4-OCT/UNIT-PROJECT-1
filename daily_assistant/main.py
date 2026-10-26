@@ -2,10 +2,12 @@ from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
 
+from ai_summary import summarize_news
 from news import NewsManager
 from pdf_report import PDFReport
 from ui import banner, console
 from weather import WeatherManager
+
 
 MENU = [
     ("1", "🌍", "Today's Top News"),
@@ -28,6 +30,7 @@ def print_menu():
         expand=True,
         border_style="dim cyan",
     )
+
     table.add_column(style="bold cyan", justify="right")
     table.add_column()
     table.add_column()
@@ -36,8 +39,13 @@ def print_menu():
         table.add_row(key, icon, label)
 
     console.print(
-        Panel(table, title="[bold]MAIN MENU[/]", border_style="cyan",
-              expand=False, padding=(1, 3))
+        Panel(
+            table,
+            title="[bold]MAIN MENU[/]",
+            border_style="cyan",
+            expand=False,
+            padding=(1, 3),
+        )
     )
 
 
@@ -45,17 +53,20 @@ def refresh_screen():
     console.clear()
     banner()
 
+
 def get_menu_choice():
     valid_choices = [key for key, _, _ in MENU]
 
     while True:
-        choice = console.input("[bold cyan]Enter your choice:[/] ").strip()  
-        
+        choice = console.input(
+            "[bold cyan]Enter your choice:[/] "
+        ).strip()
+
         if not choice:
             console.print(
-                            "[bold red]Input cannot be empty!!!!![/]"
-                        )
-        elif not choice.lstrip("-").isdigit():
+                "[bold red]Input cannot be empty![/]"
+            )
+        elif not choice.isdigit():
             console.print(
                 "[bold red]Invalid input! Please enter a number only.[/]"
             )
@@ -63,7 +74,6 @@ def get_menu_choice():
             console.print(
                 "[bold red]Wrong number! Please choose a number from the menu.[/]"
             )
-      
         else:
             return choice
 
@@ -88,35 +98,97 @@ def main():
 
     while True:
         print_menu()
-
         choice = get_menu_choice()
 
         if choice == "8":
-            console.print("\n[bold green]Thank you for using Daily News & Weather![/]\n")
+            console.print(
+                "\n[bold green]Thank you for using Daily News & Weather![/]\n"
+            )
             break
 
-        if choice in news_actions:
+        elif choice in news_actions:
             name, action = news_actions[choice]
-            articles = action()
-            if articles:
-                news_sections[name] = articles
+
+            try:
+                articles = action()
+
+                if articles:
+                    news_sections[name] = articles
+                else:
+                    console.print(
+                        "[yellow]No articles were returned.[/]"
+                    )
+
+            except Exception as err:
+                console.print(
+                    f"[bold red]Unable to retrieve news: {err}[/]"
+                )
 
         elif choice == "6":
-            result = weather.show_weather()
-            if result is not None:
-                weather_data = result
+            try:
+                result = weather.show_weather()
+
+                if result is not None:
+                    weather_data = result
+
+            except Exception as err:
+                console.print(
+                    f"[bold red]Unable to retrieve weather: {err}[/]"
+                )
 
         elif choice == "7":
-            if news_sections or weather_data:
-                pdf.generate_report(news_sections, weather_data)
+            ai_summary = None
+
+            if news_sections:
+                console.print(
+                    "[bold cyan]Generating English and Arabic summaries...[/]"
+                )
+                ai_summary = summarize_news(news_sections)
+
+                if ai_summary:
+                    console.print(
+                        "[green]Summary generated successfully.[/]"
+                    )
+                else:
+                    console.print(
+                        "[yellow]Summary unavailable. Check the AI error above.[/]"
+                    )
             else:
                 console.print(
-                    "[yellow]Please load some news or check the "
-                    "weather before saving a report.[/]"
+                    "[yellow]No news collected yet. Select a news option first.[/]"
+                )
+
+            try:
+                output_path = pdf.generate_report(
+                    news_sections,
+                    weather_data,
+                    ai_summary,
+                )
+
+                if output_path:
+                    console.print(
+                        Panel(
+                            f"PDF created successfully!\n{output_path}",
+                            title="PDF Report",
+                            border_style="green",
+                        )
+                    )
+                else:
+                    console.print(
+                        "[bold red]PDF creation failed. Check the error above.[/]"
+                    )
+
+            except Exception as err:
+                console.print(
+                    f"[bold red]PDF creation failed: {err}[/]"
                 )
 
         console.print()
-        Prompt.ask("[dim]Press Enter to return to the menu[/]", default="", show_default=False)
+        Prompt.ask(
+            "[dim]Press Enter to return to the menu[/]",
+            default="",
+            show_default=False,
+        )
         refresh_screen()
 
 
