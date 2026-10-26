@@ -1,3 +1,4 @@
+"""Saving and loading the subscriptions from the JSON data file."""
 import json
 from datetime import date
 from pathlib import Path
@@ -47,10 +48,14 @@ class Storage:
         return subscriptions
 
     def save(self, subscriptions: list[Subscription]):
-        """Write all the subscriptions to the file."""
-        self.file_path.parent.mkdir(exist_ok=True)
-        with open(self.file_path, "w", encoding="utf-8") as file:
-            json.dump([sub.to_dict() for sub in subscriptions], file, indent=4)
+        """Write all the subscriptions to the file (show an error instead of crashing if it fails)."""
+        try:
+            self.file_path.parent.mkdir(exist_ok=True)
+            with open(self.file_path, "w", encoding="utf-8") as file:
+                # ensure_ascii=False keeps Arabic names readable in the file
+                json.dump([sub.to_dict() for sub in subscriptions], file, indent=4, ensure_ascii=False)
+        except OSError as error:
+            console.print(f"[red]Couldn't save your changes: {error}[/red]")
 
 
 def subscription_from_dict(data: dict) -> Subscription:
@@ -62,4 +67,5 @@ def subscription_from_dict(data: dict) -> Subscription:
         category=data["category"],
         start_date=date.fromisoformat(data["start_date"]),
         months=data.get("months"),
+        importance=data.get("importance", "Nice to have"),
     )

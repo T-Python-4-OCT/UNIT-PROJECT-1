@@ -1,37 +1,59 @@
 [
     {
-        "name": "Netflix",
-        "price": 55.0,
-        "cycle": "yearly",
-        "category": "video",
-        "start_date": "2025-03-10"
-    },
-    {
         "name": "Gym",
         "price": 250.0,
         "cycle": "monthly",
         "category": "sport",
-        "start_date": "2026-10-06"
+        "start_date": "2026-03-28",
+        "importance": "Not important"
+    },
+    {
+        "name": "WiFi",
+        "price": 155.0,
+        "cycle": "monthly",
+        "category": "other",
+        "start_date": "2026-01-31",
+        "importance": "Essential"
+    },
+    {
+        "name": "Shahid",
+        "price": 30.0,
+        "cycle": "monthly",
+        "category": "video",
+        "start_date": "2026-05-01",
+        "importance": "Nice to have"
+    },
+    {
+        "name": "Netflix",
+        "price": 45.0,
+        "cycle": "monthly",
+        "category": "video",
+        "start_date": "2025-03-10",
+        "importance": "Nice to have"
+    },
+    {
+        "name": "iCloud",
+        "price": 11.99,
+        "cycle": "monthly",
+        "category": "apps",
+        "start_date": "2025-06-15",
+        "importance": "Essential"
+    },
+    {
+        "name": "PS Plus",
+        "price": 60.0,
+        "cycle": "custom",
+        "category": "gaming",
+        "start_date": "2026-02-20",
+        "importance": "Not important",
+        "months": 3
     },
     {
         "name": "Spotify",
         "price": 220.0,
         "cycle": "yearly",
         "category": "music",
-        "start_date": "2024-03-02"
-    },
-    {
-        "name": "wifi",
-        "price": 155.0,
-        "cycle": "monthly",
-        "category": "other",
-        "start_date": "2026-01-31"
-    },
-    {
-        "name": "TV",
-        "price": 200.0,
-        "cycle": "yearly",
-        "category": "video",
-        "start_date": "2026-09-09"
+        "start_date": "2024-03-02",
+        "importance": "Essential"
     }
 ]

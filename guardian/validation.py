@@ -5,7 +5,7 @@ from datetime import date, datetime
 import questionary
 
 from guardian.display import MENU_STYLE, POINTER, console
-from guardian.subscription import CATEGORIES, CYCLES
+from guardian.subscription import CATEGORIES, CYCLES, IMPORTANCE_LEVELS
 
 MAX_NAME_LENGTH = 30
 MAX_PRICE = 100_000
@@ -16,6 +16,7 @@ OLDEST_START_DATE = date(2000, 1, 1)
 # ---------- Rules (return an error message, or None if the value is fine) ----------
 
 def name_error(name: str, taken_names: list[str] = ()) -> str | None:
+    """A name must not be empty, not too long, and not used by another subscription."""
     if not name:
         return "The name can't be empty."
     if len(name) > MAX_NAME_LENGTH:
@@ -26,6 +27,7 @@ def name_error(name: str, taken_names: list[str] = ()) -> str | None:
 
 
 def price_error(price: float) -> str | None:
+    """A price must be a real number between 0 and MAX_PRICE with at most 2 decimals."""
     if not math.isfinite(price):  # catches "nan" and "inf"
         return "Price must be a real number (example: 45 or 12.5)."
     if price <= 0:
@@ -38,12 +40,14 @@ def price_error(price: float) -> str | None:
 
 
 def months_error(months: int) -> str | None:
+    """A custom cycle must be from 1 to MAX_MONTHS months."""
     if months < 1 or months > MAX_MONTHS:
         return f"The number of months must be from 1 to {MAX_MONTHS}."
     return None
 
 
 def start_date_error(start_date: date) -> str | None:
+    """A start date must be between OLDEST_START_DATE and today."""
     if start_date > date.today():
         return "The start date can't be in the future."
     if start_date < OLDEST_START_DATE:
@@ -64,6 +68,8 @@ def subscription_data_error(data: dict, taken_names: list[str] = ()) -> str | No
         return f"unknown cycle {data.get('cycle')!r}"
     if data.get("category") not in CATEGORIES:
         return f"unknown category {data.get('category')!r}"
+    if data.get("importance", "Nice to have") not in IMPORTANCE_LEVELS:
+        return f"unknown importance {data.get('importance')!r}"
     if data["cycle"] == "custom":
         months = data.get("months")
         if not isinstance(months, int) or isinstance(months, bool):

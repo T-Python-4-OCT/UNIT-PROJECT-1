@@ -1,3 +1,4 @@
+"""How the app looks: the console, colors, the big title, and money formatting."""
 import pyfiglet
 import questionary
 from rich.console import Console

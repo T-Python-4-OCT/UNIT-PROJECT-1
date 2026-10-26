@@ -1,3 +1,6 @@
+"""SubscriptionManager: keeps the list of subscriptions, changes it, and shows it as a table."""
+from functools import wraps
+
 from rich.console import Console
 from rich.table import Table
 
@@ -15,6 +18,16 @@ SORT_OPTIONS = {
 }
 
 
+def auto_save(method):
+    """Decorator: run the method, then save all subscriptions to the file automatically."""
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        result = method(self, *args, **kwargs)
+        self.save()
+        return result
+    return wrapper
+
+
 class SubscriptionManager:
     """Keeps the list of subscriptions and works on it."""
 
@@ -23,21 +36,33 @@ class SubscriptionManager:
         self.subscriptions: list[Subscription] = self.storage.load()
 
     def save(self):
+        """Write all subscriptions to the data file."""
         self.storage.save(self.subscriptions)
 
+    @auto_save
     def add(self, subscription: Subscription):
+        """Add a new subscription."""
         self.subscriptions.append(subscription)
-        self.save()
 
+    @auto_save
     def delete(self, subscription: Subscription):
+        """Remove a subscription."""
         self.subscriptions.remove(subscription)
-        self.save()
 
+    @auto_save
+    def edit(self, subscription: Subscription, field: str, value):
+        """Change one field of a subscription, for example edit(netflix, "price", 50)."""
+        setattr(subscription, field, value)
+
+    @auto_save
     def replace(self, old: Subscription, new: Subscription):
         """Put a new subscription in the same place as an old one (used when the cycle changes)."""
         index = self.subscriptions.index(old)
         self.subscriptions[index] = new
-        self.save()
+
+    def names(self, except_for: Subscription = None) -> list[str]:
+        """Names of all subscriptions except one (used so a name can't be taken twice)."""
+        return [sub.name for sub in self.subscriptions if sub is not except_for]
 
     def view_all(self, sort_by: str = "Days left (soonest first)"):
         """Print all subscriptions in a colored table, sorted by one of SORT_OPTIONS."""

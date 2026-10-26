@@ -1,22 +1,26 @@
+"""The subscription classes: one parent class and three kinds of cycles that inherit from it."""
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
 
 from guardian.display import money
 
-# Fixed categories (tuple because they never change)
+# Fixed choices (tuples because they never change)
 CATEGORIES = ("video", "music", "sport", "gaming", "apps", "other")
 CYCLES = ("monthly", "yearly", "custom")
+IMPORTANCE_LEVELS = ("Essential", "Nice to have", "Not important")
 
 
 class Subscription:
-    """Base class for any subscription."""
+    """Base class for any subscription. Child classes decide how long one cycle is."""
 
-    def __init__(self, name: str, price: float, category: str, start_date: date):
+    def __init__(self, name: str, price: float, category: str, start_date: date,
+                 importance: str = "Nice to have"):
         self.name = name
         self.price = price
         self.category = category
         self.start_date = start_date
+        self.importance = importance
         self.cycle = "unknown"
 
     def monthly_cost(self) -> float:
@@ -24,10 +28,11 @@ class Subscription:
         raise NotImplementedError
 
     def one_cycle(self) -> relativedelta:
-        """How long one cycle is: 1 month or 1 year (each child class decides)."""
+        """How long one cycle is (each child class decides)."""
         raise NotImplementedError
 
     def yearly_cost(self) -> float:
+        """How much this subscription costs per year."""
         return self.monthly_cost() * 12
 
     def payments_made(self) -> int:
@@ -62,6 +67,7 @@ class Subscription:
             "cycle": self.cycle,
             "category": self.category,
             "start_date": self.start_date.isoformat(),
+            "importance": self.importance,
         }
 
     def __str__(self):
@@ -69,8 +75,11 @@ class Subscription:
 
 
 class MonthlySubscription(Subscription):
-    def __init__(self, name: str, price: float, category: str, start_date: date):
-        super().__init__(name, price, category, start_date)
+    """A subscription that renews every month."""
+
+    def __init__(self, name: str, price: float, category: str, start_date: date,
+                 importance: str = "Nice to have"):
+        super().__init__(name, price, category, start_date, importance)
         self.cycle = "monthly"
 
     def monthly_cost(self) -> float:
@@ -81,8 +90,11 @@ class MonthlySubscription(Subscription):
 
 
 class YearlySubscription(Subscription):
-    def __init__(self, name: str, price: float, category: str, start_date: date):
-        super().__init__(name, price, category, start_date)
+    """A subscription that renews every year."""
+
+    def __init__(self, name: str, price: float, category: str, start_date: date,
+                 importance: str = "Nice to have"):
+        super().__init__(name, price, category, start_date, importance)
         self.cycle = "yearly"
 
     def monthly_cost(self) -> float:
@@ -95,8 +107,9 @@ class YearlySubscription(Subscription):
 class CustomSubscription(Subscription):
     """A subscription that renews every N months (3, 6, 18...)."""
 
-    def __init__(self, name: str, price: float, category: str, start_date: date, months: int):
-        super().__init__(name, price, category, start_date)
+    def __init__(self, name: str, price: float, category: str, start_date: date, months: int,
+                 importance: str = "Nice to have"):
+        super().__init__(name, price, category, start_date, importance)
         self.cycle = "custom"
         self.months = months
 
@@ -116,10 +129,10 @@ class CustomSubscription(Subscription):
 
 
 def create_subscription(cycle: str, name: str, price: float, category: str, start_date: date,
-                        months: int = None) -> Subscription:
+                        months: int = None, importance: str = "Nice to have") -> Subscription:
     """Make the right kind of subscription depending on the cycle."""
     if cycle == "monthly":
-        return MonthlySubscription(name, price, category, start_date)
+        return MonthlySubscription(name, price, category, start_date, importance)
     if cycle == "yearly":
-        return YearlySubscription(name, price, category, start_date)
-    return CustomSubscription(name, price, category, start_date, months)
+        return YearlySubscription(name, price, category, start_date, importance)
+    return CustomSubscription(name, price, category, start_date, months, importance)

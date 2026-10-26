@@ -1,3 +1,4 @@
+"""The spending report: totals, spending by category, and suggestions on what to cancel."""
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -27,8 +28,62 @@ def spending_by_category(subscriptions: list[Subscription]) -> dict[str, float]:
     return totals
 
 
+def duplicate_categories(subscriptions: list[Subscription]) -> set[str]:
+    """Find the categories that have more than one subscription (using sets)."""
+    seen = set()
+    duplicates = set()
+    for sub in subscriptions:
+        if sub.category in seen:
+            duplicates.add(sub.category)
+        seen.add(sub.category)
+    return duplicates
+
+
+def make_suggestions(subscriptions: list[Subscription]) -> list[str]:
+    """Suggest what to cancel: subscriptions that are not important, and repeated categories."""
+    suggestions = []
+
+    not_important = [sub for sub in subscriptions if sub.importance == "Not important"]
+    for sub in not_important:
+        suggestions.append(
+            f'"{sub.name}" is not important to you. '
+            f"Cancel it and save [bold green]{money(sub.yearly_cost())}/year[/]?"
+        )
+
+    for category in sorted(duplicate_categories(subscriptions)):
+        same = [sub for sub in subscriptions if sub.category == category]
+        names = ", ".join(sub.name for sub in same)
+        # Keeping only the cheapest one saves the most
+        cheapest = min(same, key=lambda sub: sub.yearly_cost())
+        savings = sum(sub.yearly_cost() for sub in same) - cheapest.yearly_cost()
+        suggestions.append(
+            f"You have {len(same)} {category} subscriptions ({names}). "
+            f"Keep only one and save up to [bold green]{money(savings)}/year[/]?"
+        )
+
+    if not_important:
+        total = sum(sub.yearly_cost() for sub in not_important)
+        suggestions.append(
+            f"[bold]Cancel everything that is not important and save "
+            f"[green]{money(total)}[/green] every year.[/bold]"
+        )
+    return suggestions
+
+
+def show_suggestions(subscriptions: list[Subscription]):
+    """Print the suggestions in a yellow box (or a green one if there is nothing to cancel)."""
+    suggestions = make_suggestions(subscriptions)
+    if not suggestions:
+        console.print(Panel("Great! Every subscription is important and nothing repeats.",
+                            title="Suggestions", border_style="green", expand=False))
+        return
+
+    text = "\n".join(f"[yellow]⚠[/yellow] {line}" for line in suggestions)
+    console.print(Panel(text, title="Suggestions: what to cancel?", border_style="yellow", padding=(0, 1)))
+
+
 def show_spending_report(subscriptions: list[Subscription]):
-    """Print the totals and a table by category with a share bar for each one."""
+    """Print the totals, a table by category with a share bar for each one, and suggestions."""
     if not subscriptions:
         console.print("[yellow]You don't have any subscriptions yet.[/yellow]")
         return
@@ -64,3 +119,5 @@ def show_spending_report(subscriptions: list[Subscription]):
         table.add_row(category, str(count), money(amount), money(amount * 12), share_bar(share, color))
 
     console.print(table)
+    console.print()
+    show_suggestions(subscriptions)
