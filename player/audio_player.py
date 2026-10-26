@@ -1,3 +1,5 @@
+from interface.arabic_text import ArabicText
+from interface.arabic_text import print_arabic
 
 import threading
 import time
@@ -130,8 +132,8 @@ class AudioPlayer:
             raise ValueError("عدد مرات التكرار يجب أن يكون واحدًا على الأقل.")
 
         def task(event):
-            print(
-                f"\nجارٍ تشغيل الآية {ayah_number} "
+            print_arabic(
+                f"جارٍ تشغيل الآية {ayah_number} "
                 f"من السورة {surah_number}، "
                 f"عدد التكرارات: {repeats}."
             )
@@ -186,7 +188,7 @@ class AudioPlayer:
         ):
             self.worker.join(timeout=1)
 
-        print("تم إيقاف التلاوة.")
+        print_arabic("تم إيقاف التلاوة.")
 
     def close(self):
         """إيقاف الصوت وإغلاق مشغل الصوت."""

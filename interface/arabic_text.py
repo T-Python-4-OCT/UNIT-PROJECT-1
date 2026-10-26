@@ -1,11 +1,20 @@
 import arabic_reshaper
 from bidi.algorithm import get_display
+from rich.console import Console
+from rich.text import Text
 
 
-def ArabicText(text):
+def ArabicText(text=""):
     """تهيئة النص العربي للعرض في الطرفية."""
-    if not isinstance(text, str):
-        text = str(text)
+    return get_display(arabic_reshaper.reshape(str(text)))
 
-    reshaped_text = arabic_reshaper.reshape(text)
-    return get_display(reshaped_text, base_dir="R")
+
+def print_arabic(text="", console=None, **kwargs):
+    """عرض النص العربي بعد تهيئته لاتجاه الطرفية."""
+    if console is None:
+        console = Console()
+
+    console.print(
+        Text(ArabicText(text), justify="right"),
+        **kwargs
+    )
