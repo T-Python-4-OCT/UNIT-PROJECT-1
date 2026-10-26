@@ -1,0 +1,33 @@
+{
+  "farm_name": "My farm",
+  "city": "Riyadh",
+  "crops": [
+    {
+      "crop_id": "wheat",
+      "area_m2": 20,
+      "irrigation_type": "drip"
+    },
+    {
+      "crop_id": "apple",
+      "area_m2": 1000,
+      "irrigation_type": "sprinkler"
+    }
+  ],
+  "irrigation_log": [
+    {
+      "crop_id": "wheat",
+      "date": "2026-10-24",
+      "volume_m3": 90
+    },
+    {
+      "crop_id": "wheat",
+      "date": "2026-10-25",
+      "volume_m3": 2000
+    }
+  ],
+  "last_savings": {
+    "date": "2026-10-26",
+    "saved_m3": 0,
+    "saved_percent": 0
+  }
+}
