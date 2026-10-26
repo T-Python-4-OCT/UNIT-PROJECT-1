@@ -31,9 +31,11 @@ DESTINATION_INFO = {
                     "Bujairi Terrace"
                 ],
                 "events": [
-                    "Riyadh Season",
-                    "Cultural events",
-                    "Entertainment events"
+                    "King Abdulaziz Falconry Festival",
+                     "Minzal Heritage Experience",
+                     "Diriyah Heritage Experience",
+                     "Traditional Souq Experience",
+                     "Murabba Palace Evenings"
                 ]
             },
             "Jeddah": {
@@ -45,8 +47,9 @@ DESTINATION_INFO = {
                 ],
                 "events": [
                     "Jeddah Season",
-                    "Jeddah Art Promenade",
-                    "Cultural experiences"
+                    "Al-Balad walking tours",
+                    "Red Sea diving",
+                     "Traditional Hijazi food experiences"
                 ]
             },
             "Makkah": {
@@ -56,8 +59,10 @@ DESTINATION_INFO = {
                     "Hira Cultural District"
                 ],
                 "events": [
-                    "Cultural experiences",
-                    "Historical experiences"
+                    "Guided Islamic heritage tours",
+                    "Kiswah exhibition experience",
+                    "Historical sites tours",
+                    "Spiritual Journey in Makkah"
                 ]
             },
             "Madinah": {
@@ -68,8 +73,10 @@ DESTINATION_INFO = {
                     "Qiblatain Mosque"
                 ],
                 "events": [
-                    "Cultural experiences",
-                    "Historical experiences"
+                    "Dar Al Madinah Museum",
+                    "King Fahd Park",
+                    "Hijrah Journey",
+                    "Festival of Cultures and Peoples"
                 ]
             }
         }
