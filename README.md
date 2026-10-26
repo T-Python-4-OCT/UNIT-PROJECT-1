@@ -16,7 +16,7 @@ decorators, OOP, and virtual environments with pip.
 ## Features
 - 🏢 **5 cinemas**: VOX Riyadh Park, VOX Sahara Mall, VOX Al Qasr Mall, VOX Atyaf Mall, VOX The Sport.
 - 🎞️ Each cinema shows **10 real movies**: new 2026 releases (Avengers: Doomsday, Spider-Man: Brand New Day, Toy Story 5...) and classics (The Shawshank Redemption, Interstellar, The Godfather...).
-- 📅 Showtimes every day from **21 to 31 October 2026**, 4 showtimes a day.
+- 📅 Showtimes for the **next 7 calendar days** (past start times are hidden), 4 showtimes per day.
 - 🎟️ **3 experiences** with different seat maps and prices:
 
   | Experience | Seats | Layout | Price |
@@ -41,7 +41,7 @@ As a **customer** I should be able to:
 - Choose one of the 5 cinemas.
 - Browse the 10 movies of the cinema (year and genre).
 - Choose an experience: Standard, IMAX or Suites, and see the prices.
-- Choose a day (21-31 October) and a showtime.
+- Choose an available day in the next 7 days and a showtime.
 - See the seat map with the screen, and know which seats are free or booked.
 - Choose a seat, get an error if it is booked, and choose another one.
 - Add more seats for my friends.
@@ -98,6 +98,162 @@ Enter a seat (example: B5) or Q to stop: D1
 Do you want to book another seat (for a friend)? (yes/no): no
 ```
 
+## Complete Booking Walkthrough — All 7 CLI Steps
+
+Below is an **illustrative full booking session**, showing what a customer sees at every stage. The examples follow the actual program flow, but the selected date, reserved seats, and invoice number can change when you run it. Each step is displayed on a separate terminal screen (the program clears the previous screen).
+
+### Main menu — Start booking
+
+```text
+============================================================
+                      VOX CINEMAS
+============================================================
+  1. Book a ticket
+  2. My bookings (view / change seats / cancel)
+  3. Recommendations for me
+  4. Cinema statistics
+  5. How to use
+  6. Exit
+
+Choose a number: 1
+```
+
+### Step 1/7 — Your name
+
+```text
+============================================================
+                 Step 1/7 - Your name
+============================================================
+Enter your full name: Ahmed Ali
+```
+
+### Step 2/7 — Choose a cinema
+
+```text
+============================================================
+               Step 2/7 - Choose a cinema
+============================================================
+  1. VOX Riyadh Park
+  2. VOX Sahara Mall
+  3. VOX Al Qasr Mall
+  4. VOX Atyaf Mall
+  5. VOX The Sport
+
+Choose a cinema: 1
+```
+
+### Step 3/7 — Choose a movie
+
+```text
+============================================================
+             Step 3/7 - Movies at VOX Riyadh Park
+============================================================
+  1. Avengers: Doomsday             2026   Action
+  2. Spider-Man: Brand New Day      2026   Action
+  3. The Super Mario Galaxy Movie  2026   Animation
+  4. Toy Story 5                   2026   Animation
+  5. Project Hail Mary             2026   Sci-Fi
+  6. The Odyssey                   2026   Adventure
+  7. Supergirl                     2026   Action
+  8. The Shawshank Redemption      1994   Drama
+  9. Interstellar                  2014   Sci-Fi
+ 10. The Dark Knight               2008   Action
+
+Choose a movie: 9
+```
+
+### Step 4/7 — Choose your experience
+
+```text
+============================================================
+           Step 4/7 - Choose your experience
+============================================================
+  1. Standard  48 seats - Classic cinema experience
+                Rows A-D Regular: 40 SAR | Rows E-F Premium: 60 SAR
+  2. IMAX      60 seats - Giant screen and powerful sound
+                80 SAR per seat
+  3. Suites    32 seats - Luxury recliner seats in couple pairs
+                150 SAR per seat
+
+Choose an experience: 1
+```
+
+### Step 5/7 — Choose your showtime
+
+```text
+============================================================
+             Step 5/7 - Choose your showtime
+============================================================
+  1. Mon 26 Oct 2026
+  2. Tue 27 Oct 2026
+  3. Wed 28 Oct 2026
+  4. Thu 29 Oct 2026
+  5. Fri 30 Oct 2026
+  6. Sat 31 Oct 2026
+  7. Sun 01 Nov 2026
+
+Choose a day: 2
+
+  1. 13:30
+  2. 16:00
+  3. 19:15
+  4. 22:30
+
+Choose a showtime: 3
+```
+
+*The dates above are just an example. The application displays the next seven calendar days and hides showtimes that have already started.*
+
+### Step 6/7 — Select your seats
+
+```text
+============================================================
+ Step 6/7 - Interstellar - Standard - Tue 27 Oct 2026 19:15
+============================================================
+
+                     S C R E E N
+                ---------------------
+                  1  2  3  4  5  6  7  8
+             A    🟩 🟩 🟥 🟩 🟩 🟩 🟥 🟩
+             B    🟩 🟩 🟩 🟩 🟥 🟩 🟩 🟩
+             C    🟩 🟩 🟩 🟩 🟩 🟩 🟩 🟩
+             D    🟩 🟩 🟩 🟩 🟩 🟩 🟩 🟩
+                 -- PREMIUM SEATS --
+             E    🟩 🟩 🟩 🟩 🟩 🟩 🟩 🟩
+             F    🟩 🟩 🟩 🟩 🟩 🟩 🟩 🟩
+
+🟩 Available    🟥 Booked    🟨 Your choice
+Prices -> Rows A-D Regular: 40 SAR | Rows E-F Premium: 60 SAR
+
+Enter a seat (example: B5) or Q to stop: D1
+✔ Seat D1 (Regular, 40 SAR) added.
+Do you want to book another seat (for a friend)? (yes/no): no
+```
+
+*The real seat map is drawn using colored terminal backgrounds (green/red/yellow), rather than emoji squares; this simplified illustration makes it easier to read in GitHub.*
+
+### Step 7/7 — Booking summary and confirmation
+
+```text
+============================================================
+              Step 7/7 - Booking summary
+============================================================
+Customer      : Ahmed Ali
+Cinema        : VOX Riyadh Park
+Movie         : Interstellar (2014)
+Experience    : Standard
+Your showtime : Tue 27 Oct 2026 at 19:15
+----------------------------------------
+  Seat D1   Regular       40 SAR
+----------------------------------------
+  TOTAL (1 seats)          40 SAR
+
+Confirm this booking? (yes/no): yes
+✔ Booking confirmed! Keep your invoice number: [generated number]
+```
+
+After confirmation, the program prints the **ticket** and the **weather forecast (if available)**, then asks whether to save the ticket as a `.txt` file. Booking and invoice data are saved in JSON so they can be found later from **My bookings**.
+
 ## Project Structure
 ```
 vox-cinema-booking/
@@ -145,35 +301,9 @@ vox-cinema-booking/
 └── .gitignore
 ```
 
-## Project Requirements Checklist
-| Requirement | How it is done |
-|---|---|
-| Interactive on CLI | Numbered menus, step-by-step booking, colored seat map |
-| Python used accurately | Clear names, small functions, input validation, no crashes on wrong input |
-| Organized into modules & packages | `cinema/` package with 6 sub-packages: config, models, storage, services, ui, screens |
-| Git & GitHub | Commits for every development stage |
-| Full CRUD + search | Book (create), view, change seats (update), cancel (delete), search by name / invoice |
-| Save & load data | `data/bookings.json`, tickets exported to `tickets/*.txt` |
-| Creativity | Real weather API, recommendations, statistics with text charts |
-| `requirements.txt` | Generated with `pip freeze > requirements.txt` |
-
-## Unit 1 Concepts Used
-| Concept | Where |
-|---|---|
-| Variables, type hints, casting, f-strings | All files (`int(text)`, `-> list[str]`) |
-| if / elif / else, for, while, range | `ui/seat_map.py`, `ui/inputs.py`, `screens/seat_picker.py` |
-| Functions, parameters, return values | Every module |
-| Lists, tuples, dictionaries, sets | `config/` (dict, tuple), `storage/search.py` (set of booked seats) |
-| Modules & packages, imports | `cinema/` package with 6 sub-packages |
-| File & directory operations | `storage/` (JSON, `.txt` tickets, `os.makedirs`) |
-| Recursion | `ui/inputs.py` → `ask_yes_no()` |
-| Lambda | `services/statistics.py`, `services/recommendations.py`, `screens/my_bookings_screen.py` |
-| Exceptions (try / except / else / finally) | `storage/bookings_file.py`, `services/weather.py`, `main.py` |
-| Decorators | `ui/decorators.py` → `@pause_after` |
-| OOP: classes, methods, inheritance | `models/hall.py` → `models/hall_types.py`; `models/booking.py` |
-| venv & pip | `colorama`, `requests`, `requirements.txt` |
-
 ## Built With
 - Python 3.10+
 - [colorama](https://pypi.org/project/colorama/) – colors in the terminal
 - [requests](https://pypi.org/project/requests/) – weather from the [Open-Meteo API](https://open-meteo.com/)
+
+

@@ -4,7 +4,7 @@ from datetime import date, datetime, timedelta
 
 from cinema.config.branches import BRANCHES
 from cinema.config.movies import MOVIES
-from cinema.config.settings import FIRST_SHOW_DAY, LAST_SHOW_DAY, SHOW_TIMES
+from cinema.config.settings import SHOW_DAYS_AHEAD, SHOW_TIMES
 from cinema.models.hall import Hall
 from cinema.models.hall_types import get_halls
 from cinema.ui.display import print_error
@@ -43,20 +43,19 @@ def choose_hall() -> Hall:
 
 
 def show_days() -> list[date]:
-    """All days from FIRST_SHOW_DAY to LAST_SHOW_DAY, without the days that already passed."""
-    first_day = date.fromisoformat(FIRST_SHOW_DAY)
-    last_day = date.fromisoformat(LAST_SHOW_DAY)
+    """Seven calendar days starting today; skip today if all shows have started."""
     days = []
-    day = first_day
-    while day <= last_day:
-        if day >= date.today():
+    for offset in range(SHOW_DAYS_AHEAD):
+        day = date.today() + timedelta(days=offset)
+        if available_times(day.isoformat()):
             days.append(day)
-        day += timedelta(days=1)
     return days
 
 
 def available_times(show_date: str) -> list[str]:
     """For today, hide the showtimes that already started."""
+    if show_date < date.today().isoformat():
+        return []
     if show_date != date.today().isoformat():
         return list(SHOW_TIMES)
     now = datetime.now().strftime("%H:%M")

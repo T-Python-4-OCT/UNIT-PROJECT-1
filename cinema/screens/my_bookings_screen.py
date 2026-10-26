@@ -1,5 +1,7 @@
 """'My bookings': find bookings by name or invoice, then view, change seats, cancel or export."""
 
+from datetime import datetime
+
 from cinema.models.booking import Booking
 from cinema.models.hall_types import get_hall_by_name
 from cinema.screens.seat_picker import calculate_total, select_seats
@@ -52,12 +54,24 @@ def pick_booking(found: list[Booking]) -> Booking:
 def print_price_difference(old_total: float, new_total: float) -> None:
     difference = new_total - old_total
     if difference > 0:
-        print_info(f"You will pay {difference:.0f} SAR more.")
+        print_info(f"Price difference: +{difference:.0f} SAR (simulation, no payment processed).")
     elif difference < 0:
-        print_info(f"You will get {abs(difference):.0f} SAR back.")
+        print_info(f"Price difference: -{abs(difference):.0f} SAR (simulation, no refund processed).")
+
+
+def show_has_started(booking: Booking) -> bool:
+    """Disallow modifications when a show's starting time has passed."""
+    try:
+        start = datetime.strptime(f"{booking.show_date} {booking.show_time}", "%Y-%m-%d %H:%M")
+    except ValueError:
+        return True  # invalid dates must not allow a change
+    return start <= datetime.now()
 
 
 def change_seats(booking: Booking, bookings: list[Booking]) -> None:
+    if show_has_started(booking):
+        print_error("This show already started. Seats cannot be changed.")
+        return
     hall = get_hall_by_name(booking.hall)
     if hall is None:
         print_error("Unknown hall in this booking.")
@@ -91,6 +105,9 @@ def change_seats(booking: Booking, bookings: list[Booking]) -> None:
 
 
 def cancel_booking(booking: Booking, bookings: list[Booking], found: list[Booking]) -> None:
+    if show_has_started(booking):
+        print_error("This show already started. It cannot be cancelled.")
+        return
     if not ask_yes_no(f"Are you sure you want to cancel booking {booking.invoice}?"):
         print_info("The booking was not cancelled.")
         return

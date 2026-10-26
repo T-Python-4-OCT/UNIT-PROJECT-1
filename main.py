@@ -28,16 +28,24 @@ def run() -> None:
         print_title(f"🎬  {APP_NAME}  🎬")
         print()
         choice = ask_menu(MAIN_MENU)
-        if choice == 1:
-            new_booking()
-        elif choice == 2:
-            my_bookings_menu()
-        elif choice == 3:
-            show_recommendations()
-        elif choice == 4:
-            show_statistics()
-        elif choice == 5:
-            show_help()
+        if choice in (1, 2, 3, 4, 5):
+            try:
+                if choice == 1:
+                    new_booking()
+                elif choice == 2:
+                    my_bookings_menu()
+                elif choice == 3:
+                    show_recommendations()
+                elif choice == 4:
+                    show_statistics()
+                else:
+                    show_help()
+            except ValueError as error:
+                print(f"\nData error: {error}")
+                input("Press Enter to return to the menu...")
+            except OSError as error:
+                print(f"\nFile error: {error}")
+                input("Press Enter to return to the menu...")
         elif choice == 6:
             break
 
