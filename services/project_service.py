@@ -1,373 +1,435 @@
-from datetime import date, timedelta
+import uuid
+from datetime import datetime
+import questionary
+from questionary import Choice, Style
 from rich.table import Table
 from rich.panel import Panel
 from models.classes import Project
 from storage import save_data
+import utils
 from utils import (
     console,
     print_header,
     print_success,
     print_error,
     print_info,
-    prompt_required_text,
-    prompt_positive_int,
     prompt_select,
-    confirm_delete,
-    show_spinner
+    prompt_required_text
 )
 
-def manage_projects_menu(data):
+
+def confirm_delete_action(item_name):
+    delete_style = Style([
+        ("qmark", "fg:yellow bold"),
+        ("question", "fg:white bold"),
+        ("pointer", "fg:cyan bold"),
+        ("highlighted", "bold"),
+    ])
+    choices = [
+        Choice(title=[("fg:white", f"No, keep '{item_name}' (Cancel)")], value=False),
+        Choice(title=[("fg:ansired bold", f"Yes, Delete '{item_name}' Successfully")], value=True),
+    ]
+    return questionary.select(
+        f"Are you sure you want to delete '{item_name}'?",
+        choices=choices,
+        style=delete_style
+    ).ask()
+
+
+def ask_valid_score(prompt_text, max_val):
     while True:
-        print_header(
-            "SECTION: Academic Projects Tracker",
-            "Create custom project steps with weights (%) and grades, and track completion"
-        )
-        choices = [
-            "1. View All Projects & Step Breakdown",
-            "2. Add New Project (With Custom Steps, % & Grades)",
-            "3. Complete / Update Project Steps",
-            "4. Delete Project",
-            "5. Back to Main Menu"
-        ]
-        choice = prompt_select("Select an action:", choices)
+        val = prompt_required_text(prompt_text, default_value=str(int(max_val)))
+        try:
+            score = float(val)
+            if 0.0 <= score <= max_val:
+                return score
+            print_error(f"Score must be between 0 and {max_val:.0f}.")
+        except ValueError:
+            print_error("Please enter a valid number.")
 
-        if choice is None or "5." in choice:
-            break
-        elif "1." in choice:
-            view_all_projects(data)
-        elif "2." in choice:
-            add_project(data)
-        elif "3." in choice:
-            update_project_progress(data)
-        elif "4." in choice:
-            delete_project(data)
 
-def render_progress_bar(percentage):
-    filled = int(percentage // 10)
-    empty = 10 - filled
-    bar = "█" * filled + "░" * empty
-    color = "bold green" if percentage == 100 else ("cyan" if percentage >= 60 else "yellow")
-    return f"[{color}]{bar} {percentage}%[/{color}]"
+def format_steps_vertical(project):
+    if not project.steps:
+        return "[dim]No steps defined[/dim]"
+    lines = []
+    for idx, s in enumerate(project.steps, 1):
+        name = s.get("name", f"Step {idx}")
+        weight = s.get("weight", 0)
+        e_pts = s.get("earned_points")
+        m_pts = s.get("max_points", 0)
 
-def format_project_score(earned, max_s):
-    if earned is None or max_s is None or max_s <= 0:
-        return f"[dim]0/{max_s:g} (Pending)[/dim]"
-    pct = (earned / max_s) * 100
-    color = "bold green" if pct >= 85 else ("cyan" if pct >= 70 else ("yellow" if pct >= 60 else "bold red"))
-    return f"[{color}]{earned:g}/{max_s:g} pts ({pct:.0f}%)[/{color}]"
-
-def display_project_steps_table(project, course_code=""):
-    """Display a detailed table of a project's custom steps, highlighting completed ones in green."""
-    step_table = Table(
-        title=f"[bold cyan]{project.project_id} — {project.title} ({course_code})[/bold cyan] | Progress: {render_progress_bar(project.progress)}",
-        show_header=True,
-        header_style="bold cyan"
-    )
-    step_table.add_column("#", width=4)
-    step_table.add_column("Step Description", width=36)
-    step_table.add_column("Weight (%)", width=12)
-    step_table.add_column("Step Grade", width=18)
-    step_table.add_column("Status", width=16)
-
-    for idx, s in enumerate(project.steps, start=1):
         if s.get("completed"):
-            name_str = f"[bold green]✔ {s['name']}[/bold green]"
-            weight_str = f"[bold green]+{s['weight']}% (Done)[/bold green]"
-            earned_pts = s.get("earned_points", s["max_points"])
-            grade_str = f"[bold green]{earned_pts:g}/{s['max_points']:g} pts[/bold green]"
-            status_str = "[bold green]✔ Completed[/bold green]"
+            pts_str = f"{e_pts:.1f}/{m_pts:.0f} pts" if e_pts is not None else f"{m_pts:.0f}/{m_pts:.0f} pts"
+            lines.append(f"[bold green]✔ {idx}. {name} ({weight}% | {pts_str})[/bold green]")
         else:
-            name_str = f"[white]{s['name']}[/white]"
-            weight_str = f"[yellow]{s['weight']}%[/yellow]"
-            grade_str = f"[dim]0/{s['max_points']:g} pts[/dim]"
-            status_str = "[yellow]⏳ Pending[/yellow]"
+            lines.append(f"[dim]○ {idx}. {name} ({weight}%)[/dim]")
+    return "\n".join(lines)
 
-        step_table.add_row(str(idx), name_str, weight_str, grade_str, status_str)
 
-    console.print()
-    console.print(step_table)
-
-def view_all_projects(data):
-    print_header("VIEW: All Academic Projects", "Overview of projects and their custom step-by-step progress")
-    show_spinner("Loading projects...")
+def view_projects(data):
     projects = data.get("projects", [])
-
+    subjects = data.get("subjects", [])
     if not projects:
-        print_info("No projects available.")
+        print_info("No academic projects found.")
         return
 
-    sub_map = {s.subject_id: s.code for s in data["subjects"]}
-
-    table = Table(title=f"Academic Projects Summary (Total: {len(projects)})", show_header=True, header_style="bold cyan")
-    table.add_column("ID", width=9)
-    table.add_column("Project Title", width=28)
-    table.add_column("Course", width=9)
-    table.add_column("Next / Current Step", width=26)
-    table.add_column("Steps Done", width=12)
-    table.add_column("Total Progress", width=18)
+    sub_map = {s.subject_id: f"{s.code} - {s.name}" for s in subjects}
+    table = Table(title="Academic Projects & Milestones", show_header=True, header_style="bold cyan", show_lines=True)
+    table.add_column("#", style="dim", width=4)
+    table.add_column("Project Title", width=22)
+    table.add_column("Subject", width=18)
     table.add_column("Deadline", width=12)
-    table.add_column("Total Score", width=18)
+    table.add_column("Steps Breakdown", width=36)
+    table.add_column("Overall Progress", width=24)
+    table.add_column("Total Score", width=14)
 
-    for p in projects:
-        course_code = sub_map.get(p.subject_id, "N/A")
-        score_str = format_project_score(p.earned_score, p.max_score)
-        done_count = sum(1 for s in p.steps if s.get("completed"))
-        total_steps = len(p.steps)
-        
-        if p.progress == 100:
-            phase_str = "[bold green]✔ All Steps Completed[/bold green]"
-            steps_str = f"[bold green]{done_count}/{total_steps}[/bold green]"
+    for idx, p in enumerate(projects, 1):
+        sub_label = sub_map.get(p.subject_id, "Unknown")
+        steps_str = format_steps_vertical(p)
+        prog_bar = utils.render_progress_bar(p.progress)
+
+        if p.earned_score is not None and p.max_score:
+            pct = (p.earned_score / p.max_score) * 100
+            sc_color = "green" if pct >= 85 else ("yellow" if pct >= 60 else "red")
+            score_str = f"[{sc_color}]{p.earned_score:.1f}/{p.max_score:.0f}\n({pct:.0f}%)[/{sc_color}]"
         else:
-            phase_str = f"[magenta]{p.phase}[/magenta]"
-            steps_str = f"[yellow]{done_count}/{total_steps}[/yellow]"
+            score_str = f"[dim]-- / {p.max_score:.0f}[/dim]"
 
         table.add_row(
-            p.project_id,
-            p.title,
-            f"[bold]{course_code}[/bold]",
-            phase_str,
-            steps_str,
-            render_progress_bar(p.progress),
+            str(idx),
+            f"[bold]{p.title}[/bold]\n[dim]Phase: {p.phase}[/dim]",
+            sub_label,
             p.deadline,
+            steps_str,
+            prog_bar,
             score_str
         )
 
-    console.print()
     console.print(table)
 
-    # Allow user to inspect any project's custom steps in detail or view all
-    choices = ["View Detailed Steps for ALL Projects"] + [
-        f"[{p.project_id}] {p.title} ({p.progress}%)" for p in projects
-    ] + ["Back to Projects Menu"]
-
-    selected = prompt_select("Select a project to inspect its steps (green = completed):", choices)
-    if not selected or selected == "Back to Projects Menu":
-        return
-
-    if selected == "View Detailed Steps for ALL Projects":
-        for p in projects:
-            display_project_steps_table(p, sub_map.get(p.subject_id, "N/A"))
-    else:
-        prj_id = selected.split("]")[0].replace("[", "").strip()
-        target = next((p for p in projects if p.project_id == prj_id), None)
-        if target:
-            display_project_steps_table(target, sub_map.get(target.subject_id, "N/A"))
-
-def generate_next_project_id(projects):
-    max_num = 0
-    for p in projects:
-        if p.project_id.startswith("PRJ-"):
-            num_part = p.project_id.replace("PRJ-", "")
-            if num_part.isdigit():
-                num = int(num_part)
-                if num > max_num:
-                    max_num = num
-    return f"PRJ-{max_num + 1:03d}"
 
 def add_project(data):
-    print_header("ACTION: Add New Project", "Define your project and customize its steps, weights (%), and grades")
-    if not data["subjects"]:
-        print_error("Please add a subject first.")
-        return
+    subjects = data.get("subjects", [])
+    if not subjects:
+        print_error("Please add a subject first before creating a project.")
+        return None
 
-    sub_choices = [f"[{s.subject_id}] {s.code} - {s.name}" for s in data["subjects"]]
-    selected_sub = prompt_select("Select Course:", sub_choices)
-    if not selected_sub:
-        return
-
-    sub_id = selected_sub.split("]")[0].replace("[", "").strip()
-
-    title = prompt_required_text("Enter Project Title:")
-    deadline = prompt_required_text("Enter Deadline (YYYY-MM-DD):", default_value=str(date.today() + timedelta(days=30)))
-    
-    num_steps = prompt_positive_int("How many steps does this project have?", default_value="5")
-    if num_steps <= 0:
-        num_steps = 5
-
-    console.print(
-        Panel(
-            f"[bold cyan]Define the {num_steps} Steps for '{title}'[/bold cyan]\n"
-            f"For each step, enter its [bold white]Name[/bold white], [bold yellow]Percentage Weight (%)[/bold yellow], and [bold green]Max Grade Points[/bold green].",
-            border_style="cyan"
-        )
+    print_header(
+        "Create Academic Project",
+        "Tip: Type 'b' to go back, or 'm' to return to Main Menu"
     )
 
+    selected_sub = None
+    title = ""
+    deadline = "2026-12-15"
+    num_steps = 4
     steps = []
-    remaining_weight = 100
-    default_points = round(100.0 / num_steps, 1)
 
-    for i in range(1, num_steps + 1):
-        console.print(f"\n[bold cyan]--- Step {i} of {num_steps} (Remaining Progress Weight: {remaining_weight}%) ---[/bold cyan]")
-        step_name = prompt_required_text(f"Enter Step {i} Name:")
-        
-        if i == num_steps and remaining_weight > 0:
-            default_w = remaining_weight
-        else:
-            default_w = max(5, remaining_weight // (num_steps - i + 1))
+    stage = 1
+    while True:
+        # 1. اختيار المادة أولاً
+        if stage == 1:
+            sub_choices = [f"{s.code} - {s.name}" for s in subjects]
+            sub_choices.append("⬅ Back to Projects Menu")
+            sub_choices.append("🏠 Return to Main Menu")
 
-        weight = prompt_positive_int(
-            f"Enter Step {i} Progress Percentage (%) [Remaining: {remaining_weight}%]:",
-            default_value=str(default_w)
-        )
-        remaining_weight = max(0, remaining_weight - weight)
+            sub_choice = prompt_select("Step 1/5 — Select Subject First:", sub_choices)
+            if not sub_choice or "Back to Projects Menu" in sub_choice:
+                return None
+            if "Return to Main Menu" in sub_choice:
+                return "MAIN_MENU"
 
-        pts_str = prompt_required_text(f"Enter Step {i} Max Grade Points:", default_value=str(default_points))
-        try:
-            max_pts = float(pts_str)
-            if max_pts <= 0:
-                max_pts = default_points
-        except ValueError:
-            max_pts = default_points
+            selected_sub = subjects[sub_choices.index(sub_choice)]
+            stage = 2
 
-        is_done_choice = prompt_select(
-            f"Have you already completed Step {i} ('{step_name}')?",
-            ["No (Pending)", "Yes (Completed ✔)"]
-        )
-        is_done = is_done_choice == "Yes (Completed ✔)"
-        earned_pts = None
+        # 2. إدخال عنوان المشروع ثانياً
+        elif stage == 2:
+            raw_title = prompt_required_text(
+                f"Step 2/5 — Enter Project Title for {selected_sub.code} (or 'b' = Back, 'm' = Main):",
+                default_value=title
+            ).strip()
 
-        if is_done:
-            ep_str = prompt_required_text(f"Enter Earned Points for Step {i} (out of {max_pts:g}):", default_value=str(max_pts))
+            if raw_title.lower() == "b":
+                stage = 1
+                continue
+            if raw_title.lower() == "m":
+                return "MAIN_MENU"
+
+            title = raw_title
+            stage = 3
+
+        # 3. إدخال موعد التسليم
+        elif stage == 3:
+            raw_date = prompt_required_text(
+                "Step 3/5 — Enter Deadline YYYY-MM-DD (or 'b' = Back, 'm' = Main):",
+                default_value=deadline
+            ).strip()
+
+            if raw_date.lower() == "b":
+                stage = 2
+                continue
+            if raw_date.lower() == "m":
+                return "MAIN_MENU"
+
             try:
-                earned_pts = min(float(ep_str), max_pts)
+                datetime.strptime(raw_date, "%Y-%m-%d")
+                deadline = raw_date
+                stage = 4
             except ValueError:
-                earned_pts = max_pts
+                print_error("Invalid date format. Use YYYY-MM-DD.")
 
-        steps.append({
-            "name": step_name,
-            "weight": weight,
-            "max_points": max_pts,
-            "earned_points": earned_pts,
-            "completed": is_done
-        })
+        # 4. عدد الخطوات
+        elif stage == 4:
+            raw_count = prompt_required_text(
+                "Step 4/5 — Number of steps? (1 - 10) (or 'b' = Back, 'm' = Main):",
+                default_value=str(num_steps)
+            ).strip()
 
-    new_id = generate_next_project_id(data["projects"])
-    new_project = Project(new_id, title, sub_id, deadline, steps=steps)
+            if raw_count.lower() == "b":
+                stage = 3
+                continue
+            if raw_count.lower() == "m":
+                return "MAIN_MENU"
 
-    show_spinner("Saving project and calculating step progress...")
+            try:
+                val = int(raw_count)
+                if 1 <= val <= 10:
+                    num_steps = val
+                    stage = 5
+                else:
+                    print_error("Enter a number between 1 and 10.")
+            except ValueError:
+                print_error("Enter a valid integer.")
+
+        # 5. تفاصيل كل خطوة مع دعم التراجع
+        elif stage == 5:
+            steps = [None] * num_steps
+            default_per_step = 100 // num_steps
+            i = 0
+
+            while i < num_steps:
+                used_weight = sum(s["weight"] for s in steps[:i] if s is not None)
+                remaining_weight = max(0, 100 - used_weight)
+
+                console.print(
+                    f"\n[bold cyan]--- Project Step {i + 1} of {num_steps} "
+                    f"(Remaining Weight: {remaining_weight}%) ---[/bold cyan]"
+                )
+
+                prev_name = steps[i]["name"] if steps[i] else ""
+                s_name = prompt_required_text(
+                    f"Step {i+1} Name (or 'b' = Previous Step, 'm' = Main Menu):",
+                    default_value=prev_name
+                ).strip()
+
+                if s_name.lower() == "b":
+                    if i == 0:
+                        stage = 4
+                        break
+                    else:
+                        i -= 1
+                        continue
+                if s_name.lower() == "m":
+                    return "MAIN_MENU"
+
+                if i == num_steps - 1 and remaining_weight > 0:
+                    suggested_w = remaining_weight
+                else:
+                    suggested_w = min(default_per_step, remaining_weight) if remaining_weight > 0 else 10
+
+                prev_w = steps[i]["weight"] if steps[i] else suggested_w
+                raw_w = prompt_required_text(
+                    f"Step {i+1} Percentage (%) [Remaining: {remaining_weight}%] (or 'b' = Back):",
+                    default_value=str(prev_w)
+                ).strip()
+
+                if raw_w.lower() == "b":
+                    continue
+                if raw_w.lower() == "m":
+                    return "MAIN_MENU"
+
+                try:
+                    weight = max(1, min(100, int(raw_w)))
+                except ValueError:
+                    weight = suggested_w
+
+                steps[i] = {
+                    "name": s_name,
+                    "weight": weight,
+                    "max_points": float(weight),
+                    "earned_points": None,
+                    "completed": False
+                }
+
+                next_label = (
+                    f"✔ Save & Create Project '{title}'"
+                    if i == num_steps - 1
+                    else f"✔ Confirm Step {i + 1} & Proceed"
+                )
+                nav_action = prompt_select(
+                    f"Step {i + 1} ('{s_name}' - {weight}%) Ready:",
+                    [
+                        next_label,
+                        f"✏ Edit Step {i + 1} Again",
+                        "⬅ Back to Previous Step",
+                        "🏠 Return to Main Menu"
+                    ]
+                )
+
+                if not nav_action or "Return to Main Menu" in nav_action:
+                    return "MAIN_MENU"
+                elif "Edit Step" in nav_action:
+                    continue
+                elif "Back to Previous Step" in nav_action:
+                    if i == 0:
+                        stage = 4
+                        break
+                    else:
+                        i -= 1
+                        continue
+                else:
+                    i += 1
+
+            if stage == 5 and i == num_steps:
+                break
+
+    new_project = Project(
+        project_id=str(uuid.uuid4())[:8],
+        title=title,
+        subject_id=selected_sub.subject_id,
+        deadline=deadline,
+        steps=steps
+    )
     data["projects"].append(new_project)
     save_data(data)
+    print_success(f"Project '{title}' created successfully for {selected_sub.code}!")
+    return None
 
-    sub_code = next((s.code for s in data["subjects"] if s.subject_id == sub_id), "")
-    display_project_steps_table(new_project, sub_code)
-    print_success(f"Project '{title}' added! Completed Progress: {new_project.progress}%.")
 
-def update_project_progress(data):
-    print_header("ACTION: Complete / Manage Project Steps", "Select a step to mark it completed (Green) and update your progress %")
-    if not data.get("projects"):
-        print_info("No projects available.")
-        return
-
-    sub_map = {s.subject_id: s.code for s in data["subjects"]}
-    choices = [
-        f"[{p.project_id}] {p.title} ({sub_map.get(p.subject_id, 'N/A')}) — Progress: {p.progress}%"
-        for p in data["projects"]
-    ]
-    choices.append("Cancel")
-
-    selected = prompt_select("Select a project to update its steps:", choices)
-    if not selected or selected == "Cancel":
-        return
-
-    prj_id = selected.split("]")[0].replace("[", "").strip()
-    target = next((p for p in data["projects"] if p.project_id == prj_id), None)
-    if not target:
-        return
-
-    course_code = sub_map.get(target.subject_id, "N/A")
+def update_project_steps(data):
+    projects = data.get("projects", [])
+    if not projects:
+        print_info("No projects available to update.")
+        return None
 
     while True:
-        display_project_steps_table(target, course_code)
+        proj_choices = [f"{p.title} (Progress: {p.progress}%)" for p in projects]
+        proj_choices.append("⬅ Back to Projects Menu")
+        proj_choices.append("🏠 Return to Main Menu")
+        p_choice = prompt_select("Select a Project to manage its steps:", proj_choices)
 
-        step_choices = []
-        for idx, s in enumerate(target.steps):
-            if s.get("completed"):
-                earned = s.get("earned_points", s["max_points"])
-                step_choices.append(
-                    f"Step {idx + 1}: ✔ [COMPLETED] {s['name']} (+{s['weight']}% | {earned:g}/{s['max_points']:g} pts) — Select to Undo/Edit"
+        if not p_choice or "Back to Projects Menu" in p_choice:
+            return None
+        if "Return to Main Menu" in p_choice:
+            return "MAIN_MENU"
+
+        project = projects[proj_choices.index(p_choice)]
+
+        while True:
+            console.print()
+            console.print(Panel(
+                f"[bold cyan]{project.title}[/bold cyan] — Current Phase: [yellow]{project.phase}[/yellow]\n"
+                f"Overall Progress: {utils.render_progress_bar(project.progress)}\n\n"
+                f"{format_steps_vertical(project)}",
+                title="Project Milestones Status",
+                border_style="cyan"
+            ))
+
+            step_choices = []
+            for idx, s in enumerate(project.steps):
+                status_icon = "✔ Done" if s.get("completed") else "○ Pending"
+                step_choices.append(f"Step {idx + 1}: {s['name']} ({s['weight']}%) [{status_icon}]")
+            step_choices.append("⬅ Back to Project Selection")
+            step_choices.append("🏠 Return to Main Menu")
+
+            s_choice = prompt_select("Select a step to toggle/grade:", step_choices)
+            if not s_choice or "Back to Project Selection" in s_choice:
+                break
+            if "Return to Main Menu" in s_choice:
+                return "MAIN_MENU"
+
+            step_idx = step_choices.index(s_choice)
+            step = project.steps[step_idx]
+
+            if not step.get("completed"):
+                action = prompt_select(
+                    f"Mark '{step['name']}' ({step['weight']}%) as completed?",
+                    [
+                        f"1. Complete with Full Score ({step['max_points']:.0f}/{step['max_points']:.0f})",
+                        f"2. Complete with Custom Score (out of {step['max_points']:.0f})",
+                        "⬅ Back to Steps List"
+                    ]
                 )
-            else:
-                step_choices.append(
-                    f"Step {idx + 1}: ⏳ [PENDING]   {s['name']} (+{s['weight']}% | {s['max_points']:g} pts) — Select to Complete"
-                )
-        step_choices.append("Done / Back to Projects Menu")
-
-        chosen_step = prompt_select("Choose a step to complete or update:", step_choices)
-        if not chosen_step or chosen_step == "Done / Back to Projects Menu":
-            break
-
-        step_idx = int(chosen_step.split(":")[0].replace("Step ", "").strip()) - 1
-        step_obj = target.steps[step_idx]
-
-        if not step_obj.get("completed"):
-            old_prog = target.progress
-            earned_str = prompt_required_text(
-                f"Enter Earned Grade Points for '{step_obj['name']}' (Max {step_obj['max_points']:g} pts):",
-                default_value=str(step_obj['max_points'])
-            )
-            target.complete_step(step_idx, earned_str)
-            save_data(data)
-
-            console.print(
-                Panel(
-                    f"[bold green]✔ Step Completed:[/bold green] [bold white]{step_obj['name']}[/bold white]\n"
-                    f"[bold green]Progress Added:[/bold green] +{step_obj['weight']}%  ({old_prog}% ➔ [bold green]{target.progress}%[/bold green])\n"
-                    f"[bold green]Step Score:[/bold green]     {step_obj['earned_points']:g} / {step_obj['max_points']:g} pts\n"
-                    f"[bold cyan]Overall Progress:[/bold cyan] {render_progress_bar(target.progress)}",
-                    title="[bold green]Step Accomplished![/bold green]",
-                    border_style="green"
-                )
-            )
-
-            if target.progress == 100:
-                console.print(
-                    Panel(
-                        f"[bold green]🎉 CONGRATULATIONS! ALL PROJECT STEPS COMPLETED (100%)![/bold green]\n"
-                        f"[bold white]Project:[/bold white] {target.title}\n"
-                        f"[bold white]Total Project Score:[/bold white] [bold green]{target.earned_score:g} / {target.max_score:g} pts[/bold green]",
-                        title="[bold green]★ Project 100% Accomplished ★[/bold green]",
-                        border_style="green"
+                if action and "1." in action:
+                    project.complete_step(step_idx, earned_points=step["max_points"])
+                    save_data(data)
+                    print_success(f"Step '{step['name']}' completed successfully!")
+                elif action and "2." in action:
+                    pts = ask_valid_score(
+                        f"Enter score for '{step['name']}' (0 - {step['max_points']:.0f}):",
+                        max_val=float(step["max_points"])
                     )
+                    project.complete_step(step_idx, earned_points=pts)
+                    save_data(data)
+                    print_success(f"Step '{step['name']}' completed successfully with score {pts:.1f}!")
+            else:
+                confirm = prompt_select(
+                    f"Step '{step['name']}' is already completed. Revert to Pending?",
+                    ["Yes, revert to Pending", "⬅ No, keep as Completed"]
                 )
-        else:
-            action = prompt_select(
-                f"Step '{step_obj['name']}' is already completed. What would you like to do?",
-                [
-                    "1. Update Earned Grade Points",
-                    "2. Mark as Pending (Uncheck Step)",
-                    "3. Cancel"
-                ]
-            )
-            if action and "1." in action:
-                earned_str = prompt_required_text(
-                    f"Enter New Earned Points (Max {step_obj['max_points']:g} pts):",
-                    default_value=str(step_obj.get("earned_points", step_obj["max_points"]))
-                )
-                target.complete_step(step_idx, earned_str)
-                save_data(data)
-                print_success("Step score updated.")
-            elif action and "2." in action:
-                target.uncomplete_step(step_idx)
-                save_data(data)
-                print_info(f"Step '{step_obj['name']}' marked as Pending. Progress is now {target.progress}%.")
+                if confirm and "Yes" in confirm:
+                    project.uncomplete_step(step_idx)
+                    save_data(data)
+                    print_info(f"Step '{step['name']}' reverted to pending.")
+
 
 def delete_project(data):
-    print_header("ACTION: Delete Project", "Remove a project")
-    if not data.get("projects"):
-        print_info("No projects available.")
+    projects = data.get("projects", [])
+    if not projects:
+        print_info("No projects available to delete.")
         return
 
-    choices = [f"[{p.project_id}] {p.title}" for p in data["projects"]]
-    choices.append("Cancel")
+    choices = [f"{p.title} ({p.progress}%)" for p in projects]
+    choices.append("⬅ Cancel")
+    choice = prompt_select("Select Project to delete:", choices)
 
-    selected = prompt_select("Select project to delete:", choices)
-    if not selected or selected == "Cancel":
+    if not choice or "Cancel" in choice:
         return
 
-    prj_id = selected.split("]")[0].replace("[", "").strip()
-    if confirm_delete(selected):
-        data["projects"] = [p for p in data["projects"] if p.project_id != prj_id]
+    idx = choices.index(choice)
+    target = projects[idx]
+
+    if confirm_delete_action(target.title):
+        projects.pop(idx)
         save_data(data)
-        print_success("Project deleted successfully.")
+        print_success(f"Project '{target.title}' has been deleted successfully.")
     else:
         print_info("Deletion cancelled.")
+
+
+def manage_projects_menu(data):
+    while True:
+        print_header("Manage Academic Projects", "Track project milestones and weights")
+        choices = [
+            "1. View All Projects",
+            "2. Create New Project",
+            "3. Update Project Steps & Progress",
+            "4. Delete Project",
+            "5. Back to Main Menu"
+        ]
+        choice = prompt_select("Projects Menu:", choices)
+
+        if not choice or "5." in choice:
+            break
+        elif "1." in choice:
+            view_projects(data)
+        elif "2." in choice:
+            res = add_project(data)
+            if res == "MAIN_MENU":
+                break
+        elif "3." in choice:
+            res = update_project_steps(data)
+            if res == "MAIN_MENU":
+                break
+        elif "4." in choice:
+            delete_project(data)

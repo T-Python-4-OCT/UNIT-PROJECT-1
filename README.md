@@ -4,17 +4,17 @@ A terminal-based Python app to help students keep track of their university cour
 
 ## What it does
 
-- **Login system:** Simple login and sign-up screen with hidden password input. Default login info is loaded from a `.env` file.
+- **Login system:** Simple login and sign-up screen with hidden password input and SHA-256 password hashing. Default login info is loaded from a `.env` file.
 - **Dashboard:** Shows estimated GPA (out of 4.00), course averages, overdue tasks, and upcoming exams.
 - **Projects tracker:** Lets you break down each course project into custom steps with specific weights (`%`) and points. Marking a step as done updates the progress bar and total score automatically.
 - **Tasks, Exams & Notes:** Add, view, update, and delete tasks, exams, and study notes for each subject.
-- **Charts:** Uses `matplotlib` to plot a bar chart of your course averages and project progress, and saves it as `academic_report.png`.
+- **Study Timer:** Built-in countdown timer to track study sessions per subject, automatically logging completed sessions into study notes and `activity.log`.
 
 ## Files & Folders
 
 - `main.py` - Entry point of the app and main menu loop.
 - `models/classes.py` - Contains the main OOP classes (`User`, `Subject`, `Task`, `Project`, `Exam`, `StudyNote`).
-- `services/` - Separate files for each section of the app (`auth_service.py`, `dashboard_service.py`, `subject_service.py`, `task_service.py`, `project_service.py`, `exam_service.py`, `note_service.py`).
+- `services/` - Separate files for each section of the app (`auth_service.py`, `dashboard_service.py`, `subject_service.py`, `task_service.py`, `project_service.py`, `exam_service.py`, `note_service.py`, `pomodoro_service.py`).
 - `storage.py` - Handles reading and saving data to `studymate_data.json`.
 - `utils.py` - Helper functions for `rich` tables and `questionary` inputs.
 - `seed.py` - Generates random sample data using `Faker` to test the app quickly.
@@ -24,7 +24,6 @@ A terminal-based Python app to help students keep track of their university cour
 
 - `rich`
 - `questionary`
-- `matplotlib`
 - `Faker`
 - `python-dotenv`
 

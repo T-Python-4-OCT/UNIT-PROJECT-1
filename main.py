@@ -10,6 +10,7 @@ from services.note_service import manage_notes_menu
 from services.pomodoro_service import manage_pomodoro_menu
 from models.classes import User, Subject, Task, Project, Exam, StudyNote
 
+
 def hydrate_data(raw_data):
     users = [User(**u) for u in raw_data.get("users", [])]
     subjects = [Subject(**s) for s in raw_data.get("subjects", [])]
@@ -26,60 +27,56 @@ def hydrate_data(raw_data):
         "notes": notes
     }
 
+
 def main():
     show_spinner("Starting StudyMate Academic Assistant...")
     raw_data = load_data()
     data = hydrate_data(raw_data)
 
+    current_user = auth_menu(data)
+    if not current_user:
+        console.print("\n[bold cyan]Goodbye![/bold cyan]\n")
+        return
+
     while True:
-        current_user = auth_menu(data)
-        if not current_user:
-            console.print("\n[bold cyan]Goodbye![/bold cyan]\n")
+        print_header(
+            "StudyMate — Smart University Academic Assistant",
+            f"👤 Logged in as: {current_user.full_name} ({current_user.username}) | 🎓 Major: {current_user.major}"
+        )
+
+        choices = [
+            "1. Academic Progress & Grades Dashboard",
+            "2. Manage Subjects",
+            "3. Manage Tasks & Assignments",
+            "4. Manage Academic Projects",
+            "5. Manage Exams",
+            "6. Manage Study Notes",
+            "7. Study Timer",
+            "8. Save and Exit"
+        ]
+
+        choice = prompt_select("Main Menu:", choices)
+
+        if choice is None or "8." in choice:
+            show_spinner("Saving your academic records...")
+            save_data(data)
+            console.print(f"\n[bold cyan]All data saved. Goodbye, {current_user.full_name}![/bold cyan]\n")
             break
+        elif "1." in choice:
+            show_dashboard(data)
+        elif "2." in choice:
+            manage_subjects_menu(data)
+        elif "3." in choice:
+            manage_tasks_menu(data)
+        elif "4." in choice:
+            manage_projects_menu(data)
+        elif "5." in choice:
+            manage_exams_menu(data)
+        elif "6." in choice:
+            manage_notes_menu(data)
+        elif "7." in choice:
+            manage_pomodoro_menu(data)
 
-        while True:
-            print_header(
-                "StudyMate — Smart University Academic Assistant",
-                f"👤 Logged in as: {current_user.full_name} ({current_user.username}) | 🎓 Major: {current_user.major}"
-            )
-
-            choices = [
-                "1. Academic Progress & Grades Dashboard",
-                "2. Manage Subjects",
-                "3. Manage Tasks & Assignments",
-                "4. Manage Academic Projects",
-                "5. Manage Exams",
-                "6. Manage Study Notes",
-                "7. Study Timer",
-                "8. Logout (Switch Account)",
-                "9. Save and Exit"
-            ]
-
-            choice = prompt_select("Main Menu:", choices)
-
-            if choice is None or "9." in choice:
-                show_spinner("Saving your academic records...")
-                save_data(data)
-                console.print(f"\n[bold cyan]All data saved. Goodbye, {current_user.full_name}![/bold cyan]\n")
-                return
-            elif "8." in choice:
-                show_spinner("Logging out...")
-                save_data(data)
-                break
-            elif "1." in choice:
-                show_dashboard(data)
-            elif "2." in choice:
-                manage_subjects_menu(data)
-            elif "3." in choice:
-                manage_tasks_menu(data)
-            elif "4." in choice:
-                manage_projects_menu(data)
-            elif "5." in choice:
-                manage_exams_menu(data)
-            elif "6." in choice:
-                manage_notes_menu(data)
-            elif "7." in choice:
-                manage_pomodoro_menu(data)
 
 if __name__ == "__main__":
     main()

@@ -88,9 +88,9 @@
             "subject_id": "SUB-002",
             "due_date": "2026-10-26",
             "priority": "Low",
-            "status": "Not Started",
-            "earned_score": null,
-            "max_score": null,
+            "status": "Completed",
+            "earned_score": 95.0,
+            "max_score": 100.0,
             "created_at": "2026-10-25"
         },
         {
@@ -112,9 +112,9 @@
             "subject_id": "SUB-003",
             "due_date": "2026-10-27",
             "priority": "Low",
-            "status": "Not Started",
-            "earned_score": null,
-            "max_score": null,
+            "status": "Completed",
+            "earned_score": 80.0,
+            "max_score": 100.0,
             "created_at": "2026-10-25"
         },
         {
@@ -278,7 +278,7 @@
                     "name": "DJI280 - Grow Dot-Com Technologies",
                     "weight": 20,
                     "max_points": 20.0,
-                    "earned_points": 15.6,
+                    "earned_points": 18.0,
                     "completed": true
                 },
                 {
@@ -305,7 +305,7 @@
             ],
             "phase": "DJI280 - Aggregate Strategic Technologies",
             "progress": 40,
-            "earned_score": 31.0,
+            "earned_score": 33.4,
             "max_score": 100.0
         },
         {
@@ -453,6 +453,16 @@
             "exam_type": "Final",
             "earned_score": 54.0,
             "max_score": 100.0
+        },
+        {
+            "exam_id": "EXM-006",
+            "title": "a",
+            "subject_id": "SUB-003",
+            "exam_date": "2026-10-26",
+            "exam_time": "09:00",
+            "exam_type": "Midterm",
+            "earned_score": null,
+            "max_score": 100.0
         }
     ],
     "notes": [
@@ -504,6 +514,27 @@
             "content": "Completed a 25-minute study session for GVB017 (Advanced Content-Based Concept).",
             "subject_id": "SUB-005",
             "created_at": "2026-10-25"
+        },
+        {
+            "note_id": "NTE-006",
+            "title": "a",
+            "content": "welcome",
+            "subject_id": "SUB-005",
+            "created_at": "2026-10-26"
+        },
+        {
+            "note_id": "42bfacc8",
+            "title": "Study Session (25 mins)",
+            "content": "Completed a 25-minute study session for JKV995 (Extended Multimedia Database).",
+            "subject_id": "SUB-004",
+            "created_at": "2026-10-26"
+        },
+        {
+            "note_id": "180658be",
+            "title": "Study Session (25 mins)",
+            "content": "Completed a 25-minute study session for DJI280 (Virtual Local Utilization).",
+            "subject_id": "SUB-003",
+            "created_at": "2026-10-26"
         }
     ]
 }
