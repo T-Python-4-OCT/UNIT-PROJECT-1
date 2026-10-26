@@ -85,19 +85,25 @@ def bar(value, maximum, width=30, style="green"):
 
 # ---------------------------------------------------------------- input ----
 
-def ask(prompt, default=None):
+class BackRequested(Exception):
+    """Raised when the user requests the previous onboarding question."""
+
+
+def ask(prompt, default=None, allow_back=False):
     suffix = f" [{default}]" if default not in (None, "") else ""
     try:
         answer = input(color(f"{prompt}{suffix}: ", "cyan")).strip()
     except EOFError:
         # Input stream closed (Ctrl+D / Ctrl+Z): stop the app cleanly instead of looping.
         raise KeyboardInterrupt from None
+    if allow_back and answer.casefold() == "back":
+        raise BackRequested
     return answer if answer else ("" if default is None else str(default))
 
 
-def ask_float(prompt, low, high, default=None):
+def ask_float(prompt, low, high, default=None, allow_back=False):
     while True:
-        raw = ask(prompt, default)
+        raw = ask(prompt, default, allow_back=allow_back)
         try:
             value = float(raw)
         except ValueError:
@@ -108,9 +114,9 @@ def ask_float(prompt, low, high, default=None):
         error(f"Value must be between {low} and {high}.")
 
 
-def ask_int(prompt, low, high, default=None):
+def ask_int(prompt, low, high, default=None, allow_back=False):
     while True:
-        raw = ask(prompt, default)
+        raw = ask(prompt, default, allow_back=allow_back)
         try:
             value = int(raw)
         except ValueError:
@@ -120,7 +126,7 @@ def ask_int(prompt, low, high, default=None):
         error(f"Please enter a whole number between {low} and {high}.")
 
 
-def ask_choice(prompt, options, default=None):
+def ask_choice(prompt, options, default=None, allow_back=False):
     """options: list of (key, label). Returns the chosen key."""
     print(color(prompt, "bold"))
     for i, (_, label) in enumerate(options, start=1):
@@ -130,7 +136,7 @@ def ask_choice(prompt, options, default=None):
         for i, (key, _) in enumerate(options, start=1):
             if key == default:
                 default_index = i
-    index = ask_int("Choose", 1, len(options), default_index)
+    index = ask_int("Choose", 1, len(options), default_index, allow_back=allow_back)
     return options[index - 1][0]
 
 

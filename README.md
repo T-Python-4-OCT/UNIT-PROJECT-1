@@ -32,6 +32,7 @@ To start the program type in `python main.py`, answer the coach's questions, the
 * type in `stats` to show your BMI, calories, macros and water.
 * type in `profile` to show your profile.
 * type in `edit` to answer the questions again and get a new plan.
+* type in `back` during profile questions to return to the previous question; earlier answers stay as defaults.
 * type in `weight number` to log your weight (example : `weight 82.5`).
 * type in `plan` to show your weekly workout plan.
 * type in `today` to show today's workout.

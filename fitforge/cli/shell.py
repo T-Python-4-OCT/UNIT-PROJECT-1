@@ -90,8 +90,10 @@ class Shell:
 
         if choice == "__new__":
             name = None
+            recreate = False
         elif choice.startswith("__recreate__:"):
             name = choice.removeprefix("__recreate__:").replace("_", " ")
+            recreate = True
         else:
             try:
                 self.account = storage.Account.load(choice)
@@ -99,6 +101,7 @@ class Shell:
                 ui.warn(f"Couldn't load that save: {exc}")
                 if ui.confirm("Recreate this profile?", default=False):
                     name = choice
+                    recreate = True
                 else:
                     return self.login()
             else:
@@ -107,19 +110,17 @@ class Shell:
                 return
 
         if name is not None or choice == "__new__":
-            self._create_profile(name)
+            self._create_profile(name, replace_existing=recreate)
 
-    def _create_profile(self, name=None):
-        if name is None:
-            while True:
-                name = ui.ask("Your name")
-                if not name:
-                    ui.error("Name can't be empty.")
-                elif storage.exists(name):
-                    ui.error("That name is taken. Pick another one.")
-                else:
-                    break
-        profile = interview(name)
+    def _create_profile(self, name=None, replace_existing=False):
+        def name_is_available(value):
+            same_damaged_save = (
+                replace_existing and name is not None
+                and storage.path_for(value) == storage.path_for(name)
+            )
+            return same_damaged_save or not storage.exists(value)
+
+        profile = interview(name, name_is_available=name_is_available)
         self.account = storage.Account(profile)
         self.account.plan = planner.build_plan(profile)
         self.account.save()

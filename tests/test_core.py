@@ -18,6 +18,7 @@ from fitforge import storage
 from fitforge.cli.session import _parse_reps
 from fitforge.cli import views
 from fitforge.cli.shell import Shell
+from fitforge.cli.onboarding import interview
 from fitforge.ai.coach import AICoach, CoachError, build_context
 
 
@@ -289,6 +290,57 @@ class OnboardingGuidanceTests(unittest.TestCase):
                 self.assertIn("today", output.getvalue())
                 self.assertIn("start", output.getvalue())
                 self.assertIn("help", output.getvalue())
+
+    def test_back_returns_to_previous_profile_question_and_keeps_answers(self):
+        answers = [
+            "1", "25", "180", "back", "back", "back", "back", "Updated Name",
+            "2", "25", "180", "90", "80",
+            "1", "1", "1", "1", "4", "1", "1",
+        ]
+        with (
+            patch("builtins.input", side_effect=answers),
+            contextlib.redirect_stdout(io.StringIO()),
+        ):
+            profile = interview("Original Name")
+
+        self.assertEqual(profile.name, "Updated Name")
+        self.assertEqual(profile.sex, "female")
+        self.assertEqual(profile.age, 25)
+        self.assertEqual(profile.days_per_week, 4)
+
+    def test_edit_profile_starts_at_first_question_and_supports_back(self):
+        old = make_profile()
+        answers = ["2", "back", "1", "25", "180", "90", "80", "1", "1", "1", "1", "4", "1", "1"]
+        with (
+            patch("builtins.input", side_effect=answers),
+            contextlib.redirect_stdout(io.StringIO()),
+        ):
+            edited = interview(old.name, old)
+
+        self.assertEqual(edited.name, old.name)
+        self.assertEqual(edited.sex, old.sex)
+
+    def test_back_navigation_can_recreate_a_damaged_save(self):
+        shell = Shell()
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(storage, "SAVE_DIR", Path(directory)):
+                storage.path_for("Damaged User").write_text("{", encoding="utf-8")
+                with (
+                    patch(
+                        "fitforge.cli.shell.interview",
+                        side_effect=lambda name, name_is_available: (
+                            make_profile(name=name)
+                            if name_is_available(name)
+                            else self.fail("The damaged profile name should be reusable.")
+                        ),
+                    ),
+                    patch("fitforge.cli.shell.views.show_stats"),
+                    patch("fitforge.cli.shell.views.show_plan"),
+                    contextlib.redirect_stdout(io.StringIO()),
+                ):
+                    shell._create_profile("Damaged User", replace_existing=True)
+
+                self.assertEqual(storage.Account.load("Damaged User").profile.name, "Damaged User")
 
 
 if __name__ == "__main__":
