@@ -1,0 +1,35 @@
+
+{
+  "connections": {
+    "forest_memory": {
+      "requires": [
+        "The forest remembers every visitor.",
+        "The forest uses voices to mislead travelers."
+      ],
+      "title": "The Forest Remembers",
+      "description": "The forest remembers explorers and uses their memories to guide or mislead them."
+    },
+    "hidden_trials": {
+      "requires": [
+        "The forgotten chronicle contains the forest's truth.",
+        "The forest conceals its purpose behind trials."
+      ],
+      "title": "The Hidden Trials",
+      "description": "The forest's challenges are deliberate tests, not random obstacles."
+    },
+    "ancient_symbols": {
+      "requires": [
+        "The moon comes before the sun.",
+        "The correct symbol order is Moon, Sun, Root."
+      ],
+      "title": "The Ancient Order",
+      "description": "The symbols reveal a meaningful sequence that unlocks the forest's secrets."
+    }
+  },
+  "puzzle_names": {
+    "1": "The First Riddle",
+    "2": "The Rune Equation",
+    "3": "The Three Forgotten Symbols",
+    "4": "The Missing Chronicle"
+  }
+}

@@ -1,0 +1,181 @@
+
+{
+  "1": [
+    {
+      "question": "I have keys but open no locks. I have space but contain no rooms. What am I?",
+      "options": ["A map", "A keyboard", "A forest", "A mirror"],
+      "correct": 2,
+      "hint": "Think of something you use to type."
+    },
+    {
+      "question": "I follow you in sunlight but disappear in darkness. What am I?",
+      "options": ["A shadow", "A whisper", "A memory", "A cloud"],
+      "correct": 1,
+      "hint": "You can see me on the ground when light shines."
+    },
+    {
+      "question": "The more you take from me, the bigger I become. What am I?",
+      "options": ["A tree", "A hole", "A river", "A stone"],
+      "correct": 2,
+      "hint": "Digging makes me larger."
+    },
+    {
+      "question": "I have many rings but no fingers. What am I?",
+      "options": ["A bell", "A tree", "A crown", "A necklace"],
+      "correct": 2,
+      "hint": "My rings reveal my age."
+    },
+    {
+      "question": "I can be broken without being touched. What am I?",
+      "options": ["A promise", "A branch", "A stone", "A gate"],
+      "correct": 1,
+      "hint": "It is something you give with words."
+    }
+  ],
+  "2": [
+    {
+      "question": "The ancient runes reveal: 3x + 4 = 19. What is x?",
+      "options": ["3", "5", "7", "9"],
+      "correct": 2,
+      "hint": "Subtract 4 from both sides, then divide by 3."
+    },
+    {
+      "question": "Four glowing runes each hold 6 units of energy. What is their total energy?",
+      "options": ["18", "20", "24", "30"],
+      "correct": 3,
+      "hint": "Multiply the number of runes by their energy."
+    },
+    {
+      "question": "A stone sequence reads: 3, 6, 12, 24. What comes next?",
+      "options": ["30", "36", "42", "48"],
+      "correct": 4,
+      "hint": "Each number is twice the previous one."
+    },
+    {
+      "question": "The ancient equation reads: 2x + 8 = 20. What is x?",
+      "options": ["4", "6", "8", "10"],
+      "correct": 2,
+      "hint": "Subtract 8, then divide by 2."
+    },
+    {
+      "question": "Five crystals contain 35 units of magic equally. How much magic does each crystal contain?",
+      "options": ["5", "6", "7", "8"],
+      "correct": 3,
+      "hint": "Divide the total magic by the number of crystals."
+    }
+  ],
+  "3": [
+    {
+      "question": "The moon comes before the sun. The root comes after the sun. What is the correct order?",
+      "options": [
+        "Moon, Sun, Root",
+        "Sun, Moon, Root",
+        "Root, Sun, Moon",
+        "Moon, Root, Sun"
+      ],
+      "correct": 1,
+      "hint": "Place the sun between the moon and the root."
+    },
+    {
+      "question": "The root must be first. The moon follows the root. The sun comes last. Choose the order.",
+      "options": [
+        "Moon, Root, Sun",
+        "Root, Moon, Sun",
+        "Sun, Root, Moon",
+        "Root, Sun, Moon"
+      ],
+      "correct": 2,
+      "hint": "Begin with the root and end with the sun."
+    },
+    {
+      "question": "The sun rises before the moon. The root lies between them. Choose the order.",
+      "options": [
+        "Moon, Root, Sun",
+        "Root, Sun, Moon",
+        "Sun, Root, Moon",
+        "Sun, Moon, Root"
+      ],
+      "correct": 3,
+      "hint": "The root is the middle symbol."
+    },
+    {
+      "question": "The moon must be last. The root comes before the sun. Choose the order.",
+      "options": [
+        "Sun, Root, Moon",
+        "Moon, Sun, Root",
+        "Root, Moon, Sun",
+        "Root, Sun, Moon"
+      ],
+      "correct": 4,
+      "hint": "Start with the root and finish with the moon."
+    },
+    {
+      "question": "The sun must be first. The moon comes before the root. Choose the order.",
+      "options": [
+        "Sun, Moon, Root",
+        "Moon, Sun, Root",
+        "Sun, Root, Moon",
+        "Root, Moon, Sun"
+      ],
+      "correct": 1,
+      "hint": "The moon stands between the sun and the root."
+    }
+  ],
+  "4": [
+    {
+      "question": "What truth does the forgotten chronicle reveal?",
+      "options": [
+        "The forest protects a hidden kingdom.",
+        "The forest remembers those who enter.",
+        "The forest has no purpose.",
+        "The forest is only an illusion."
+      ],
+      "correct": 2,
+      "hint": "Remember the warning at the Silent Gate."
+    },
+    {
+      "question": "The Watcher warns that the forest changes with every choice. What does this suggest?",
+      "options": [
+        "Choices shape an explorer's journey.",
+        "All paths lead to the same result.",
+        "The forest has no memory.",
+        "The Watcher controls the weather."
+      ],
+      "correct": 1,
+      "hint": "Think about how your decisions affect your journey."
+    },
+    {
+      "question": "The chronicle says that every trial reveals something about the explorer. What is the forest testing?",
+      "options": [
+        "Physical strength alone",
+        "The explorer's wealth",
+        "Wisdom and decisions",
+        "The ability to run"
+      ],
+      "correct": 3,
+      "hint": "Recall the riddles and the choices you made."
+    },
+    {
+      "question": "An old passage reads: Those who ignore the past will lose their way. What should an explorer do?",
+      "options": [
+        "Forget every clue",
+        "Follow random paths",
+        "Ignore the journal",
+        "Study the collected evidence"
+      ],
+      "correct": 4,
+      "hint": "Your journal preserves what you have learned."
+    },
+    {
+      "question": "The final chronicle reveals that the forest remembers every visitor. What is its greatest lesson?",
+      "options": [
+        "Escape requires luck alone.",
+        "Knowledge and choices shape your fate.",
+        "The forest rewards every explorer equally.",
+        "The ancient symbols are meaningless."
+      ],
+      "correct": 2,
+      "hint": "Combine what you learned from the puzzles and your decisions."
+    }
+  ]
+}

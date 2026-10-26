@@ -1,0 +1,31 @@
+
+{
+  "positive": {
+    "way_beyond": {
+      "title": "The Way Beyond",
+      "description": "The ancient archway opens before you. The forest recognizes your wisdom and allows you to escape. You leave Eldergrove carrying the memories of your journey."
+    },
+    "forest_keeper": {
+      "title": "The Forest's Keeper",
+      "description": "The ancient roots awaken beneath your feet. Eldergrove chooses you as its new guardian. You remain in the forest, protecting its secrets for generations to come."
+    },
+    "golden_awakening": {
+      "title": "The Golden Awakening",
+      "description": "A golden light rises from the forgotten ruins. Your courage awakens an ancient power, restoring life and hope to Eldergrove. The forest will remember you as its savior."
+    }
+  },
+  "negative": {
+    "eternal_wanderer": {
+      "title": "The Eternal Wanderer",
+      "description": "The paths twist and disappear behind you. Unable to find the way out, you wander through Eldergrove forever, following whispers that never lead home."
+    },
+    "forgotten_soul": {
+      "title": "The Forgotten Soul",
+      "description": "A cold mist surrounds you. Slowly, your memories fade, until even your own name is forgotten. Eldergrove keeps your story, but the world never hears it."
+    },
+    "roots_of_eternity": {
+      "title": "The Roots of Eternity",
+      "description": "Ancient roots rise from beneath the earth and surround you. The forest claims your spirit, binding you to its forgotten depths for all eternity."
+    }
+  }
+}

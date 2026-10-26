@@ -1,0 +1,38 @@
+
+{
+  "evidence": {
+    "The forest remembers every visitor.": "الغابة تتذكر كل من يدخلها.",
+    "A faded moon symbol marks the entrance.": "رمز قمر باهت يميز المدخل.",
+    "Observe before you act.": "راقب قبل أن تتصرف.",
+    "The forgotten chronicle contains the forest's truth.": "السجل المنسي يحتوي على حقيقة الغابة.",
+    "The first riddle reveals that knowledge opens hidden paths.": "يكشف اللغز الأول أن المعرفة تفتح الطرق المخفية.",
+    "The marked trail leads toward the ancient tower.": "الممر المعلّم يقود إلى البرج القديم.",
+    "The forest uses voices to mislead travelers.": "الغابة تستخدم الأصوات لتضليل المسافرين.",
+    "The rune equation confirms that careful reasoning opens the way.": "تؤكد معادلة الرونية أن التفكير الدقيق يفتح الطريق.",
+    "An old chronicle may explain the forest's purpose.": "قد يفسر سجل قديم الغرض من وجود الغابة.",
+    "The forest conceals its purpose behind trials.": "الغابة تخفي هدفها خلف سلسلة من الاختبارات.",
+    "The moon comes before the sun.": "القمر يسبق الشمس.",
+    "The correct symbol order is Moon, Sun, Root.": "الترتيب الصحيح للرموز هو القمر ثم الشمس ثم الجذر.",
+    "The forest tests those who enter before revealing the way out.": "الغابة تختبر من يدخلها قبل أن تكشف طريق الخروج."
+  },
+  "connections": {
+    "forest_memory": {
+      "title": "الغابة تتذكر",
+      "description": "تتذكر الغابة المستكشفين، وتستخدم ذكرياتهم لإرشادهم أو تضليلهم."
+    },
+    "hidden_trials": {
+      "title": "الاختبارات الخفية",
+      "description": "تحديات الغابة اختبارات مقصودة، وليست عقبات عشوائية."
+    },
+    "ancient_symbols": {
+      "title": "الترتيب القديم",
+      "description": "تكشف الرموز عن ترتيب له معنى يفتح أسرار الغابة."
+    }
+  },
+  "puzzle_names": {
+    "1": "اللغز الأول",
+    "2": "معادلة الرونية",
+    "3": "الرموز الثلاثة المنسية",
+    "4": "السجل المفقود"
+  }
+}

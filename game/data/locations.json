@@ -1,0 +1,122 @@
+
+{
+  "regions": [
+    {
+      "id": "whispering_gate",
+      "name": "The Whispering Gate",
+      "description": "The entrance to Eldergrove, where ancient warnings and forgotten secrets await.",
+      "locations": [
+        {
+          "id": "ancient_gate",
+          "name": "Ancient Gate",
+          "description": "A towering stone gate covered in mysterious inscriptions.",
+          "event_id": 1,
+          "requires": [],
+          "optional": false
+        },
+        {
+          "id": "watchers_camp",
+          "name": "Watcher's Camp",
+          "description": "A quiet camp belonging to the mysterious Watcher.",
+          "event_id": 2,
+          "requires": ["ancient_gate"],
+          "optional": false
+        },
+        {
+          "id": "forgotten_shrine",
+          "name": "Forgotten Shrine",
+          "description": "An abandoned shrine surrounded by ancient stone carvings.",
+          "event_id": null,
+          "requires": ["ancient_gate"],
+          "optional": true
+        },
+        {
+          "id": "whispering_roots",
+          "name": "Whispering Roots",
+          "description": "Ancient roots whisper forgotten words beneath the forest floor.",
+          "event_id": 3,
+          "requires": ["watchers_camp"],
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "mosswood",
+      "name": "The Mosswood",
+      "description": "A mist-covered woodland filled with strange voices, runes, and hidden trails.",
+      "locations": [
+        {
+          "id": "misty_trail",
+          "name": "Misty Trail",
+          "description": "A narrow trail concealed beneath shifting layers of mist.",
+          "event_id": 4,
+          "requires": [],
+          "optional": false
+        },
+        {
+          "id": "rune_stones",
+          "name": "Rune Stones",
+          "description": "Ancient stones marked with glowing mathematical symbols.",
+          "event_id": 5,
+          "requires": ["misty_trail"],
+          "optional": false
+        },
+        {
+          "id": "strangers_shelter",
+          "name": "Stranger's Shelter",
+          "description": "A shelter where a mysterious stranger offers fragments of truth.",
+          "event_id": 6,
+          "requires": ["rune_stones"],
+          "optional": false
+        },
+        {
+          "id": "abandoned_camp",
+          "name": "Abandoned Camp",
+          "description": "An empty campsite containing traces of earlier explorers.",
+          "event_id": null,
+          "requires": ["misty_trail"],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "hollow_ruins",
+      "name": "The Hollow Ruins",
+      "description": "Forgotten ruins that hold Eldergrove's oldest mysteries.",
+      "locations": [
+        {
+          "id": "forgotten_symbols",
+          "name": "Forgotten Symbols",
+          "description": "Three ancient symbols guard the entrance to a sealed chamber.",
+          "event_id": 7,
+          "requires": [],
+          "optional": false
+        },
+        {
+          "id": "chronicle_chamber",
+          "name": "Chronicle Chamber",
+          "description": "A hidden chamber containing the forest's damaged chronicle.",
+          "event_id": 8,
+          "requires": ["forgotten_symbols"],
+          "optional": false
+        },
+        {
+          "id": "hidden_sanctuary",
+          "name": "Hidden Sanctuary",
+          "description": "A secret sanctuary concealed deep beneath the ancient ruins.",
+          "event_id": null,
+          "requires": ["chronicle_chamber"],
+          "optional": true
+        },
+        {
+          "id": "last_passage",
+          "name": "Last Passage",
+          "description": "The final archway where every explorer must face their fate.",
+          "event_id": 9,
+          "requires": ["chronicle_chamber"],
+          "optional": false
+        }
+      ]
+    }
+  ]
+}

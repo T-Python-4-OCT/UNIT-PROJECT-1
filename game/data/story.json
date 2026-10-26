@@ -1,0 +1,225 @@
+
+
+
+{
+    "events": [
+        {
+            "id": 1,
+            "title": "The Silent Gate",
+            "description": "An ancient stone gate blocks your path. Strange symbols cover its surface.",
+            "choices": [
+                {
+                    "text": "Examine the inscription",
+                    "result": "You discover an ancient warning: The forest remembers every visitor.",
+                    "evidence": "The forest remembers every visitor."
+                },
+                {
+                    "text": "Push the gate",
+                    "result": "The gate moves slightly, revealing a faded symbol of the moon.",
+                    "evidence": "A faded moon symbol marks the entrance."
+                },
+                {
+                    "text": "Listen to the whispers",
+                    "result": "A faint voice whispers: Those who seek the truth must observe before they act.",
+                    "evidence": "Observe before you act."
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "title": "The Watcher's Bargain",
+            "description": "A hooded Watcher appears beside the gate. 'Why have you entered the forest?' the figure asks.",
+            "choices": [
+                {
+                    "text": "Tell the truth",
+                    "result": "The Watcher nods. 'Then seek the truth hidden in the forgotten chronicle.'",
+                    "evidence": "The forgotten chronicle contains the forest's truth."
+                },
+                {
+                    "text": "Give a misleading answer",
+                    "result": "The Watcher steps aside, but warns you that false paths lead deeper into the forest."
+                },
+                {
+                    "text": "Refuse to answer",
+                    "result": "The Watcher remains silent and points toward a narrow trail."
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "title": "The First Riddle",
+            "description": "An ancient stone tablet blocks your path. A mysterious riddle appears across its glowing surface. Solve it to reveal the hidden passage.",
+            "choices": [
+                {
+                    "text": "A map",
+                    "result": "The tablet remains dark. The answer is incorrect.",
+                    "puzzle_id": 1
+                },
+                {
+                    "text": "A keyboard",
+                    "result": "The tablet glows, revealing a hidden passage.",
+                    "puzzle_id": 1,
+                    "correct": true,
+                    "evidence": "The first riddle reveals that knowledge opens hidden paths."
+                },
+                {
+                    "text": "A forest",
+                    "result": "The tablet remains dark. The answer is incorrect.",
+                    "puzzle_id": 1
+                },
+                {
+                    "text": "A mirror",
+                    "result": "The tablet remains dark. The answer is incorrect.",
+                    "puzzle_id": 1
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "title": "A Voice in the Mist",
+            "description": "Cold mist fills the trees. A distant voice calls your name, while strange marks appear along a narrow trail.",
+            "choices": [
+                {
+                    "text": "Follow the voice",
+                    "result": "The voice leads you toward a ruined shrine, where an unfamiliar symbol is carved into stone."
+                },
+                {
+                    "text": "Follow the marked trail",
+                    "result": "The marks guide you safely through the mist. You discover that the symbols point toward an ancient tower.",
+                    "evidence": "The marked trail leads toward the ancient tower."
+                },
+                {
+                    "text": "Wait and observe",
+                    "result": "The mist shifts, revealing that the voice comes from somewhere behind the trees.",
+                    "evidence": "The forest uses voices to mislead travelers."
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "title": "The Rune Equation",
+            "description":  "An ancient door is covered in glowing mathematical runes. A magical equation appears, and the door will only open when you solve it.",
+            "choices": [
+                {
+                    "text": "x = 3",
+                    "result": "The runes flicker. The answer is incorrect.",
+                    "puzzle_id": 2
+                },
+                {
+                    "text": "x = 5",
+                    "result": "The runes shine brightly, and the ancient door opens.",
+                    "puzzle_id": 2,
+                    "correct": true,
+                    "evidence": "The rune equation confirms that careful reasoning opens the way."
+                },
+                {
+                    "text": "x = 7",
+                    "result": "The runes flicker. The answer is incorrect.",
+                    "puzzle_id": 2
+                },
+                {
+                    "text": "x = 9",
+                    "result": "The runes flicker. The answer is incorrect.",
+                    "puzzle_id": 2
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "title": "The Stranger's Truth",
+            "description": "A stranger stands beside a broken statue. They claim the forest is testing every person who enters, but their story seems incomplete.",
+            "choices": [
+                {
+                    "text": "Trust the stranger",
+                    "result": "The stranger shares a fragment of an old chronicle and points toward the tower.",
+                    "evidence": "An old chronicle may explain the forest's purpose."
+                },
+                {
+                    "text": "Challenge the story",
+                    "result": "The stranger admits that the forest hides its true purpose behind a series of trials.",
+                    "evidence": "The forest conceals its purpose behind trials."
+                },
+                {
+                    "text": "Ask for proof",
+                    "result": "The stranger reveals an inscription: The moon comes before the sun.",
+                    "evidence": "The moon comes before the sun."
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "title": "The Three Forgotten Symbols",
+            "description": "Three ancient symbols stand before a sealed chamber: the Moon, the Sun, and the Root. A magical inscription challenges you to discover their correct order.",
+            "choices": [
+                {
+                    "text": "Moon → Sun → Root",
+                    "result": "The symbols illuminate in order, and the chamber opens.",
+                    "puzzle_id": 3,
+                    "correct": true,
+                    "evidence": "The correct symbol order is Moon, Sun, Root."
+                },
+                {
+                    "text": "Sun → Moon → Root",
+                    "result": "The symbols dim. The order is incorrect.",
+                    "puzzle_id": 3
+                },
+                {
+                    "text": "Root → Sun → Moon",
+                    "result": "The symbols dim. The order is incorrect.",
+                    "puzzle_id": 3
+                },
+                {
+                    "text": "Moon → Root → Sun",
+                    "result": "The symbols dim. The order is incorrect.",
+                    "puzzle_id": 3
+                }
+            ]
+        },
+      {
+         "id": 8,
+         "title": "The Missing Chronicle",
+         "description": "Inside the chamber, you discover a damaged chronicle containing forgotten truths about Eldergrove. Its final question will test what you have learned.",
+         "choices": [
+        {
+            "text": "The forest protects a hidden kingdom.",
+            "result": "The pages offer no support for this claim.",
+            "puzzle_id": 4
+        },
+        {
+            "text": "The forest tests those who enter.",
+            "result": "The remaining pages confirm that the forest tests every visitor before revealing the way out.",
+            "puzzle_id": 4,
+            "correct": true,
+            "evidence": "The forest tests those who enter before revealing the way out."
+        },
+        {
+            "text": "The forest was created to trap everyone forever.",
+            "result": "The chronicle contains no evidence that the forest was made as a prison.",
+            "puzzle_id": 4
+        },
+        {
+            "text": "The forest has no purpose.",
+            "result": "The writing suggests that every trial serves a purpose.",
+            "puzzle_id": 4
+        }
+    ]
+} ,
+        {
+            "id": 9,
+            "title": "The Last Passage",
+            "description": "You reach a towering archway at the forest's edge. The path ahead is uncertain, and the forest's final test begins.",
+            "choices": [
+                {
+                    "text": "Use the clues you discovered",
+                    "result": "You study the evidence and prepare to choose your path beyond the archway.",
+                    "ending_choice": "use_clues"
+                },
+                {
+                    "text": "Ignore the clues and guess",
+                    "result": "You step into the unknown without understanding the forest's warnings.",
+                    "ending_choice": "guess"
+                }
+            ]
+        }
+    ]
+}
