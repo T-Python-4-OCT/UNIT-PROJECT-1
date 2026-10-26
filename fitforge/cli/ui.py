@@ -4,10 +4,6 @@ import sys
 
 _ANSI = re.compile(r"\033\[[0-9;]*m")
 
-# Enable ANSI escape codes on Windows terminals.
-if os.name == "nt":
-    os.system("")
-
 _USE_COLOR = sys.stdout.isatty() and "NO_COLOR" not in os.environ
 
 _CODES = {

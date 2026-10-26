@@ -1,4 +1,3 @@
-from dataclasses import replace
 from datetime import date, timedelta
 
 from . import ui
@@ -170,3 +169,66 @@ def show_library(muscle=None):
     for m in ([muscle] if muscle else muscles):
         names = [e["name"] for e in db.EXERCISES if e["muscle"] == m]
         print(f"  {ui.color(m.title(), 'bold', 'yellow'):<22} {', '.join(names)}")
+
+
+def show_progress(account):
+    """Display workout totals, current streak, and recent weight entries."""
+    p = account.profile
+    totals = progress.totals(account.workouts)
+    this_week = progress.workouts_this_week(account.workouts)
+    streak = progress.weekly_streak(account.workouts, p.days_per_week)
+    ui.header("Training progress")
+    ui.table(["Measure", "Total"], [
+        ["Workouts", str(totals["sessions"])],
+        ["Training time", f"{totals['minutes']:.0f} min"],
+        ["Calories burned", f"{totals['kcal']:.0f} kcal"],
+        ["Training volume", f"{totals['volume']:.0f} kg"],
+        ["Sets completed", str(totals["sets"])],
+        ["This week's workouts", str(len(this_week))],
+        ["Completed-week streak", str(streak)],
+    ])
+
+    weights = sorted(account.weights, key=lambda entry: entry["date"])
+    if weights:
+        fraction = progress.target_progress(weights, p.target_weight_kg)
+        print()
+        print(f"  Weight: {weights[0]['kg']:.1f} kg → {weights[-1]['kg']:.1f} kg "
+              f"· target {p.target_weight_kg:.1f} kg "
+              f"({fraction:.0%} of the starting-to-target distance)")
+        ui.table(["Date", "Weight"], [
+            [entry["date"], f"{entry['kg']:.1f} kg"] for entry in weights[-5:]])
+
+
+def show_forecast(account):
+    """Show the current target estimate and alternative weekly training burns."""
+    p = account.profile
+    actual_burn = planner.weekly_burn(account.plan, p.weight_kg)
+    weeks = calculator.weeks_to_target(p, actual_burn)
+    ui.header("Target-weight forecast")
+    if weeks is None:
+        ui.warn("Your current goal and calorie plan are not moving toward the target weight.")
+    elif weeks == 0:
+        ui.success("You are already at your target weight.")
+    else:
+        arrival = date.today() + timedelta(weeks=weeks)
+        print(f"  Estimated time: {weeks:.1f} weeks (around {arrival.isoformat()})")
+
+    scenarios = [("No planned workouts", 0.0),
+                 ("Current weekly plan", actual_burn),
+                 ("Current plan + 500 kcal", actual_burn + 500)]
+    ui.table(["Scenario", "Weekly workout burn", "Estimate"], [
+        [label, f"{burn:.0f} kcal",
+         (f"{estimate:.1f} weeks" if (estimate := calculator.weeks_to_target(p, burn)) is not None
+          else "Not moving toward target")]
+        for label, burn in scenarios
+    ])
+
+
+def show_achievements(account):
+    """List earned and locked training achievements."""
+    earned = progress.unlocked(account)
+    ui.header("Achievements", f"{len(earned)} of {len(progress.ACHIEVEMENTS)} unlocked")
+    ui.table(["Status", "Achievement", "How to unlock"], [
+        ["Unlocked" if key in earned else "Locked", title, description]
+        for key, title, description in progress.ACHIEVEMENTS
+    ])

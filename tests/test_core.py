@@ -1,3 +1,5 @@
+import contextlib
+import io
 import json
 import tempfile
 import unittest
@@ -10,6 +12,7 @@ from fitforge.core.profile import Profile
 from fitforge.data import exercises as db
 from fitforge import storage
 from fitforge.cli.session import _parse_reps
+from fitforge.cli import views
 
 
 def make_profile(**changes):
@@ -162,6 +165,15 @@ class InputAndSaveSafetyTests(unittest.TestCase):
         for invalid in (0, 301, float("nan")):
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):
                 account.log_weight(invalid)
+
+
+class CliViewTests(unittest.TestCase):
+    def test_existing_progress_commands_render_without_errors(self):
+        profile = make_profile()
+        account = storage.Account(profile, planner.build_plan(profile))
+        for show in (views.show_progress, views.show_forecast, views.show_achievements):
+            with self.subTest(view=show.__name__), contextlib.redirect_stdout(io.StringIO()):
+                show(account)
 
 
 if __name__ == "__main__":
