@@ -313,25 +313,26 @@ def choose_city(country):
 
     print()
 
+
     while True:
-        choice = input(
-            f"{CYAN}➜ Select a city: {RESET}"
-        ).strip()
+     choice = input(
+        f"{CYAN}➜ Select a city: {RESET}"
+    ).strip()
 
-        if choice.isdigit():
-            number = int(choice)
+     if choice == "0":
+        return None
 
-            if number == 0:
-               return None
+     if choice.isdigit():
+         number = int(choice)
 
-            if 1 <= number <= len(cities):
-                return cities[number - 1]
+         if 1 <= number <= len(cities):
+          return cities[number - 1]
 
-        print(
-            RED +
-            "❌ Invalid city."
-            + RESET
-        )
+     print(
+    f"{RED}❌ Invalid option. Please choose a city.{RESET}"
+)
+
+    
 
 
 # ============================================================
@@ -383,8 +384,10 @@ def explore_country():
 
                 if choice == "1":
                     clear_screen()
+
                     show_destination_info(
-                        country["name"]
+                        country["name"],
+                         section="general"
                     )
                     pause()
 
@@ -397,28 +400,49 @@ def explore_country():
                     pause()
 
                 elif choice == "3":
-                    clear_screen()
-                    show_destination_info(
-                        country["name"],
-                        section="events",
+                 while True:
+                  city = choose_city(country)
+
+                  if not city:
+                    break
+
+                  clear_screen()
+
+                  show_destination_info(
+                    country["name"],
+                   section="events",
+                   city_name=city["name"],
                     )
-                    pause()
+
+                  pause()
 
                 elif choice == "4":
-                    clear_screen()
-                    show_destination_info(
-                        country["name"],
-                        section="places",
-                    )
-                    pause()
+                 while True:
+                  city = choose_city(country)
+
+                  if not city:
+                   break
+
+                   clear_screen()
+
+                  show_destination_info(
+                   country["name"],
+                    section="places",
+                    city_name=city["name"],
+                 )
+
+                  pause()
 
                 elif choice == "5":
-                    city = choose_city(country)
+                  while True:
+                   city = choose_city(country)
 
-                    if city:
-                        clear_screen()
-                        show_weather(city)
-                        pause()
+                   if not city:
+                     break
+
+                   clear_screen()
+                   show_weather(city)
+                   pause()
 
                 elif choice == "6":
                     clear_screen()
