@@ -29,8 +29,7 @@ VEHICLES = [
 
 PRIORITIES = ["High", "Medium", "Low"]
 
-# (label, key). Everyone can self-register as the PUBLIC_ROLES; Manager and
-# Dispatcher accounts can only be created by a logged-in manager.
+
 ROLES = [
     ("Manager", "manager"),
     ("Dispatcher", "dispatcher"),
@@ -40,12 +39,10 @@ ROLES = [
 ]
 PUBLIC_ROLES = [r for r in ROLES if r[1] in ("field_supervisor", "fleet_officer", "general")]
 
-# Shipment lifecycle:  Pending Fleet Assignment -> In Transit -> Completed
 SHIP_PENDING = "Pending Fleet Assignment"
 SHIP_IN_TRANSIT = "In Transit"
 SHIP_DONE = "Completed"
 
-# Field-request lifecycle:  Pending -> Approved (shipment created) -> In Transit -> Completed
 REQ_PENDING = "Pending"
 REQ_APPROVED = "Approved"
 REQ_IN_TRANSIT = "In Transit"

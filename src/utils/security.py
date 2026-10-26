@@ -10,7 +10,7 @@ import os
 import re
 
 PREFIX = "scrypt"
-N, R, P = 2 ** 14, 8, 1      # cost parameters (higher = slower = harder to brute-force)
+N, R, P = 2 ** 14, 8, 1      
 SALT_BYTES = 16
 
 

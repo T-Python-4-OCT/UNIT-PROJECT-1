@@ -1,14 +1,10 @@
-"""One-time, idempotent clean-ups of the JSON files written by older versions.
 
-Safe to run on every start: each step only touches records that are still in the
-old shape. It runs once from main.py before the menu appears.
-"""
 from src import config
 from src.utils.json_handler import load_json, save_json
 
 OLD_SHIPMENT_STATUS = {
     "Pending": config.SHIP_PENDING,
-    "Completed & In Transit": config.SHIP_IN_TRANSIT,   # it was only ever in transit, never delivered
+    "Completed & In Transit": config.SHIP_IN_TRANSIT,   
 }
 OLD_REQUEST_STATUS = {
     "In Transit / Processed": config.REQ_APPROVED,
@@ -62,7 +58,7 @@ def _migrate_shipments(path, supplies):
     shipments = load_json(path)
     result = []
     for s in shipments:
-        if "items" in s:                                    # built with the old Shipment class
+        if "items" in s:                                    
             items = s.get("items") or []
             item_name = items[0]["item_name"] if items else "—"
             quantity = sum(i.get("quantity", 0) for i in items)

@@ -1,9 +1,4 @@
-"""Business logic for supplies, field requests and shipments.
 
-Nothing in this module calls input() or print(): every function takes plain
-values and returns (ok, message, ...) so it can be unit-tested. The terminal
-screens that ask the questions live in src/flows.py.
-"""
 import re
 
 from src import config
@@ -13,7 +8,6 @@ from src.models.supply import SupplyItem
 from src.utils.json_handler import load_json, save_json
 
 
-# ------------------------------------------------------------------ storage
 def load_supplies():
     return load_json(config.data_path(config.SUPPLIES_FILE))
 
@@ -42,7 +36,6 @@ def view_supplies():
     return load_supplies()
 
 
-# ------------------------------------------------------------------ helpers
 def next_id(existing_ids, prefix, width=3, start=0):
     """'SUPP' + ['SUPP-009', 'SUPP-012'] -> 'SUPP-013' (highest number + 1, never reused)."""
     numbers = [int(m.group(1)) for i in existing_ids
@@ -68,7 +61,6 @@ def vehicle_problem(vehicle, shipment):
     return ""
 
 
-# ----------------------------------------------------------------- supplies
 def add_supply(name, category, quantity, unit_weight_kg):
     name, category = " ".join(str(name).split()), " ".join(str(category).split()).title()
     if not name or not category:
@@ -90,7 +82,6 @@ def add_supply(name, category, quantity, unit_weight_kg):
     return True, f"Item '{name}' ({item['id']}) added to inventory.", item
 
 
-# ----------------------------------------------------------- field requests
 def create_field_request(zone, item_name, quantity, priority="Medium"):
     item_name = " ".join(str(item_name).split())
     if not item_name:
@@ -127,7 +118,6 @@ def _set_request_status(requests, request_id, status):
     return False
 
 
-# ---------------------------------------------------------------- shipments
 def create_shipment(item_id, quantity, destination, request_id=None):
     """Take stock out of the inventory and queue a shipment for the fleet officer."""
     try:

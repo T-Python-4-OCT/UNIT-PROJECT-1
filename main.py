@@ -11,6 +11,7 @@ from src.utils import display as ui
 console = ui.console
 
 
+
 def show_supplies():
     ui.clear()
     ui.display_supplies_table(logistics.view_supplies())

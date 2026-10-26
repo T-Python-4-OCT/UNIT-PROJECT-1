@@ -1,5 +1,4 @@
-"""Interactive screens: they ask the questions and show the answers.
-All the real work is done by the services (which never touch the keyboard)."""
+
 from src import config
 from src.services import logistics_service as logistics
 from src.services.weather_api import get_crisis_weather

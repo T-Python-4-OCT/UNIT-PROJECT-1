@@ -11,7 +11,7 @@ class Shipment:
         self.quantity = quantity
         self.destination = destination
         self.total_weight_kg = total_weight_kg
-        self.request_id = request_id          # the field request this shipment answers (optional)
+        self.request_id = request_id          
         self.status = status
         self.vehicle = vehicle
 

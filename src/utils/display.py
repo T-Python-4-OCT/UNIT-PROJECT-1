@@ -1,4 +1,3 @@
-"""Terminal UI (Rich) — neon "command center" look."""
 import sys
 import time
 from contextlib import contextmanager
@@ -32,7 +31,6 @@ WEATHER_CODES = {
 }
 
 
-# ------------------------------------------------------------- basics
 def clear():
     console.clear()
 
@@ -71,14 +69,13 @@ def raw_input():
     Held for the whole menu so keys typed quickly are not lost between reads."""
     global _raw_depth
     if sys.platform == "win32" or not sys.stdin.isatty() or _raw_depth > 0:
-        yield                                            # already in single-key mode: don't reset it
+        yield                                            
         return
     import termios
     import tty
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
-    tty.setcbreak(fd, termios.TCSADRAIN)                 # keeps Ctrl+C working; doesn't drop typed keys
-    _raw_depth += 1
+    tty.setcbreak(fd, termios.TCSADRAIN)                 
     try:
         yield
     finally:
@@ -93,7 +90,7 @@ def read_key():
         if sys.platform == "win32":
             import msvcrt
             ch = msvcrt.getwch()
-            if ch in ("\x00", "\xe0"):                 # arrow / function keys come as 2 codes
+            if ch in ("\x00", "\xe0"):                 
                 return {"H": "UP", "P": "DOWN"}.get(msvcrt.getwch(), "")
             if ch == "\x03":
                 raise KeyboardInterrupt
@@ -111,7 +108,7 @@ def read_key():
                 return "ESC"
             return "ENTER" if ch in ("\r", "\n") else ch
     except (ImportError, OSError, ValueError):
-        input()                                          # not a real terminal: fall back to Enter
+        input()                                         
         return "ENTER"
 
 
@@ -127,7 +124,7 @@ def ask_password(label="Password:"):
             key = read_key()
             if key == "ENTER":
                 break
-            if key in ("\x7f", "\x08"):                 # Backspace (Linux/macOS, Windows)
+            if key in ("\x7f", "\x08"):                 
                 if chars:
                     chars.pop()
                     sys.stdout.write("\b \b")
@@ -203,7 +200,6 @@ def menu(heading_text, options):
     return str(idx + 1) if idx >= 0 else ""
 
 
-# ------------------------------------------------------------- header / login
 def display_header():
     t = Text.assemble(("🚨 CRISIS MANAGEMENT & LOGISTICS SIMULATOR 🚨", f"bold {RED}"))
     sub = Text("Secure Emergency Response & Fleet Dispatch Command Center", style=CYAN)
@@ -229,7 +225,6 @@ def login_panel():
     console.print(Panel(body, border_style=CYAN, width=58, padding=(1, 2)))
 
 
-# ------------------------------------------------------------- tables
 def _table(title_text, icon, **kw):
     return Table(
         title=f"{icon} [bold {VIOLET}]{title_text}[/]", title_justify="left",
@@ -314,7 +309,6 @@ def display_recommendations(recs, category):
                         title_align="left", border_style=GREEN))
 
 
-# ------------------------------------------------------------- weather
 def weather_panel(region_name, weather):
     text, emoji = WEATHER_CODES.get(weather.get("weathercode"), ("Unknown", "🌡️"))
     grid = Table.grid(padding=(0, 3))
@@ -328,7 +322,6 @@ def weather_panel(region_name, weather):
     console.print(Panel(grid, border_style=CYAN, padding=(1, 3)))
 
 
-# ------------------------------------------------------------- dispatch
 class ColoredBar(BarColumn):
     """Progress bar whose color comes from task.fields['color']."""
     def render(self, task):
