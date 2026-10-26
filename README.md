@@ -1,44 +1,76 @@
-# UNIT-PROJECT-1
+# UniMate 🎓
 
+UniMate is a terminal-based Python app I built to help university students manage their semester in one place. It lets you keep track of your courses, tasks, project steps, exams, study notes, and study time directly from the command line.
 
-## Based on what you’ve learned until now , create a project of your choosing (impress us with your imagination) . This project must at least satisfy the following minimum requirements :
+## Features
 
-- Must be interactive on CLI.
-- Use your coding skills in Python accurately.
-- Organize Your Code into modules & (or packages)
-- Use git & Github to track changes in your code.
+- **Login & Registration:** Simple account system with hidden password input and SHA-256 password hashing.
+- **Academic Dashboard:** Shows a quick summary of your credit hours, completed tasks, project progress, and average grades, plus a table showing your grade standing (`A` to `F`) for each course.
+- **Manage Subjects:** Add, view, and delete courses. The app prevents deleting a course if it still has tasks, projects, or exams linked to it.
+- **Tasks & Assignments:** Add tasks with due dates and priority levels (`High`, `Medium`, `Low`), mark them as done, and save your scores.
+- **Project Milestones:** Break down any course project into custom steps with percentage weights (`%`). Completing a step automatically updates the progress bar and total score.
+- **Exams & Study Notes:** Schedule upcoming exams, record exam scores, and save or read study notes for your courses.
+- **Study & Break Timer:** Built-in countdown timer (25-minute standard timer, custom study duration, and break timer) with live controls to pause, switch to a break, or cancel. Completed study sessions are logged to `activity.log` and saved to study notes automatically.
 
-## Example Project :  An online Grocery Store :
+## Project Files
 
-#### Overview : An online store that sells fruits to customers. This online store has 2 main users. The customer and the manager of the store . Each one of them should be able to do the following tasks for the store to function properly . 
+- `main.py` - Starts the app and runs the main menu.
+- `models/classes.py` - Contains the main OOP classes (`ScoredItem`, `Subject`, `Task`, `Project`, `Exam`, `StudyNote`, `User`).
+- `services/` - Menu and logic files for each part of the app:
+  - `base_service.py` - Shared menu loop and helper methods inherited by other services.
+  - `auth_service.py` - Login and create account screens.
+  - `dashboard_service.py` - Overall stats and course performance table.
+  - `subject_service.py` - Add, view, and delete courses.
+  - `task_service.py` - Manage assignments and task scores.
+  - `project_service.py` - Manage projects and milestone steps.
+  - `exam_service.py` - Schedule exams and record grades.
+  - `note_service.py` - Create, read, and delete study notes.
+  - `pomodoro_service.py` - Study and break countdown timers and activity logger.
+- `storage.py` - Loads and saves data to `unimate_data.json`.
+- `utils.py` - Input validation functions, `questionary` menus, and `rich` print helpers.
+- `seed.py` - Creates fake test data using `Faker` so you can test the app right away.
+- `requirements.txt` - List of packages used in the project.
 
-### Features & User Stories
-#### As a customer I should be able to do the following :
-- Browse  Products . 
-- View the product info (summary, specs, price, quantity , etc.)
-- Search for Products.
-- Get recommendations for my next purchase based on my purchase history.
-- Add Products to the shopping cart .
-- Remove a product from the shopping cart.
-- List the products in my shopping cart. 
-- Continue to checkout . 
-- Fill in my address for delivery.
-- Get receipt of my purchases.
-- Check delivery status . 
+## Libraries Used
 
+- `rich` - For tables, panels, colors, and progress bars.
+- `questionary` - For interactive menus and user prompts.
+- `Faker` - For generating sample data in `seed.py`.
+- `python-dotenv` - For reading default settings from the `.env` file.
 
+## How to Run
 
-#### Usage :
- Explain to the user how to use your project . 
- for example:
- - type in search product_name to search for a product.
- - type in list_products to show all the products in the grocery.
- - type in show product_name to get information about this product.
- - type in buy product_name to buy the product . 
- - and so on...
+1. Go to the project folder:
+   ```bash
+   cd UNIT-PROJECT-1
+   ```
 
+2. Install the required libraries:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### For your project. Edit this README.md file to include your own project name,  overview, user stories, and usage. 
+3. Make sure you have a `.env` file in the project folder with these default values:
+   ```env
+   DEFAULT_USERNAME=student
+   DEFAULT_PASSWORD=1234
+   DEFAULT_MAJOR=Software Engineering
+   DATA_FILE=unimate_data.json
+   ```
 
-### NOTE: before submitting the final project, please do the following command:
-`pip freeze > requirements.txt` to enable use to know & use the packages used in your project.
+4. Generate sample data to test the app:
+   ```bash
+   python seed.py
+   ```
+
+5. Run the app:
+   ```bash
+   python main.py
+   ```
+
+### Default Login (after running `seed.py`)
+- **Username:** `student`
+- **Password:** `1234`
+
+---
+By **Ghali Al-Mazmoumi**

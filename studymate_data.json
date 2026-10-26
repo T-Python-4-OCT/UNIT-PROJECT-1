@@ -1,0 +1,515 @@
+{
+    "users": [
+        {
+            "username": "student",
+            "full_name": "Mary Allen",
+            "major": "Software Engineering",
+            "password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"
+        },
+        {
+            "username": "ghali",
+            "full_name": "ghali almazmoumi",
+            "major": "Hci",
+            "password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"
+        }
+    ],
+    "subjects": [
+        {
+            "subject_id": "SUB-001",
+            "name": "Vision-Oriented Optimal Extranet",
+            "code": "QEL284",
+            "instructor": "Dr. Alexis Hayes",
+            "credit_hours": 4
+        },
+        {
+            "subject_id": "SUB-002",
+            "name": "Organic Even-Keeled Project",
+            "code": "FVC835",
+            "instructor": "Dr. Dr. Kelly Fleming",
+            "credit_hours": 2
+        },
+        {
+            "subject_id": "SUB-003",
+            "name": "Devolved Grid-Enabled Challenge",
+            "code": "IXB426",
+            "instructor": "Dr. Courtney Davis",
+            "credit_hours": 2
+        },
+        {
+            "subject_id": "SUB-004",
+            "name": "Digitized Homogeneous Hierarchy",
+            "code": "XPC897",
+            "instructor": "Dr. Ryan Brown",
+            "credit_hours": 2
+        },
+        {
+            "subject_id": "SUB-005",
+            "name": "Polarized Mission-Critical Hierarchy",
+            "code": "EBE795",
+            "instructor": "Dr. Robert Powell",
+            "credit_hours": 2
+        }
+    ],
+    "tasks": [
+        {
+            "task_id": "TSK-001",
+            "title": "QEL284 - Re-Intermediate Collaborative Metrics",
+            "description": "Card our culture work in left understand lawyer.",
+            "subject_id": "SUB-001",
+            "due_date": "2026-10-23",
+            "priority": "Low",
+            "status": "Completed",
+            "earned_score": 100.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-26"
+        },
+        {
+            "task_id": "TSK-002",
+            "title": "QEL284 - Whiteboard Dot-Com Action-Items",
+            "description": "Thank room dinner west.",
+            "subject_id": "SUB-001",
+            "due_date": "2026-10-28",
+            "priority": "Medium",
+            "status": "Not Started",
+            "earned_score": null,
+            "max_score": null,
+            "created_at": "2026-10-26"
+        },
+        {
+            "task_id": "TSK-003",
+            "title": "FVC835 - Synergize Plug-And-Play Synergies",
+            "description": "Road cup while box off real.",
+            "subject_id": "SUB-002",
+            "due_date": "2026-10-23",
+            "priority": "Medium",
+            "status": "Completed",
+            "earned_score": 81.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-26"
+        },
+        {
+            "task_id": "TSK-004",
+            "title": "FVC835 - Whiteboard Revolutionary Deliverables",
+            "description": "Them important practice need treatment may ball.",
+            "subject_id": "SUB-002",
+            "due_date": "2026-11-05",
+            "priority": "Medium",
+            "status": "Not Started",
+            "earned_score": null,
+            "max_score": null,
+            "created_at": "2026-10-26"
+        },
+        {
+            "task_id": "TSK-005",
+            "title": "IXB426 - Streamline B2B Action-Items",
+            "description": "Weight away same interesting bank knowledge military.",
+            "subject_id": "SUB-003",
+            "due_date": "2026-10-20",
+            "priority": "Medium",
+            "status": "Completed",
+            "earned_score": 73.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-26"
+        },
+        {
+            "task_id": "TSK-006",
+            "title": "IXB426 - Whiteboard Enterprise Models",
+            "description": "Improve sense cell method.",
+            "subject_id": "SUB-003",
+            "due_date": "2026-10-22",
+            "priority": "High",
+            "status": "Completed",
+            "earned_score": 75.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-26"
+        },
+        {
+            "task_id": "TSK-007",
+            "title": "XPC897 - Matrix Cross-Media Content",
+            "description": "Certainly animal certain similar quickly around difference.",
+            "subject_id": "SUB-004",
+            "due_date": "2026-10-21",
+            "priority": "High",
+            "status": "Completed",
+            "earned_score": 61.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-26"
+        },
+        {
+            "task_id": "TSK-008",
+            "title": "XPC897 - Exploit Global Deliverables",
+            "description": "Bank full professor mind sister about.",
+            "subject_id": "SUB-004",
+            "due_date": "2026-10-23",
+            "priority": "Medium",
+            "status": "Completed",
+            "earned_score": 68.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-26"
+        },
+        {
+            "task_id": "TSK-009",
+            "title": "EBE795 - Incentivize Open-Source Niches",
+            "description": "Chair agree type.",
+            "subject_id": "SUB-005",
+            "due_date": "2026-10-23",
+            "priority": "Medium",
+            "status": "Completed",
+            "earned_score": 53.0,
+            "max_score": 100.0,
+            "created_at": "2026-10-26"
+        },
+        {
+            "task_id": "TSK-010",
+            "title": "EBE795 - Drive Clicks-And-Mortar Mindshare",
+            "description": "Always finally degree site effort.",
+            "subject_id": "SUB-005",
+            "due_date": "2026-11-01",
+            "priority": "Medium",
+            "status": "Not Started",
+            "earned_score": null,
+            "max_score": null,
+            "created_at": "2026-10-26"
+        }
+    ],
+    "projects": [
+        {
+            "project_id": "PRJ-001",
+            "title": "QEL284: Fundamental Exuding Methodology",
+            "subject_id": "SUB-001",
+            "deadline": "2026-11-21",
+            "steps": [
+                {
+                    "name": "QEL284 - Envisioneer Mission-Critical Methodologies",
+                    "weight": 15,
+                    "max_points": 15.0,
+                    "earned_points": 14.8,
+                    "completed": true
+                },
+                {
+                    "name": "QEL284 - Mesh Viral Bandwidth",
+                    "weight": 20,
+                    "max_points": 20.0,
+                    "earned_points": 19.6,
+                    "completed": true
+                },
+                {
+                    "name": "QEL284 - Drive Leading-Edge Solutions",
+                    "weight": 25,
+                    "max_points": 25.0,
+                    "earned_points": 24.0,
+                    "completed": true
+                },
+                {
+                    "name": "QEL284 - Enable Wireless Convergence",
+                    "weight": 25,
+                    "max_points": 25.0,
+                    "earned_points": 23.2,
+                    "completed": true
+                },
+                {
+                    "name": "QEL284 - Target Sticky Platforms",
+                    "weight": 15,
+                    "max_points": 15.0,
+                    "earned_points": null,
+                    "completed": false
+                }
+            ],
+            "phase": "QEL284 - Target Sticky Platforms",
+            "progress": 85,
+            "earned_score": 81.6,
+            "max_score": 100.0
+        },
+        {
+            "project_id": "PRJ-002",
+            "title": "FVC835: Grass-Roots Incremental Installation",
+            "subject_id": "SUB-002",
+            "deadline": "2026-11-13",
+            "steps": [
+                {
+                    "name": "FVC835 - Envisioneer B2C Users",
+                    "weight": 10,
+                    "max_points": 10.0,
+                    "earned_points": 8.9,
+                    "completed": true
+                },
+                {
+                    "name": "FVC835 - Incentivize Mission-Critical Functionalities",
+                    "weight": 20,
+                    "max_points": 20.0,
+                    "earned_points": 16.6,
+                    "completed": true
+                },
+                {
+                    "name": "FVC835 - Visualize Out-Of-The-Box Synergies",
+                    "weight": 30,
+                    "max_points": 30.0,
+                    "earned_points": 24.6,
+                    "completed": true
+                },
+                {
+                    "name": "FVC835 - Implement Collaborative Niches",
+                    "weight": 25,
+                    "max_points": 25.0,
+                    "earned_points": null,
+                    "completed": false
+                },
+                {
+                    "name": "FVC835 - Syndicate Customized Niches",
+                    "weight": 15,
+                    "max_points": 15.0,
+                    "earned_points": null,
+                    "completed": false
+                }
+            ],
+            "phase": "FVC835 - Implement Collaborative Niches",
+            "progress": 60,
+            "earned_score": 50.1,
+            "max_score": 100.0
+        },
+        {
+            "project_id": "PRJ-003",
+            "title": "IXB426: Switchable Zero Tolerance Solution",
+            "subject_id": "SUB-003",
+            "deadline": "2026-11-06",
+            "steps": [
+                {
+                    "name": "IXB426 - Benchmark User-Centric Info-Mediaries",
+                    "weight": 20,
+                    "max_points": 20.0,
+                    "earned_points": 14.4,
+                    "completed": true
+                },
+                {
+                    "name": "IXB426 - Maximize Granular E-Tailers",
+                    "weight": 20,
+                    "max_points": 20.0,
+                    "earned_points": 15.2,
+                    "completed": true
+                },
+                {
+                    "name": "IXB426 - Engineer 24/7 Markets",
+                    "weight": 20,
+                    "max_points": 20.0,
+                    "earned_points": null,
+                    "completed": false
+                },
+                {
+                    "name": "IXB426 - Evolve Real-Time Models",
+                    "weight": 20,
+                    "max_points": 20.0,
+                    "earned_points": null,
+                    "completed": false
+                },
+                {
+                    "name": "IXB426 - E-Enable Synergistic Infrastructures",
+                    "weight": 20,
+                    "max_points": 20.0,
+                    "earned_points": null,
+                    "completed": false
+                }
+            ],
+            "phase": "IXB426 - Engineer 24/7 Markets",
+            "progress": 40,
+            "earned_score": 29.6,
+            "max_score": 100.0
+        },
+        {
+            "project_id": "PRJ-004",
+            "title": "XPC897: Multi-Channeled Bifurcated Solution",
+            "subject_id": "SUB-004",
+            "deadline": "2026-11-02",
+            "steps": [
+                {
+                    "name": "XPC897 - Monetize Collaborative Technologies",
+                    "weight": 15,
+                    "max_points": 15.0,
+                    "earned_points": 10.1,
+                    "completed": true
+                },
+                {
+                    "name": "XPC897 - Morph Next-Generation Infrastructures",
+                    "weight": 15,
+                    "max_points": 15.0,
+                    "earned_points": null,
+                    "completed": false
+                },
+                {
+                    "name": "XPC897 - Visualize Frictionless Metrics",
+                    "weight": 30,
+                    "max_points": 30.0,
+                    "earned_points": null,
+                    "completed": false
+                },
+                {
+                    "name": "XPC897 - Synthesize Plug-And-Play Bandwidth",
+                    "weight": 20,
+                    "max_points": 20.0,
+                    "earned_points": null,
+                    "completed": false
+                },
+                {
+                    "name": "XPC897 - Generate Turn-Key Applications",
+                    "weight": 20,
+                    "max_points": 20.0,
+                    "earned_points": null,
+                    "completed": false
+                }
+            ],
+            "phase": "XPC897 - Morph Next-Generation Infrastructures",
+            "progress": 15,
+            "earned_score": 10.1,
+            "max_score": 100.0
+        },
+        {
+            "project_id": "PRJ-005",
+            "title": "EBE795: Multi-Channeled Local Middleware",
+            "subject_id": "SUB-005",
+            "deadline": "2026-11-30",
+            "steps": [
+                {
+                    "name": "EBE795 - Integrate Interactive Action-Items",
+                    "weight": 10,
+                    "max_points": 10.0,
+                    "earned_points": 5.2,
+                    "completed": true
+                },
+                {
+                    "name": "EBE795 - Seize Rich Synergies",
+                    "weight": 25,
+                    "max_points": 25.0,
+                    "earned_points": 14.0,
+                    "completed": true
+                },
+                {
+                    "name": "EBE795 - Scale Dynamic Platforms",
+                    "weight": 25,
+                    "max_points": 25.0,
+                    "earned_points": 12.2,
+                    "completed": true
+                },
+                {
+                    "name": "EBE795 - Matrix Cross-Platform E-Business",
+                    "weight": 20,
+                    "max_points": 20.0,
+                    "earned_points": null,
+                    "completed": false
+                },
+                {
+                    "name": "EBE795 - Whiteboard Impactful Mindshare",
+                    "weight": 20,
+                    "max_points": 20.0,
+                    "earned_points": 10.0,
+                    "completed": true
+                }
+            ],
+            "phase": "EBE795 - Matrix Cross-Platform E-Business",
+            "progress": 80,
+            "earned_score": 41.4,
+            "max_score": 100.0
+        }
+    ],
+    "exams": [
+        {
+            "exam_id": "EXM-001",
+            "title": "QEL284 - Progressive Systemic Matrices",
+            "subject_id": "SUB-001",
+            "exam_date": "2026-10-31",
+            "exam_time": "22:50",
+            "exam_type": "Practical",
+            "earned_score": 90.0,
+            "max_score": 100.0
+        },
+        {
+            "exam_id": "EXM-002",
+            "title": "FVC835 - Organic 3Rdgeneration Local Area Network",
+            "subject_id": "SUB-002",
+            "exam_date": "2026-10-25",
+            "exam_time": "10:00",
+            "exam_type": "Practical",
+            "earned_score": 86.0,
+            "max_score": 100.0
+        },
+        {
+            "exam_id": "EXM-003",
+            "title": "IXB426 - Centralized Foreground Installation",
+            "subject_id": "SUB-003",
+            "exam_date": "2026-10-29",
+            "exam_time": "17:46",
+            "exam_type": "Midterm",
+            "earned_score": 73.0,
+            "max_score": 100.0
+        },
+        {
+            "exam_id": "EXM-004",
+            "title": "XPC897 - Persevering Stable Encryption",
+            "subject_id": "SUB-004",
+            "exam_date": "2026-10-23",
+            "exam_time": "02:20",
+            "exam_type": "Final",
+            "earned_score": 62.0,
+            "max_score": 100.0
+        },
+        {
+            "exam_id": "EXM-005",
+            "title": "EBE795 - Customizable Intermediate System Engine",
+            "subject_id": "SUB-005",
+            "exam_date": "2026-10-30",
+            "exam_time": "04:11",
+            "exam_type": "Final",
+            "earned_score": 51.0,
+            "max_score": 100.0
+        }
+    ],
+    "notes": [
+        {
+            "note_id": "NTE-001",
+            "title": "QEL284 - Monetize Cross-Platform E-Services",
+            "content": "Answer education fill state he together follow. The and woman total type most factor. Far six leader knowledge nice successful truth. Mother number newspaper impact movie assume.",
+            "subject_id": "SUB-001",
+            "created_at": "2026-10-26"
+        },
+        {
+            "note_id": "NTE-002",
+            "title": "FVC835 - Brand Cross-Platform Partnerships",
+            "content": "Cultural baby happy share. Meet organization throw you argue party. Hundred recognize food important movement.",
+            "subject_id": "SUB-002",
+            "created_at": "2026-10-26"
+        },
+        {
+            "note_id": "NTE-003",
+            "title": "IXB426 - Deliver Magnetic Action-Items",
+            "content": "Prevent catch century general care. Some reality apply carry energy my. Themselves world myself who capital project.",
+            "subject_id": "SUB-003",
+            "created_at": "2026-10-26"
+        },
+        {
+            "note_id": "NTE-004",
+            "title": "XPC897 - Implement Web-Enabled Web Services",
+            "content": "Win your job professional guess. That somebody identify with unit these stop city. Sit foot speak responsibility make prepare price. Detail significant rich food race.",
+            "subject_id": "SUB-004",
+            "created_at": "2026-10-26"
+        },
+        {
+            "note_id": "NTE-005",
+            "title": "EBE795 - Repurpose Plug-And-Play Infrastructures",
+            "content": "Agree later interest mean entire. Drug brother here.",
+            "subject_id": "SUB-005",
+            "created_at": "2026-10-26"
+        },
+        {
+            "note_id": "NTE-006",
+            "title": "aa",
+            "content": "finsh midtearm",
+            "subject_id": "SUB-006",
+            "created_at": "2026-10-26"
+        },
+        {
+            "note_id": "NTE-007",
+            "title": "Study Session (25 mins)",
+            "content": "Completed a 25-minute study session for QEL284 (Vision-Oriented Optimal Extranet).",
+            "subject_id": "SUB-001",
+            "created_at": "2026-10-26"
+        }
+    ]
+}
