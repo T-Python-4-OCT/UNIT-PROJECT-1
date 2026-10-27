@@ -62,6 +62,10 @@
     {"origin": "KAFD", "destination": "National Museum", "distance_km": 14, "base_duration_minutes": 25},
     {"origin": "National Museum", "destination": "KAFD", "distance_km": 14, "base_duration_minutes": 25},
 
+
+    {"origin": "King Fahad Library", "destination": "KAFD", "distance_km": 12, "base_duration_minutes": 20},
+    {"origin": "KAFD", "destination": "King Fahad Library", "distance_km": 12, "base_duration_minutes": 20},
+
     {"origin": "King Saud University", "destination": "King Fahad Sport City", "distance_km": 18, "base_duration_minutes": 30},
     {"origin": "King Fahad Sport City", "destination": "King Saud University", "distance_km": 18, "base_duration_minutes": 30}
   ]
