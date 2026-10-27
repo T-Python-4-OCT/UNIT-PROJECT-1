@@ -292,6 +292,7 @@ def view_trip_report() -> None:
     display_traffic_report()
 
 
+
 def update_saved_trip() -> None:
     """Change the departure time of a saved trip."""
     trips = load_trips()
@@ -315,21 +316,16 @@ def update_saved_trip() -> None:
     trip = trips[index]
     base_minutes = trip.get("base_minutes")
 
-    if base_minutes is None:
+    if (
+        not isinstance(base_minutes, (int, float))
+        or isinstance(base_minutes, bool)
+        or base_minutes <= 0
+    ):
         show_message(
             "Base trip duration is unavailable for this trip.",
             "error",
         )
         return
-
-    period, duration = estimate_trip_duration(base_minutes, new_time)
-
-    updated_trip = {
-        "departure_time": new_time,
-        "traffic_period": period,
-        "estimated_minutes": duration,
-        "car_duration": duration,
-    }
 
     result = compare_transport_options(
         trip["origin"],
@@ -338,12 +334,30 @@ def update_saved_trip() -> None:
         interactive=False,
     )
 
-    if result is not None:
-        updated_trip.update(result)
+    if result is None:
+        show_message(
+            "Trip update failed because transport data is unavailable.",
+            "error",
+        )
+        return
 
-    update_trip(index, updated_trip)
-    show_message("Trip updated successfully!", "success")
+    updated_trip = trip.copy()
+    updated_trip.update(result)
 
+    updated_trip["departure_time"] = new_time
+
+    period, duration = estimate_trip_duration(
+        base_minutes, new_time
+    )
+
+    updated_trip["traffic_period"] = period
+    updated_trip["estimated_minutes"] = duration
+    updated_trip["car_duration"] = duration
+
+    if update_trip(index, updated_trip):
+        show_message("Trip updated successfully!", "success")
+    else:
+        show_message("Failed to update trip.", "error")
 
 def delete_saved_trip() -> None:
     """Delete a saved trip chosen by the user."""
@@ -356,12 +370,14 @@ def delete_saved_trip() -> None:
     print_trip_list(trips)
 
     index = ask_trip_number("Enter trip number to delete: ", trips)
-
+    
     if index is not None:
-        delete_trip(index)
-        show_message("Trip deleted successfully!", "success")
+        deleted_trip = delete_trip(index)
 
-
+        if deleted_trip is not None:
+            show_message("Trip deleted successfully!", "success")
+        else:
+            show_message("Failed to delete trip.", "error")
 
 def suggest_time() -> None:
     """Suggest a departure time for a saved trip and an arrival time."""
@@ -402,10 +418,12 @@ ACTIONS = {
 }
 
 
+
 def run_menu() -> None:
     """Show the menu and run the chosen action until the user exits."""
     while True:
         display_menu()
+
         choice = questionary.select(
             "Choose an option:",
             choices=[
@@ -428,10 +446,18 @@ def run_menu() -> None:
                 "Invalid choice. Please use the arrow keys to select an option.",
                 "error",
             )
-        else:
-            console.print()
+            continue
+
+        console.print()
+
+        try:
             action()
-            console.input("\n[bright_black]Press Enter to return to the menu...[/bright_black]")
+        except (KeyboardInterrupt, EOFError):
+            show_message("Operation cancelled.", "warning")
+
+        console.input(
+            "\n[bright_black]Press Enter to return to the menu...[/bright_black]"
+        )
 
 
 def main() -> None:

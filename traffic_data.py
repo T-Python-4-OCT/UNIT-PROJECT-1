@@ -53,33 +53,27 @@ def estimate_trip_duration(
 
 
 def find_departure_time(base_minutes: int, arrival_time: str) -> dict | None:
-    """Find the latest departure that still arrives by ``arrival_time``.
-
-    Departure times are checked every 15 minutes during the day.
-
-    Returns:
-        A dict with the departure time, arrival time, duration and traffic
-        period, or ``None`` if no departure time works.
-
-    Raises:
-        ValueError: If ``arrival_time`` is not in ``HH:MM`` format.
-    """
     arrival = datetime.strptime(arrival_time, TIME_FORMAT)
     target_minutes = arrival.hour * 60 + arrival.minute
 
     best = None
-    best_arrival = -1
+    latest_departure = -1
 
     for hour in range(24):
         for minute in range(0, 60, SEARCH_STEP_MINUTES):
             departure_time = f"{hour:02d}:{minute:02d}"
+            departure_minutes = hour * 60 + minute
+
             period, duration = estimate_trip_duration(
                 base_minutes, departure_time
             )
-            estimated_arrival = hour * 60 + minute + duration
+            estimated_arrival = departure_minutes + duration
 
-            if best_arrival < estimated_arrival <= target_minutes:
-                best_arrival = estimated_arrival
+            if (
+                estimated_arrival <= target_minutes
+                and departure_minutes > latest_departure
+            ):
+                latest_departure = departure_minutes
                 best = {
                     "departure_time": departure_time,
                     "arrival_minutes": estimated_arrival,

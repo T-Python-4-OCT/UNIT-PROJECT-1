@@ -1,13 +1,20 @@
+
 """Compare car and metro options for a trip and recommend one."""
 from __future__ import annotations
 
 import json
 
 import questionary
+from rich.box import ROUNDED
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
 
 from metro_data import estimate_metro_route_duration, find_metro_route
 from traffic_data import estimate_trip_duration
 from trip_charts import show_transport_chart
+
+console = Console()
 
 ROUTES_FILE = "routes.json"
 FUEL_PRICE_SAR = 2.18
@@ -22,14 +29,10 @@ PRIORITY_CHOICES = {
 
 
 def choose_trip_priority() -> str | None:
-    """Ask the user for a trip priority.
-
-    Returns:
-        ``"fastest"``, ``"cheapest"``, ``"balanced"``, or None if the
-        prompt was cancelled.
-    """
+    """Ask the user for a trip priority."""
     choice = questionary.select(
-        "Choose your trip priority:", choices=list(PRIORITY_CHOICES)
+        "Choose your trip priority:",
+        choices=list(PRIORITY_CHOICES),
     ).ask()
 
     return PRIORITY_CHOICES.get(choice)
@@ -61,13 +64,24 @@ def find_transport_options(origin: str, destination: str) -> dict | None:
     return None
 
 
-def calculate_car_fuel_cost(distance_km: float | None) -> float | None:
-    """Estimate the fuel cost in SAR, or None if the distance is invalid."""
-    if distance_km is None or distance_km <= 0:
+def calculate_car_fuel_cost(distance_km):
+    if distance_km is None:
         return None
 
-    fuel_liters = distance_km * FUEL_CONSUMPTION_PER_100_KM / 100
-    return round(fuel_liters * FUEL_PRICE_SAR, 2)
+    if not isinstance(distance_km, (int, float)) or isinstance(distance_km, bool):
+        return None
+
+    if distance_km <= 0:
+        return None
+
+    fuel_cost = (
+        distance_km
+        * FUEL_CONSUMPTION_PER_100_KM
+        / 100
+        * FUEL_PRICE_SAR
+    )
+
+    return round(fuel_cost, 2)
 
 
 def get_recommendation(
@@ -77,14 +91,7 @@ def get_recommendation(
     metro_duration: int,
     metro_cost: float,
 ) -> tuple[str | None, str]:
-    """Recommend car or metro for the chosen priority.
-
-    Any priority other than ``"fastest"`` or ``"cheapest"`` is treated
-    as ``"balanced"``.
-
-    Returns:
-        A tuple of (recommended option or None, reason).
-    """
+    """Recommend car or metro for the chosen priority."""
     if priority == "fastest":
         recommended = "Car" if car_duration <= metro_duration else "Metro"
         return recommended, "It has the shorter estimated travel time."
@@ -104,6 +111,7 @@ def get_recommendation(
 
     longest_time = max(car_duration, metro_duration)
     highest_cost = max(car_cost, metro_cost)
+
     car_score = car_duration / longest_time + car_cost / highest_cost
     metro_score = metro_duration / longest_time + metro_cost / highest_cost
 
@@ -120,77 +128,115 @@ def display_smart_trip_summary(
     metro_cost: float,
     priority: str | None,
 ) -> str | None:
-    """Print the time and cost differences and the recommendation.
+    """Display time/cost differences and the recommendation."""
+    table = Table(
+        title="[bold cyan]SMART TRIP SUMMARY[/bold cyan]",
+        box=ROUNDED,
+        border_style="bright_black",
+        header_style="bold cyan",
+        expand=True,
+    )
+    table.add_column("Metric", style="white")
+    table.add_column("Result", style="cyan")
 
-    Returns:
-        The recommended option, or None if there is no recommendation.
-    """
-    print("\n" + "=" * 42)
-    print("          SMART TRIP SUMMARY")
-    print("=" * 42)
-    print(f"  Route: {origin} -> {destination}")
+    table.add_row("Route", f"{origin} → {destination}")
 
     time_difference = abs(car_duration - metro_duration)
 
     if car_duration < metro_duration:
-        print(f"  Time advantage: Car is {time_difference} minutes faster.")
+        time_result = f"Car is {time_difference} minutes faster"
     elif metro_duration < car_duration:
-        print(f"  Time advantage: Metro is {time_difference} minutes faster.")
+        time_result = f"Metro is {time_difference} minutes faster"
     else:
-        print("  Time advantage: Both options take the same time.")
+        time_result = "Both options take the same time"
+
+    table.add_row("Time Advantage", time_result)
 
     if car_cost is None:
-        print("  Cost comparison unavailable: car distance is missing.")
+        cost_result = "Car cost unavailable"
     else:
         cost_difference = abs(car_cost - metro_cost)
 
         if car_cost < metro_cost:
-            print(f"  Cost advantage: Car saves {cost_difference:.2f} SAR.")
+            cost_result = f"Car saves {cost_difference:.2f} SAR"
         elif metro_cost < car_cost:
-            print(f"  Cost advantage: Metro saves {cost_difference:.2f} SAR.")
+            cost_result = f"Metro saves {cost_difference:.2f} SAR"
         else:
-            print("  Cost advantage: Both options cost the same.")
+            cost_result = "Both options cost the same"
+
+    table.add_row("Cost Advantage", cost_result)
 
     recommended, reason = get_recommendation(
         priority, car_duration, car_cost, metro_duration, metro_cost
     )
 
-    print("\n  YOUR RECOMMENDATION")
+    console.print(table)
 
     if recommended is None:
-        print("  No recommendation available.")
+        console.print(
+            Panel(
+                reason,
+                title="[bold yellow]Recommendation Unavailable[/bold yellow]",
+                border_style="yellow",
+                box=ROUNDED,
+            )
+        )
     else:
-        print(f"  Recommended option: {recommended}")
-        print(f"  Reason: {reason}")
+        console.print(
+            Panel(
+                f"[bold green]Recommended option: {recommended}[/bold green]\n"
+                f"{reason}",
+                title="[bold green]YOUR RECOMMENDATION[/bold green]",
+                border_style="green",
+                box=ROUNDED,
+                padding=(1, 2),
+            )
+        )
 
-    print("=" * 42)
     return recommended
 
 
 def _print_car_section(
     car_duration: int, car_cost: float | None, period: str
 ) -> None:
-    """Print the car part of the comparison."""
-    print("\n  Transport : Car")
-    print(f"  Duration  : {car_duration} minutes")
+    """Display car details in a formatted panel."""
+    table = Table(show_header=False, box=None, expand=True)
+    table.add_column("Metric", style="cyan")
+    table.add_column("Value", style="white")
 
-    if car_cost is not None:
-        print(f"  Cost      : {car_cost:.2f} SAR (estimated fuel)")
-    else:
-        print("  Cost      : Distance unavailable")
+    table.add_row("Duration", f"{car_duration} minutes")
+    table.add_row(
+        "Estimated Fuel Cost",
+        f"{car_cost:.2f} SAR" if car_cost is not None
+        else "Distance unavailable",
+    )
+    table.add_row("Traffic Period", period)
 
-    print(f"  Traffic   : {period}")
+    console.print(
+        Panel(
+            table,
+            title="[bold cyan]CAR[/bold cyan]",
+            border_style="cyan",
+            box=ROUNDED,
+        )
+    )
 
 
 def _print_metro_unavailable() -> None:
-    """Print the metro part when no route could be found."""
-    print("  Duration  : Route unavailable")
-    print("  Cost      : Not estimated")
-    print(
-        "  Note      : No metro route found. Either a station name "
-        "was not recognized, or the stations are on different lines."
+    """Display a clear message when no metro route was found."""
+    console.print(
+        Panel(
+            "[bold yellow]Metro route unavailable[/bold yellow]\n\n"
+            "The station names may not be recognized, or the stations "
+            "may be on different metro lines.\n\n"
+            "[white]The car estimate is still available.[/white]",
+            title="[yellow]METRO[/yellow]",
+            border_style="yellow",
+            box=ROUNDED,
+            padding=(1, 2),
+        )
     )
-    print("\n  Recommendation unavailable for metro comparison.")
+
 
 
 def compare_transport_options(
@@ -199,31 +245,49 @@ def compare_transport_options(
     departure_time: str,
     interactive: bool = True,
 ) -> dict | None:
-    """Compare car and metro for a trip and print the result.
-
-    Args:
-        origin: Starting location.
-        destination: Destination.
-        departure_time: Time in ``HH:MM`` format.
-        interactive: If True, ask for a priority, print a recommendation
-            and show a chart when a metro route exists.
-
-    Returns:
-        A dict with the comparison data to save, or None if the route is
-        not in the sample data.
-    """
+    """Compare car and metro and return the data to save."""
     route = find_transport_options(origin, destination)
 
     if route is None:
-        print("\nTransport comparison is not available for this route yet.")
+        console.print(
+            Panel(
+                "Transport comparison is not available for this route yet.",
+                title="[bold yellow]Route Unavailable[/bold yellow]",
+                border_style="yellow",
+                box=ROUNDED,
+            )
+        )
         return None
 
     distance_km = route.get("distance_km")
-    base_minutes = route["base_duration_minutes"]
+    base_minutes = route.get("base_duration_minutes")
+
+    if (
+        not isinstance(base_minutes, (int, float))
+        or isinstance(base_minutes, bool)
+        or base_minutes <= 0
+    ):
+        console.print(
+            Panel(
+                "Invalid route duration in the sample data.",
+                title="[bold red]Data Error[/bold red]",
+                border_style="red",
+                box=ROUNDED,
+            )
+        )
+        return None
+
+    if distance_km is not None and (
+        not isinstance(distance_km, (int, float))
+        or isinstance(distance_km, bool)
+        or distance_km <= 0
+    ):
+        distance_km = None
 
     period, car_duration = estimate_trip_duration(
         base_minutes, departure_time
     )
+
     car_cost = calculate_car_fuel_cost(distance_km)
 
     metro_route = find_metro_route(origin, destination)
@@ -232,35 +296,98 @@ def compare_transport_options(
     if metro_route is not None:
         metro_duration = estimate_metro_route_duration(metro_route)
 
-    print("\n" + "=" * 42)
-    print("          TRANSPORT COMPARISON")
-    print("=" * 42)
-    print(f"  From      : {origin}")
-    print(f"  To        : {destination}")
-    print(f"  Departure : {departure_time}")
-    print(f"  Distance  : {distance_km} km")
-    print("-" * 42)
+    if (
+        not isinstance(metro_duration, (int, float))
+        or isinstance(metro_duration, bool)
+        or metro_duration <= 0
+    ):
+        metro_duration = None
+
+    details = Table(
+        show_header=False,
+        box=None,
+        expand=True,
+    )
+    details.add_column("Metric", style="cyan")
+    details.add_column("Value", style="white")
+
+    details.add_row("From", origin)
+    details.add_row("To", destination)
+    details.add_row("Departure", departure_time)
+
+    distance_text = (
+        f"{distance_km} km"
+        if distance_km is not None
+        else "Not available"
+    )
+    details.add_row("Distance", distance_text)
+
+    console.print()
+    console.print(
+        Panel(
+            details,
+            title="[bold cyan]TRANSPORT COMPARISON[/bold cyan]",
+            border_style="cyan",
+            box=ROUNDED,
+            padding=(1, 2),
+        )
+    )
 
     _print_car_section(car_duration, car_cost, period)
 
-    print("\n  Transport : Metro")
-
     if metro_route is not None and metro_duration is not None:
-        print(f"  Line      : {metro_route['metro_line']}")
-        print(f"  Stations  : {metro_route['number_of_stations']}")
-        print(f"  Duration  : About {metro_duration} minutes")
-        print(f"  Cost      : About {METRO_COST_SAR:.2f} SAR")
-        print("  Note      : Estimated time, including average waiting time.")
+        metro_table = Table(
+            show_header=False,
+            box=None,
+            expand=True,
+        )
+        metro_table.add_column("Metric", style="cyan")
+        metro_table.add_column("Value", style="white")
+
+        metro_table.add_row("Line", metro_route["metro_line"])
+        metro_table.add_row(
+            "Stations",
+            str(metro_route["number_of_stations"]),
+        )
+        metro_table.add_row(
+            "Estimated Duration",
+            f"About {metro_duration} minutes",
+        )
+        metro_table.add_row(
+            "Estimated Cost",
+            f"{METRO_COST_SAR:.2f} SAR",
+        )
+
+        console.print(
+            Panel(
+                metro_table,
+                title="[bold green]METRO[/bold green]",
+                subtitle="[bright_black]Includes estimated waiting time[/bright_black]",
+                border_style="green",
+                box=ROUNDED,
+            )
+        )
 
         if interactive:
-            print()
+            console.print()
             priority = choose_trip_priority()
-            display_smart_trip_summary(
-                origin, destination, car_duration, car_cost,
-                metro_duration, METRO_COST_SAR, priority,
-            )
+
+            if priority is not None:
+                display_smart_trip_summary(
+                    origin,
+                    destination,
+                    car_duration,
+                    car_cost,
+                    metro_duration,
+                    METRO_COST_SAR,
+                    priority,
+                )
+
             show_transport_chart(
-                car_duration, metro_duration, origin, destination
+                car_duration,
+                metro_duration,
+                origin,
+                destination,
             )
     else:
         _print_metro_unavailable()
@@ -275,7 +402,15 @@ def compare_transport_options(
         "car_duration": car_duration,
         "car_cost": car_cost,
         "metro_duration": metro_duration,
-        "metro_cost": METRO_COST_SAR if metro_duration is not None else None,
-        "metro_line": metro_route["metro_line"] if metro_route else None,
+        "metro_cost": (
+            METRO_COST_SAR
+            if metro_duration is not None
+            else None
+        ),
+        "metro_line": (
+            metro_route["metro_line"]
+            if metro_route is not None and metro_duration is not None
+            else None
+        ),
         "traffic_period": period,
     }

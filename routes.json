@@ -51,9 +51,8 @@
     {"origin": "Al Rabwah", "destination": "Granada Mall", "distance_km": 10, "base_duration_minutes": 20},
     {"origin": "Granada Mall", "destination": "Al Rabwah", "distance_km": 10, "base_duration_minutes": 20},
 
-    {"origin": "Al Rabwah", "destination": "King Abdullah Financial District", "distance_km": 15, "base_duration_minutes": 25},
-    {"origin": "King Abdullah Financial District", "destination": "Al Rabwah", "distance_km": 15, "base_duration_minutes": 25},
-
+    {"origin": "Al Rabwah", "destination": "KAFD", "distance_km": 15, "base_duration_minutes": 25},
+    {"origin": "KAFD", "destination": "Al Rabwah", "distance_km": 15, "base_duration_minutes": 25},
     {"origin": "Diplomatic Quarter", "destination": "KAFD", "distance_km": 20, "base_duration_minutes": 20},
     {"origin": "KAFD", "destination": "Diplomatic Quarter", "distance_km": 20, "base_duration_minutes": 20},
 
