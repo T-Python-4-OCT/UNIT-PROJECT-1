@@ -1,44 +1,56 @@
-# UNIT-PROJECT-1
+# System Toolkit
 
+![System Toolkit - Python CLI for Windows](assets/system-toolkit-banner.png)
 
-## Based on what you’ve learned until now , create a project of your choosing (impress us with your imagination) . This project must at least satisfy the following minimum requirements :
+A Python command-line toolkit for Windows cleanup, networking, battery, memory, and hardware details.
 
-- Must be interactive on CLI.
-- Use your coding skills in Python accurately.
-- Organize Your Code into modules & (or packages)
-- Use git & Github to track changes in your code.
+## 🧰 Tools
 
-## Example Project :  An online Grocery Store :
+- 🧹 **File cleanup:** Scan a folder or known junk and temporary-file locations, preview results, and confirm cleanup.
+- 🌐 **Network:** Inspect adapters, refresh the DNS cache, change IPv4 DNS providers, and restore previous settings.
+- 🔋 **Battery:** Check battery status, activate an installed Power Saver plan, and restore the original plan.
+- 🧠 **RAM:** View memory usage and request eligible user applications to close.
+- 🖥️ **PC Parts & Health:** View CPU, RAM type and capacity, GPU, storage, and motherboard details.
 
-#### Overview : An online store that sells fruits to customers. This online store has 2 main users. The customer and the manager of the store . Each one of them should be able to do the following tasks for the store to function properly . 
+### ✨ What's New
 
-### Features & User Stories
-#### As a customer I should be able to do the following :
-- Browse  Products . 
-- View the product info (summary, specs, price, quantity , etc.)
-- Search for Products.
-- Get recommendations for my next purchase based on my purchase history.
-- Add Products to the shopping cart .
-- Remove a product from the shopping cart.
-- List the products in my shopping cart. 
-- Continue to checkout . 
-- Fill in my address for delivery.
-- Get receipt of my purchases.
-- Check delivery status . 
+**PC Parts & Health** adds a refreshable hardware summary, supported CPU/GPU temperatures in °C, and disk health reported by Windows. Unavailable readings show `N/A` or `Unknown`.
 
+NVIDIA temperatures use [nvidia-ml-py](https://pypi.org/project/nvidia-ml-py/) and the installed graphics driver. CPU and other GPU temperatures can use [Libre Hardware Monitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor): under **Options > Remote Web Server**, set **Interface / Port** to `127.0.0.1:8085`, then enable **Run**. Keep it open and refresh the tool. Sensor access may require administrator approval; unsupported readings remain `N/A`. Older WMI providers are also supported.
 
+## 🚀 Quick start
 
-#### Usage :
- Explain to the user how to use your project . 
- for example:
- - type in search product_name to search for a product.
- - type in list_products to show all the products in the grocery.
- - type in show product_name to get information about this product.
- - type in buy product_name to buy the product . 
- - and so on...
+Requires Windows 10/11, Python 3.11+, and Windows PowerShell 5.1.
 
+Run from the project folder in PowerShell:
 
-### For your project. Edit this README.md file to include your own project name,  overview, user stories, and usage. 
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe main.py
+```
 
-### NOTE: before submitting the final project, please do the following command:
-`pip freeze > requirements.txt` to enable use to know & use the packages used in your project.
+## 🧭 Usage
+
+Choose a menu number. Use `0` to go back or cancel. Choose `5` for PC Parts & Health and `6` to exit the main menu.
+
+For a computer-wide cleanup scan, choose **Clean up files > 3**. It checks known locations on local fixed drives and includes subfolders within the scan limits. Temporary files must be at least 24 hours old; crash reports must be at least 7 days old.
+
+Review the preview and answer `yes` to move all displayed files to the Recycle Bin, or `no` to cancel. Save your work before closing an application.
+
+## 🔐 Permissions
+
+Start the app normally. Protected DNS actions open the Windows administrator approval prompt. Approve to continue the selected action in an administrator window; cancel to stay in normal mode. The same settings backups are kept. Access to Windows Temp, other users' folders, and power-plan changes depends on device permissions.
+
+## 💾 Settings and recovery
+
+Backups and logs are stored in `%LOCALAPPDATA%\SystemToolkit`. Restore DNS and power settings from their tool menus. Use one Toolkit window at a time.
+
+## 📁 Project structure
+
+```text
+main.py              Entry point
+toolkit/             Tools and shared helpers
+assets/              Project banner
+requirements.txt     Dependencies
+```

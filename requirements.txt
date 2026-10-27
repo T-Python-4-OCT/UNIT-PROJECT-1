@@ -1,0 +1,4 @@
+psutil==7.2.2
+pywin32==312
+Send2Trash==2.1.0
+nvidia-ml-py==13.615.71
